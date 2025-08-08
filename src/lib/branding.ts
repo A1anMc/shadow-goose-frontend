@@ -16,8 +16,8 @@ export interface BrandingConfig {
 
 export const shadowGooseBranding: BrandingConfig = {
   name: "Shadow Goose Entertainment",
-  logoLight: "/clients/shadow-goose/logo-light.svg",
-  logoDark: "/clients/shadow-goose/logo-dark.svg",
+  logoLight: "/clients/shadow-goose/favicon-32x32.png",
+  logoDark: "/clients/shadow-goose/favicon-32x32.png",
   colors: {
     primary: "#1A1A1A",
     secondary: "#FFFFFF",
@@ -31,7 +31,7 @@ export const shadowGooseBranding: BrandingConfig = {
 };
 
 export function getBranding(): BrandingConfig {
-  const client = process.env.NEXT_PUBLIC_CLIENT || "navimpact";
+  const client = process.env.NEXT_PUBLIC_CLIENT || "shadow-goose";
   switch (client) {
     case "shadow-goose":
       return shadowGooseBranding;
