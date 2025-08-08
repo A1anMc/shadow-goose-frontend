@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState({
     totalProjects: 0,
     activeProjects: 0,
@@ -33,22 +34,34 @@ export default function Dashboard() {
       return;
     }
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+
     // Fetch user info
-    fetch('/api/user', {
+    fetch(`${apiUrl}/auth/user`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Failed to fetch user');
+      }
+      return res.json();
+    })
     .then(data => {
       setUser(data);
-      return fetch('/api/projects', {
+      return fetch(`${apiUrl}/api/projects`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
     })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Failed to fetch projects');
+      }
+      return res.json();
+    })
     .then(data => {
       if (data.projects) {
         setProjects(data.projects);
@@ -59,7 +72,10 @@ export default function Dashboard() {
         });
       }
     })
-    .catch(console.error)
+    .catch(err => {
+      console.error('Dashboard error:', err);
+      setError(err.message);
+    })
     .finally(() => setLoading(false));
   }, [router]);
 
@@ -74,6 +90,25 @@ export default function Dashboard() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <p className="font-bold">Error loading dashboard</p>
+            <p className="text-sm">{error}</p>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -219,4 +254,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-} // Force new deployment - Fri Aug  8 23:03:44 AEST 2025
+}

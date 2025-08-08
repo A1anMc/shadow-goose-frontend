@@ -38,7 +38,8 @@ export default function Rules() {
     }
 
     // Check if current user is admin
-    fetch('/api/user', {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+    fetch(`${apiUrl}/auth/user`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -58,7 +59,8 @@ export default function Rules() {
 
   const fetchRules = async (token: string) => {
     try {
-      const response = await fetch('/api/rules', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+      const response = await fetch(`${apiUrl}/api/rules`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -77,7 +79,8 @@ export default function Rules() {
 
   const fetchRuleTypes = async (token: string) => {
     try {
-      const response = await fetch('/api/rules/types', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+      const response = await fetch(`${apiUrl}/api/rules/types`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -102,7 +105,8 @@ export default function Rules() {
     if (!token) return;
 
     try {
-      const response = await fetch('/api/rules', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+      const response = await fetch(`${apiUrl}/api/rules`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

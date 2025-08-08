@@ -55,7 +55,8 @@ export default function Deployments() {
     }
 
     // Check if current user is admin
-    fetch('/api/user', {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+    fetch(`${apiUrl}/auth/user`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -75,7 +76,8 @@ export default function Deployments() {
 
   const fetchDeployments = async (token: string) => {
     try {
-      const response = await fetch('/api/deployments', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+      const response = await fetch(`${apiUrl}/api/deployments`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -94,7 +96,8 @@ export default function Deployments() {
 
   const fetchCommits = async (token: string) => {
     try {
-      const response = await fetch('/api/commits', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+      const response = await fetch(`${apiUrl}/api/commits`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -119,7 +122,8 @@ export default function Deployments() {
     if (!token) return;
 
     try {
-      const response = await fetch('/api/deployments', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+      const response = await fetch(`${apiUrl}/api/deployments`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -149,7 +153,8 @@ export default function Deployments() {
     if (!token) return;
 
     try {
-      const response = await fetch('/api/commits', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api-staging.onrender.com';
+      const response = await fetch(`${apiUrl}/api/commits`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
