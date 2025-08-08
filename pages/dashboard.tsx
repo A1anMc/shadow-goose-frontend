@@ -41,19 +41,12 @@ export default function Dashboard() {
     })
     .then(res => res.json())
     .then(data => {
-      if (data.username) {
-        setUser(data);
-      } else {
-        router.push('/login');
-      }
-    })
-    .catch(() => router.push('/login'));
-
-    // Fetch projects
-    fetch('/api/projects', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+      setUser(data);
+      return fetch('/api/projects', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
     })
     .then(res => res.json())
     .then(data => {
@@ -169,7 +162,7 @@ export default function Dashboard() {
                   onClick={() => router.push('/projects/new')}
                   className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
                 >
-                  Create Project
+                  Create Your First Project
                 </button>
               </div>
             ) : (
@@ -186,7 +179,7 @@ export default function Dashboard() {
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         project.status === 'active' ? 'bg-green-100 text-green-800' :
-                        project.status === 'completed' ? 'bg-purple-100 text-purple-800' :
+                        project.status === 'completed' ? 'bg-blue-100 text-blue-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {project.status}
@@ -198,7 +191,32 @@ export default function Dashboard() {
             )}
           </div>
         </div>
+
+        {/* Admin Features Section */}
+        {user?.role === 'admin' && (
+          <div className="mt-8 bg-white rounded-lg shadow">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Admin Features</h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onClick={() => router.push('/rules')}>
+                  <h3 className="text-lg font-medium text-gray-900">Rules Engine</h3>
+                  <p className="text-gray-600 mt-1">Manage business logic and automation rules</p>
+                </div>
+                <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onClick={() => router.push('/deployments')}>
+                  <h3 className="text-lg font-medium text-gray-900">Deployments</h3>
+                  <p className="text-gray-600 mt-1">Track deployments and CI/CD workflows</p>
+                </div>
+                <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onClick={() => router.push('/users')}>
+                  <h3 className="text-lg font-medium text-gray-900">User Management</h3>
+                  <p className="text-gray-600 mt-1">Manage users and permissions</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
-} // Force new deployment with enhanced features
+} 
