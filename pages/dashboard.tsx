@@ -98,12 +98,20 @@ export default function Dashboard() {
                 Welcome, {user?.username} ({user?.role})
               </span>
               {user?.role === 'admin' && (
-                <button
-                  onClick={() => router.push('/users')}
-                  className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm hover:bg-purple-700"
-                >
-                  User Management
-                </button>
+                <>
+                  <button
+                    onClick={() => router.push('/users')}
+                    className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm hover:bg-purple-700"
+                  >
+                    User Management
+                  </button>
+                  <button
+                    onClick={() => router.push('/rules')}
+                    className="bg-orange-600 text-white px-4 py-2 rounded-md text-sm hover:bg-orange-700"
+                  >
+                    Rules Engine
+                  </button>
+                </>
               )}
               <button
                 onClick={handleLogout}
