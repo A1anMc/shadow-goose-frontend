@@ -1,18 +1,23 @@
 services:
   - type: web
-    name: sge-week1-frontend
+    name: shadow-goose-web
     env: node
+    plan: starter
+    repo: https://github.com/A1anMc/shadow-goose-frontend.git
+    branch: main
+    rootDir: .
     buildCommand: npm ci && npm run build
-    startCommand: npm start
+    startCommand: PORT=$PORT node .next/standalone/server.js
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: NEXT_PUBLIC_API_URL
-        value: https://your-api-url.com  # Update with actual API URL
+        value: https://shadow-goose-api.onrender.com
+      - key: NEXT_PUBLIC_CLIENT
+        value: shadow-goose
       - key: NEXT_PUBLIC_APP_NAME
-        value: SGE Impact Tracker
+        value: Shadow Goose Entertainment
       - key: NEXT_PUBLIC_APP_VERSION
         value: 1.0.0
-    healthCheckPath: /
+      - key: NEXT_PUBLIC_ENV
+        value: production
+    healthCheckPath: /api/health
     autoDeploy: true
-    branch: main
