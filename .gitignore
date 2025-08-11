@@ -130,3 +130,5 @@ dependency-fix-report.txt
 dependency-tree.txt
 security-report.json
 bandit-report.json
+node_modules/
+tsconfig.tsbuildinfo
