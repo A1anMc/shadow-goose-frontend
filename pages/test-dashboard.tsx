@@ -1,89 +1,9 @@
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getBranding } from '../src/lib/branding';
-import { authService, User } from '../src/lib/auth';
-import { sgeProjectService, SGEProject } from '../src/lib/projects';
 
-export default function Dashboard() {
+export default function TestDashboard() {
   const router = useRouter();
   const branding = getBranding();
-  const [user, setUser] = useState<User | null>(null);
-  const [projects, setProjects] = useState<SGEProject[]>([]);
-  const [stats, setStats] = useState({
-    total_projects: 0,
-    active_projects: 0,
-    completed_projects: 0,
-    total_participants: 0,
-    total_funding: 0,
-    average_progress: 0,
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check authentication
-    const currentUser = authService.getCurrentUser();
-    if (!currentUser) {
-      // For development, create a mock user instead of redirecting
-      const mockUser: User = {
-        id: 1,
-        username: 'test',
-        email: 'test@shadow-goose.com',
-        role: 'admin',
-        name: 'Test User',
-      };
-      setUser(mockUser);
-      // Store mock user data
-      localStorage.setItem('sge_user_data', JSON.stringify(mockUser));
-      localStorage.setItem('sge_auth_token', 'mock_token_' + Date.now());
-    } else {
-      setUser(currentUser);
-    }
-
-    // Load dashboard data
-    loadDashboardData();
-  }, [router]);
-
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-
-      // Load projects and stats in parallel
-      const [projectsData, statsData] = await Promise.all([
-        sgeProjectService.getProjects(),
-        sgeProjectService.getProjectStats(),
-      ]);
-
-      setProjects(projectsData);
-      setStats(statsData);
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    authService.logout();
-    router.push('/login');
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-AU', {
-      style: 'currency',
-      currency: 'AUD',
-    }).format(amount);
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-sg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sg-primary mx-auto"></div>
-          <p className="mt-4 text-sg-primary">Loading SGE Dashboard...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-sg-background">
@@ -124,10 +44,10 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">
-                Welcome, {user?.name || user?.username}
+                Welcome, Test User
               </span>
               <button
-                onClick={handleLogout}
+                onClick={() => router.push('/')}
                 className="bg-sg-accent text-white px-4 py-2 rounded-md text-sm hover:bg-sg-accent/90 transition-colors"
               >
                 Logout
@@ -150,7 +70,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Projects</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total_projects}</p>
+                <p className="text-2xl font-bold text-gray-900">2</p>
               </div>
             </div>
           </div>
@@ -164,7 +84,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Active Projects</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.active_projects}</p>
+                <p className="text-2xl font-bold text-gray-900">2</p>
               </div>
             </div>
           </div>
@@ -178,7 +98,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Participants</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total_participants.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-gray-900">529</p>
               </div>
             </div>
           </div>
@@ -192,7 +112,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Funding</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.total_funding)}</p>
+                <p className="text-2xl font-bold text-gray-900">$275,000</p>
               </div>
             </div>
           </div>
@@ -240,12 +160,12 @@ export default function Dashboard() {
             <div className="flex-1">
               <div className="flex justify-between text-sm text-gray-600 mb-1">
                 <span>Average Progress</span>
-                <span>{stats.average_progress.toFixed(1)}%</span>
+                <span>65.4%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-sg-accent h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${stats.average_progress}%` }}
+                  style={{ width: '65.4%' }}
                 ></div>
               </div>
             </div>
@@ -266,52 +186,60 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="divide-y divide-gray-200">
-            {projects.length === 0 ? (
-              <div className="px-6 py-8 text-center">
-                <p className="text-gray-500">No projects found. Create your first SGE project to get started.</p>
-              </div>
-            ) : (
-              projects.map((project) => (
-                <div key={project.id} className="px-6 py-4 hover:bg-gray-50">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{project.description}</p>
-                      <div className="flex items-center mt-2 space-x-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          project.status === 'active' ? 'bg-green-100 text-green-800' :
-                          project.status === 'completed' ? 'bg-blue-100 text-blue-800' :
-                          project.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {project.current_data.current_participants} participants
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {formatCurrency(project.current_data.current_funding)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-right">
-                        <div className="text-sm text-gray-600 mb-1">Progress</div>
-                        <div className="text-lg font-semibold text-gray-900">
-                          {project.current_data.progress_percentage.toFixed(1)}%
-                        </div>
-                      </div>
-                      <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
-                        <div
-                          className="bg-sg-accent h-2 rounded-full"
-                          style={{ width: `${project.current_data.progress_percentage}%` }}
-                        ></div>
-                      </div>
-                    </div>
+            <div className="px-6 py-4 hover:bg-gray-50">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="text-lg font-medium text-gray-900">Youth Employment Initiative</h3>
+                  <p className="text-sm text-gray-600 mt-1">Supporting young people in finding meaningful employment opportunities</p>
+                  <div className="flex items-center mt-2 space-x-4">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Active
+                    </span>
+                    <span className="text-sm text-gray-500">342 participants</span>
+                    <span className="text-sm text-gray-500">$180,000</span>
                   </div>
                 </div>
-              ))
-            )}
+                <div className="ml-4">
+                  <div className="text-right">
+                    <div className="text-sm text-gray-600 mb-1">Progress</div>
+                    <div className="text-lg font-semibold text-gray-900">68.4%</div>
+                  </div>
+                  <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
+                    <div
+                      className="bg-sg-accent h-2 rounded-full"
+                      style={{ width: '68.4%' }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-4 hover:bg-gray-50">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="text-lg font-medium text-gray-900">Community Health Program</h3>
+                  <p className="text-sm text-gray-600 mt-1">Improving health outcomes in underserved communities</p>
+                  <div className="flex items-center mt-2 space-x-4">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Active
+                    </span>
+                    <span className="text-sm text-gray-500">187 participants</span>
+                    <span className="text-sm text-gray-500">$95,000</span>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <div className="text-right">
+                    <div className="text-sm text-gray-600 mb-1">Progress</div>
+                    <div className="text-lg font-semibold text-gray-900">62.3%</div>
+                  </div>
+                  <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
+                    <div
+                      className="bg-sg-accent h-2 rounded-full"
+                      style={{ width: '62.3%' }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
