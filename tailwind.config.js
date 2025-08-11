@@ -4,6 +4,7 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -14,10 +15,16 @@ module.exports = {
           accent: "#FF6600",
           background: "#F5F5F5",
         },
+        sge: {
+          primary: "#2C5F2D",
+          secondary: "#FFFFFF",
+          accent: "#FFD700",
+          background: "#F8F9FA",
+        },
       },
       fontFamily: {
-        heading: ["Poppins", "ui-sans-serif", "system-ui"],
-        body: ["Open Sans", "ui-sans-serif", "system-ui"],
+        heading: ["Poppins", "Inter", "ui-sans-serif", "system-ui"],
+        body: ["Open Sans", "Inter", "ui-sans-serif", "system-ui"],
       },
     },
   },

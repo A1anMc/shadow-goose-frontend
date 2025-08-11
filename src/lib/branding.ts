@@ -30,9 +30,27 @@ export const shadowGooseBranding: BrandingConfig = {
   },
 };
 
+export const sgeBranding: BrandingConfig = {
+  name: "SGE Impact Platform",
+  logoLight: "/clients/sge/logo-light.png",
+  logoDark: "/clients/sge/logo-dark.png",
+  colors: {
+    primary: "#2C5F2D", // SGE Green
+    secondary: "#FFFFFF",
+    accent: "#FFD700", // Gold accent
+    background: "#F8F9FA",
+  },
+  fonts: {
+    heading: "Inter",
+    body: "Inter",
+  },
+};
+
 export function getBranding(): BrandingConfig {
   const client = process.env.NEXT_PUBLIC_CLIENT || "shadow-goose";
   switch (client) {
+    case "sge":
+      return sgeBranding;
     case "shadow-goose":
       return shadowGooseBranding;
     default:
