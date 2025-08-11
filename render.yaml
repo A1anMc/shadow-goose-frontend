@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: shadow-goose-web
+    name: sge-enhanced-dashboard
     env: node
     plan: starter
     repo: https://github.com/A1anMc/shadow-goose-frontend.git
@@ -14,7 +14,7 @@ services:
       - key: NEXT_PUBLIC_CLIENT
         value: shadow-goose
       - key: NEXT_PUBLIC_APP_NAME
-        value: Shadow Goose Entertainment
+        value: SGE Enhanced Dashboard
       - key: NEXT_PUBLIC_APP_VERSION
         value: 1.0.1
       - key: NEXT_PUBLIC_ENV
