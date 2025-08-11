@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { getBranding } from '../src/lib/branding';
 
 // Production-ready dashboard with enhanced analytics and UI/UX
+// Version: 1.0.1 - Enhanced Dashboard with Analytics
 export default function Dashboard() {
   const router = useRouter();
   const branding = getBranding();
@@ -46,6 +47,9 @@ export default function Dashboard() {
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">
                 Welcome, SGE Team
+              </span>
+              <span className="text-xs text-gray-400">
+                v1.0.1 Enhanced
               </span>
               <button
                 onClick={() => router.push('/')}
