@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { getBranding } from '../src/lib/branding';
 
+// Production-ready dashboard with enhanced analytics and UI/UX
 export default function Dashboard() {
   const router = useRouter();
   const branding = getBranding();
