@@ -4,7 +4,7 @@ services:
     env: node
     plan: starter
     repo: https://github.com/A1anMc/shadow-goose-frontend.git
-    branch: main
+    branch: main  # DEPLOY FROM MAIN BRANCH - ENHANCED DASHBOARD
     rootDir: .
     buildCommand: npm ci && npm run build
     startCommand: PORT=$PORT node .next/standalone/server.js
@@ -16,7 +16,7 @@ services:
       - key: NEXT_PUBLIC_APP_NAME
         value: Shadow Goose Entertainment
       - key: NEXT_PUBLIC_APP_VERSION
-        value: 1.0.0
+        value: 1.0.1
       - key: NEXT_PUBLIC_ENV
         value: production
     healthCheckPath: /api/health
