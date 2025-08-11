@@ -7,11 +7,11 @@ services:
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
-        sync: false
+        value: postgresql://final_goose_db_user:MII5440GTcgWHUGHCTWP2F0mo8SQ4Xg3@dpg-d2apq1h5pdvs73c2gbog-a/final_goose_db
       - key: SECRET_KEY
-        sync: false
+        value: shadow-goose-secret-key-2025-staging
       - key: JWT_SECRET_KEY
-        sync: false
+        value: shadow-goose-jwt-secret-2025-staging
       - key: CORS_ORIGINS
         value: https://shadow-goose-web-staging.onrender.com
       - key: SENTRY_DSN
@@ -24,8 +24,9 @@ services:
     name: shadow-goose-web-staging
     env: node
     plan: starter
-    buildCommand: cd frontend && npm ci && npm run build
-    startCommand: cd frontend/.next/standalone && PORT=$PORT node server.js
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://shadow-goose-api-staging.onrender.com

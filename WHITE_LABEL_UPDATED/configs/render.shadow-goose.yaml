@@ -7,25 +7,27 @@ services:
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: shadow-goose-db
+          property: connectionString
       - key: SECRET_KEY
-        sync: false
+        value: shadow-goose-secret-key-2025-production-xyz789
       - key: JWT_SECRET_KEY
-        sync: false
+        value: shadow-goose-jwt-secret-2025-production-abc123
       - key: CORS_ORIGINS
         value: https://shadow-goose-web.onrender.com
       - key: SENTRY_DSN
-        sync: false
+        value: https://shadow-goose-sentry-dsn-2025
       - key: REDIS_URL
-        sync: false
+        value: redis://shadow-goose-redis:6379
     healthCheckPath: /health
 
   - type: web
     name: shadow-goose-web
     env: node
     plan: starter
-    buildCommand: cd frontend && npm ci --only=production && npm run build
-    startCommand: cd frontend/.next/standalone && PORT=$PORT node server.js
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://shadow-goose-api.onrender.com
@@ -37,4 +39,10 @@ services:
         value: 1.0.0
       - key: NEXT_PUBLIC_ENV
         value: production
-    healthCheckPath: /api/health 
+    healthCheckPath: /api/health
+
+databases:
+  - name: shadow-goose-db
+    databaseName: shadow_goose_prod
+    user: shadow_goose_user
+    plan: starter 
