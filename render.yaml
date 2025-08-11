@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: sge-week1-frontend
+    env: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://your-api-url.com  # Update with actual API URL
+      - key: NEXT_PUBLIC_APP_NAME
+        value: SGE Impact Tracker
+      - key: NEXT_PUBLIC_APP_VERSION
+        value: 1.0.0
+    healthCheckPath: /
+    autoDeploy: true
+    branch: main
