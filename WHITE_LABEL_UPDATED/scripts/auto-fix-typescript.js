@@ -5,48 +5,48 @@
  * Automatically detects and fixes common TypeScript errors
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require("fs");
+const path = require("path");
+const { execSync } = require("child_process");
 
 // Common TypeScript error patterns and their fixes
 const COMMON_FIXES = [
   {
-    name: 'undefined-setState',
+    name: "undefined-setState",
     pattern: /setNewComment\(undefined\)/g,
     replacement: 'setNewComment("")',
-    description: 'Fix undefined setState calls'
+    description: "Fix undefined setState calls",
   },
   {
-    name: 'undefined-useState',
-    pattern: /useState<undefined>/g,
-    replacement: 'useState<string>',
-    description: 'Fix undefined useState types'
+    name: "undefined-useState",
+    pattern: /useState<string>/g,
+    replacement: "useState<string>",
+    description: "Fix undefined useState types",
   },
   {
-    name: 'any-type',
-    pattern: /: any/g,
-    replacement: ': unknown',
-    description: 'Replace any with unknown for better type safety'
+    name: "any-type",
+    pattern: /: unknown/g,
+    replacement: ": unknown",
+    description: "Replace any with unknown for better type safety",
   },
   {
-    name: 'missing-import',
+    name: "missing-import",
     pattern: /import React from 'react'/g,
     replacement: "import React from 'react'",
-    description: 'Ensure React import is present'
+    description: "Ensure React import is present",
   },
   {
-    name: 'async-await',
+    name: "async-await",
     pattern: /\.then\(/g,
-    replacement: 'await ',
-    description: 'Convert .then() to async/await'
-  }
+    replacement: "await ",
+    description: "Convert await ) to async/await",
+  },
 ];
 
 /**
  * Find all TypeScript/JavaScript files in the project
  */
-function findTypeScriptFiles(dir = '.') {
+function findTypeScriptFiles(dir = ".") {
   const files = [];
 
   function walk(currentDir) {
@@ -58,10 +58,15 @@ function findTypeScriptFiles(dir = '.') {
 
       if (stat.isDirectory()) {
         // Skip node_modules and .git
-        if (item !== 'node_modules' && item !== '.git') {
+        if (item !== "node_modules" && item !== ".git") {
           walk(fullPath);
         }
-      } else if (item.endsWith('.ts') || item.endsWith('.tsx') || item.endsWith('.js') || item.endsWith('.jsx')) {
+      } else if (
+        item.endsWith(".ts") ||
+        item.endsWith(".tsx") ||
+        item.endsWith(".js") ||
+        item.endsWith(".jsx")
+      ) {
         files.push(fullPath);
       }
     }
@@ -76,12 +81,12 @@ function findTypeScriptFiles(dir = '.') {
  */
 function applyFixesToFile(filePath) {
   try {
-    let content = fs.readFileSync(filePath, 'utf8');
+    let content = fs.readFileSync(filePath, "utf8");
     let originalContent = content;
     let fixesApplied = [];
 
     // Apply each fix
-    COMMON_FIXES.forEach(fix => {
+    COMMON_FIXES.forEach((fix) => {
       if (fix.pattern.test(content)) {
         content = content.replace(fix.pattern, fix.replacement);
         fixesApplied.push(fix.name);
@@ -90,8 +95,8 @@ function applyFixesToFile(filePath) {
 
     // Write back if changes were made
     if (content !== originalContent) {
-      fs.writeFileSync(filePath, content, 'utf8');
-      console.log(`✅ Fixed ${fixesApplied.join(', ')} in ${filePath}`);
+      fs.writeFileSync(filePath, content, "utf8");
+      console.log(`✅ Fixed ${fixesApplied.join(", ")} in ${filePath}`);
       return fixesApplied;
     }
 
@@ -107,13 +112,13 @@ function applyFixesToFile(filePath) {
  */
 function runTypeScriptCheck() {
   try {
-    execSync('npx tsc --noEmit', { stdio: 'pipe' });
-    console.log('✅ TypeScript check passed');
+    execSync("npx tsc --noEmit", { stdio: "pipe" });
+    console.log("✅ TypeScript check passed");
     return { success: true, errors: [] };
   } catch (error) {
     const output = error.stdout.toString() + error.stderr.toString();
-    const errors = output.split('\n').filter(line => line.includes('error'));
-    console.log('❌ TypeScript errors found:', errors.length);
+    const errors = output.split("\n").filter((line) => line.includes("error"));
+    console.log("❌ TypeScript errors found:", errors.length);
     return { success: false, errors };
   }
 }
@@ -122,7 +127,7 @@ function runTypeScriptCheck() {
  * Main function
  */
 function main() {
-  console.log('🔧 Auto-Fixing TypeScript Errors...\n');
+  console.log("🔧 Auto-Fixing TypeScript Errors...\n");
 
   // Find all TypeScript files
   const files = findTypeScriptFiles();
@@ -132,7 +137,7 @@ function main() {
   let totalFixes = 0;
   const fixedFiles = [];
 
-  files.forEach(file => {
+  files.forEach((file) => {
     const fixes = applyFixesToFile(file);
     if (fixes.length > 0) {
       totalFixes += fixes.length;
@@ -146,18 +151,20 @@ function main() {
   console.log(`- Total fixes applied: ${totalFixes}`);
 
   if (totalFixes > 0) {
-    console.log('\n🔍 Running TypeScript check after fixes...');
+    console.log("\n🔍 Running TypeScript check after fixes...");
     const checkResult = runTypeScriptCheck();
 
     if (checkResult.success) {
-      console.log('🎉 All TypeScript errors resolved!');
+      console.log("🎉 All TypeScript errors resolved!");
     } else {
-      console.log('⚠️ Some TypeScript errors remain. Manual review may be needed.');
-      console.log('Remaining errors:');
-      checkResult.errors.forEach(error => console.log(`  - ${error}`));
+      console.log(
+        "⚠️ Some TypeScript errors remain. Manual review may be needed.",
+      );
+      console.log("Remaining errors:");
+      checkResult.errors.forEach((error) => console.log(`  - ${error}`));
     }
   } else {
-    console.log('✅ No TypeScript errors found to fix');
+    console.log("✅ No TypeScript errors found to fix");
   }
 }
 
@@ -170,5 +177,5 @@ module.exports = {
   findTypeScriptFiles,
   applyFixesToFile,
   runTypeScriptCheck,
-  COMMON_FIXES
+  COMMON_FIXES,
 };

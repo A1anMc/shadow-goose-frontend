@@ -12,4 +12,4 @@ export const shadowGooseBranding = {
     heading: "Poppins",
     body: "Open Sans",
   },
-} as const; 
+} as const;

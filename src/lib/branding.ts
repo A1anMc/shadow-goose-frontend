@@ -38,4 +38,4 @@ export function getBranding(): BrandingConfig {
     default:
       return shadowGooseBranding;
   }
-} 
+}

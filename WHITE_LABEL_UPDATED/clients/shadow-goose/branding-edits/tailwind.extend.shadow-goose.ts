@@ -15,4 +15,4 @@ export const shadowGooseTailwindExtend = {
       },
     },
   },
-} as const; 
+} as const;
