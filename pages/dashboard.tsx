@@ -86,10 +86,22 @@ export default function Dashboard() {
               </h1>
               <nav className="flex space-x-4">
                 <button
+                  onClick={() => router.push('/instant-analytics')}
+                  className="text-gray-600 hover:text-sg-primary transition-colors"
+                >
+                  Instant Analytics
+                </button>
+                <button
                   onClick={() => router.push('/analytics')}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Analytics
+                </button>
+                <button
+                  onClick={() => router.push('/impact-analytics')}
+                  className="text-gray-600 hover:text-sg-primary transition-colors"
+                >
+                  Impact Analytics
                 </button>
                 <button
                   onClick={() => router.push('/projects/new')}
@@ -173,6 +185,41 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <button
+            onClick={() => router.push('/instant-analytics')}
+            className="p-6 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            <h3 className="text-lg font-semibold mb-2">Instant Analytics</h3>
+            <p className="text-sm opacity-90">Real-time insights and live updates</p>
+          </button>
+
+          <button
+            onClick={() => router.push('/impact-analytics')}
+            className="p-6 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            <h3 className="text-lg font-semibold mb-2">Impact Analytics</h3>
+            <p className="text-sm opacity-90">Deep dive into impact measurement</p>
+          </button>
+
+          <button
+            onClick={() => router.push('/analytics')}
+            className="p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            <h3 className="text-lg font-semibold mb-2">Full Analytics</h3>
+            <p className="text-sm opacity-90">Comprehensive analytics dashboard</p>
+          </button>
+
+          <button
+            onClick={() => router.push('/projects/new')}
+            className="p-6 bg-gradient-to-r from-sg-primary to-sg-accent text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            <h3 className="text-lg font-semibold mb-2">New Project</h3>
+            <p className="text-sm opacity-90">Create a new SGE initiative</p>
+          </button>
         </div>
 
         {/* Progress Overview */}
