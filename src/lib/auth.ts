@@ -125,7 +125,7 @@ class AuthService {
       const token = this.getToken();
       if (!token) return false;
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/validate`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/user`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
