@@ -1,16 +1,18 @@
 #!/bin/bash
 
-# SGE Enhanced Dashboard - Automated Deployment Monitor
-# Monitors deployment status, CSS loading, and content rendering
+# Deployment Monitoring Script
+# Monitors the backend deployment and tests when complete
 
 set -e
 
+echo "📊 MONITORING BACKEND DEPLOYMENT"
+echo "================================"
+
 # Configuration
-URL="https://sge-enhanced-dashboard.onrender.com/dashboard"
-CSS_URL="https://sge-enhanced-dashboard.onrender.com/_next/static/css"
-EXPECTED_BUILD_ID=""
-MAX_RETRIES=30
-RETRY_INTERVAL=30
+API_URL="https://shadow-goose-api.onrender.com"
+TOKEN="${FRESH_TOKEN:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzU1MDM3MTU3fQ.B5upejmDj-y2wFbl-pdtqUa5RJQSUWD2ibhmBLflxzM}"
+CHECK_INTERVAL=30  # Check every 30 seconds
+MAX_CHECKS=20      # Maximum 10 minutes of monitoring
 
 # Colors for output
 RED='\033[0;31m'
@@ -19,249 +21,82 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Logging function
-log() {
-    echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
+echo "🔧 DEPLOYMENT STATUS:"
+echo "===================="
+echo "API URL: $API_URL"
+echo "Check Interval: $CHECK_INTERVAL seconds"
+echo "Max Duration: $((CHECK_INTERVAL * MAX_CHECKS / 60)) minutes"
+echo ""
+
+# Function to test the API
+test_api() {
+    local response=$(curl -s -H "Authorization: Bearer $TOKEN" "$API_URL/api/grants" 2>/dev/null || echo "FAILED")
+    echo "$response"
 }
 
-error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
+# Function to check deployment status
+check_deployment() {
+    local check_number=$1
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
-success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
+    echo -e "${BLUE}[$timestamp] Check #$check_number - Testing API...${NC}"
 
-warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
+    local response=$(test_api)
 
-# Check if URL is accessible
-check_url_accessibility() {
-    log "Checking URL accessibility..."
-    if curl -s -f "$URL" > /dev/null; then
-        success "URL is accessible"
+    if echo "$response" | grep -q "'dict' object has no attribute 'dict'"; then
+        echo -e "${YELLOW}⏳ Still deploying... (Python error still present)${NC}"
+        return 1
+    elif echo "$response" | grep -q '"grants"' && echo "$response" | grep -q '"data_source":"api"'; then
+        echo -e "${GREEN}✅ DEPLOYMENT COMPLETE! API is working correctly!${NC}"
+        echo -e "${GREEN}✅ Python dictionary error is FIXED!${NC}"
+        echo -e "${GREEN}✅ Data source validation is working!${NC}"
         return 0
+    elif echo "$response" | grep -q '"grants"'; then
+        echo -e "${YELLOW}⚠️  Partially deployed... (Grants working but missing data_source)${NC}"
+        return 2
+    elif echo "$response" | grep -q "Token expired"; then
+        echo -e "${YELLOW}⚠️  Token expired, but API is responding (good sign)${NC}"
+        return 3
     else
-        error "URL is not accessible"
-        return 1
+        echo -e "${RED}❌ Unexpected response: $response${NC}"
+        return 4
     fi
 }
 
-# Get current build ID
-get_build_id() {
-    local build_id=$(curl -s "$URL" | grep -o 'buildId":"[^"]*"' | cut -d'"' -f3)
-    echo "$build_id"
-}
+echo "🚀 STARTING DEPLOYMENT MONITORING..."
+echo "===================================="
 
-# Check if build has been updated
-check_build_update() {
-    local current_build_id=$(get_build_id)
-    log "Current build ID: $current_build_id"
-    
-    if [ "$current_build_id" != "$EXPECTED_BUILD_ID" ]; then
-        success "Build updated to: $current_build_id"
-        EXPECTED_BUILD_ID="$current_build_id"
-        return 0
-    else
-        warning "Build not yet updated (still: $current_build_id)"
-        return 1
+for i in $(seq 1 $MAX_CHECKS); do
+    if check_deployment $i; then
+        echo ""
+        echo -e "${GREEN}🎉 DEPLOYMENT SUCCESSFUL!${NC}"
+        echo "================================"
+        echo "✅ Python dictionary error is FIXED"
+        echo "✅ API endpoints are working"
+        echo "✅ Data source validation is active"
+        echo ""
+        echo "🧪 RUNNING FULL TEST SUITE..."
+        echo "============================="
+        ./scripts/test-all-endpoints.sh
+        exit 0
     fi
-}
 
-# Check CSS loading
-check_css_loading() {
-    log "Checking CSS loading..."
-    
-    # Get CSS file from HTML
-    local css_file=$(curl -s "$URL" | grep -o 'href="/_next/static/css/[^"]*"' | head -1 | cut -d'"' -f2)
-    
-    if [ -n "$css_file" ]; then
-        local css_url="https://sge-enhanced-dashboard.onrender.com$css_file"
-        log "CSS file: $css_url"
-        
-        if curl -s -f "$css_url" > /dev/null; then
-            success "CSS file is accessible"
-            
-            # Check for SGE custom classes
-            local sge_classes=$(curl -s "$css_url" | grep -c "bg-sg-background" || echo "0")
-            if [ "$sge_classes" -gt 0 ]; then
-                success "SGE custom classes found in CSS"
-                return 0
-            else
-                error "SGE custom classes not found in CSS"
-                return 1
-            fi
-        else
-            error "CSS file is not accessible"
-            return 1
-        fi
-    else
-        error "CSS file not found in HTML"
-        return 1
+    if [ $i -lt $MAX_CHECKS ]; then
+        echo -e "${BLUE}Waiting $CHECK_INTERVAL seconds before next check...${NC}"
+        sleep $CHECK_INTERVAL
     fi
-}
+done
 
-# Check content rendering
-check_content_rendering() {
-    log "Checking content rendering..."
-    
-    local html_content=$(curl -s "$URL")
-    
-    # Check for key elements
-    local checks=(
-        "bg-sg-background"
-        "text-sg-primary"
-        "bg-sg-primary"
-        "bg-sg-accent"
-        "grid grid-cols"
-        "Total Projects"
-        "Instant Analytics"
-        "Grant Management"
-        "OKR Management"
-    )
-    
-    local failed_checks=0
-    
-    for check in "${checks[@]}"; do
-        if echo "$html_content" | grep -q "$check"; then
-            success "✓ Found: $check"
-        else
-            error "✗ Missing: $check"
-            ((failed_checks++))
-        fi
-    done
-    
-    if [ $failed_checks -eq 0 ]; then
-        success "All content elements are present"
-        return 0
-    else
-        error "$failed_checks content elements are missing"
-        return 1
-    fi
-}
+echo ""
+echo -e "${RED}⏰ DEPLOYMENT MONITORING TIMEOUT${NC}"
+echo "====================================="
+echo "❌ Deployment may still be in progress"
+echo "❌ Check Render dashboard for deployment status"
+echo "❌ Manual verification may be needed"
+echo ""
+echo "🔧 MANUAL VERIFICATION COMMANDS:"
+echo "================================"
+echo "curl -H \"Authorization: Bearer \$FRESH_TOKEN\" \"$API_URL/api/grants\""
+echo "./scripts/test-all-endpoints.sh"
 
-# Check performance metrics
-check_performance() {
-    log "Checking performance metrics..."
-    
-    local start_time=$(date +%s)
-    local response_time=$(curl -s -w "%{time_total}" -o /dev/null "$URL")
-    local end_time=$(date +%s)
-    
-    log "Response time: ${response_time}s"
-    
-    if (( $(echo "$response_time < 3.0" | bc -l) )); then
-        success "Response time is acceptable (< 3s)"
-        return 0
-    else
-        warning "Response time is slow (> 3s): ${response_time}s"
-        return 1
-    fi
-}
-
-# Main monitoring function
-monitor_deployment() {
-    log "Starting deployment monitoring..."
-    log "URL: $URL"
-    log "Max retries: $MAX_RETRIES"
-    log "Retry interval: ${RETRY_INTERVAL}s"
-    
-    local retry_count=0
-    local build_updated=false
-    
-    while [ $retry_count -lt $MAX_RETRIES ]; do
-        log "Attempt $((retry_count + 1))/$MAX_RETRIES"
-        
-        # Check URL accessibility
-        if ! check_url_accessibility; then
-            error "URL not accessible, retrying..."
-            sleep $RETRY_INTERVAL
-            ((retry_count++))
-            continue
-        fi
-        
-        # Check build update
-        if check_build_update; then
-            build_updated=true
-        fi
-        
-        # If build is updated, check everything else
-        if [ "$build_updated" = true ]; then
-            log "Build updated, checking full deployment..."
-            
-            local all_checks_passed=true
-            
-            # Check CSS loading
-            if ! check_css_loading; then
-                all_checks_passed=false
-            fi
-            
-            # Check content rendering
-            if ! check_content_rendering; then
-                all_checks_passed=false
-            fi
-            
-            # Check performance
-            if ! check_performance; then
-                all_checks_passed=false
-            fi
-            
-            if [ "$all_checks_passed" = true ]; then
-                success "🎉 DEPLOYMENT SUCCESSFUL!"
-                success "All checks passed - Dashboard is fully operational"
-                return 0
-            else
-                warning "Some checks failed, but build is updated"
-                log "Continuing to monitor for improvements..."
-            fi
-        fi
-        
-        sleep $RETRY_INTERVAL
-        ((retry_count++))
-    done
-    
-    error "❌ DEPLOYMENT MONITORING TIMEOUT"
-    error "Maximum retries reached without successful deployment"
-    return 1
-}
-
-# Health check function
-health_check() {
-    log "Running health check..."
-    
-    local status=0
-    
-    check_url_accessibility || status=1
-    check_css_loading || status=1
-    check_content_rendering || status=1
-    check_performance || status=1
-    
-    if [ $status -eq 0 ]; then
-        success "Health check passed - Dashboard is healthy"
-    else
-        error "Health check failed - Dashboard has issues"
-    fi
-    
-    return $status
-}
-
-# Main execution
-case "${1:-monitor}" in
-    "monitor")
-        monitor_deployment
-        ;;
-    "health")
-        health_check
-        ;;
-    "build-id")
-        get_build_id
-        ;;
-    *)
-        echo "Usage: $0 [monitor|health|build-id]"
-        echo "  monitor   - Monitor deployment progress"
-        echo "  health    - Run health check"
-        echo "  build-id  - Get current build ID"
-        exit 1
-        ;;
-esac
+exit 1
