@@ -25,19 +25,23 @@ jobs:
     if: env.WEEK == '1'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running Week 1 checks: JWT, Baseline, Build, Mobile, Branding"
+      - run: |
+          echo "Running Week 1 checks: JWT, Baseline, Build, Mobile, Branding"
   week-2:
     if: env.WEEK == '2'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running Week 2 checks: OKR, Realtime, Reporting, Users"
+      - run: |
+          echo "Running Week 2 checks: OKR, Realtime, Reporting, Users"
   week-3:
     if: env.WEEK == '3'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running Week 3 checks: Story, Photo, Feedback, Attribution"
+      - run: |
+          echo "Running Week 3 checks: Story, Photo, Feedback, Attribution"
   week-4:
     if: env.WEEK == '4'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running Week 4 checks: PDF, Impact Metrics, Dashboard UX, Data Validation"
+      - run: |
+          echo "Running Week 4 checks: PDF, Impact Metrics, Dashboard UX, Data Validation"
