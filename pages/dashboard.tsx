@@ -124,7 +124,7 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <button
             onClick={() => router.push('/instant-analytics')}
             className="p-6 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
@@ -147,6 +147,14 @@ export default function Dashboard() {
           >
             <h3 className="text-lg font-semibold mb-2">Full Analytics</h3>
             <p className="text-sm opacity-90">Comprehensive analytics dashboard</p>
+          </button>
+
+          <button
+            onClick={() => router.push('/grants')}
+            className="p-6 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            <h3 className="text-lg font-semibold mb-2">Grant Management</h3>
+            <p className="text-sm opacity-90">Find & apply for grants</p>
           </button>
 
           <button
