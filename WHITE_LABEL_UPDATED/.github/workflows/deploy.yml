@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'staging or production'
+        description: "staging or production"
         required: true
-        default: 'staging'
+        default: "staging"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -14,4 +14,4 @@ jobs:
       - name: Echo next steps
         run: |
           echo "This is a placeholder. Use Render Dashboard to deploy services."
-          echo "Ensure env vars are set per WHITE_LABEL_UPDATED/ENV_TEMPLATE.production" 
+          echo "Ensure env vars are set per WHITE_LABEL_UPDATED/ENV_TEMPLATE.production"

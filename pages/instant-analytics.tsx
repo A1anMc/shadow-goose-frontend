@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { getBranding } from '../src/lib/branding';
-import { authService, User } from '../src/lib/auth';
-import { analyticsService, RealTimeMetric } from '../src/lib/analytics';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { getBranding } from "../src/lib/branding";
+import { authService, User } from "../src/lib/auth";
+import { analyticsService, RealTimeMetric } from "../src/lib/analytics";
 
 export default function InstantAnalytics() {
   const router = useRouter();
@@ -11,13 +11,15 @@ export default function InstantAnalytics() {
   const [metrics, setMetrics] = useState<RealTimeMetric[]>([]);
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<
+    "1h" | "24h" | "7d" | "30d"
+  >("24h");
 
   useEffect(() => {
     // Check authentication
     const currentUser = authService.getCurrentUser();
     if (!currentUser) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
     setUser(currentUser);
@@ -38,7 +40,7 @@ export default function InstantAnalytics() {
       const metricsData = await analyticsService.getRealTimeMetrics();
       setMetrics(metricsData);
     } catch (error) {
-      console.error('Error loading instant analytics:', error);
+      console.error("Error loading instant analytics:", error);
     } finally {
       setLoading(false);
     }
@@ -46,48 +48,48 @@ export default function InstantAnalytics() {
 
   const handleLogout = () => {
     authService.logout();
-    router.push('/login');
+    router.push("/login");
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'up':
-        return '↗️';
-      case 'down':
-        return '↘️';
+      case "up":
+        return "↗️";
+      case "down":
+        return "↘️";
       default:
-        return '→';
+        return "→";
     }
   };
 
   const getTrendColor = (trend: string, changePercent: number) => {
-    if (trend === 'up' && changePercent > 0) return 'text-green-600';
-    if (trend === 'down' && changePercent < 0) return 'text-red-600';
-    return 'text-gray-600';
+    if (trend === "up" && changePercent > 0) return "text-green-600";
+    if (trend === "down" && changePercent < 0) return "text-red-600";
+    return "text-gray-600";
   };
 
   const getMetricStatus = (metric: RealTimeMetric) => {
     // const value = metric.value;
     const change = metric.changePercent;
 
-    if (change > 5) return 'excellent';
-    if (change > 0) return 'good';
-    if (change > -5) return 'stable';
-    return 'needs-attention';
+    if (change > 5) return "excellent";
+    if (change > 0) return "good";
+    if (change > -5) return "stable";
+    return "needs-attention";
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'excellent':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'good':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'stable':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'needs-attention':
-        return 'bg-red-100 text-red-800 border-red-200';
+      case "excellent":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "good":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "stable":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "needs-attention":
+        return "bg-red-100 text-red-800 border-red-200";
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -113,28 +115,30 @@ export default function InstantAnalytics() {
                 {branding.name} Instant Analytics
               </h1>
               <div className="flex items-center space-x-2">
-                <span className={`w-3 h-3 rounded-full ${autoRefresh ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                <span
+                  className={`w-3 h-3 rounded-full ${autoRefresh ? "bg-green-500" : "bg-gray-400"}`}
+                ></span>
                 <span className="text-sm text-gray-600">
-                  {autoRefresh ? 'Live Updates' : 'Manual Refresh'}
+                  {autoRefresh ? "Live Updates" : "Manual Refresh"}
                 </span>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <nav className="flex space-x-4">
                 <button
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push("/dashboard")}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Dashboard
                 </button>
                 <button
-                  onClick={() => router.push('/analytics')}
+                  onClick={() => router.push("/analytics")}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Analytics
                 </button>
                 <button
-                  onClick={() => router.push('/impact-analytics')}
+                  onClick={() => router.push("/impact-analytics")}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Impact Analytics
@@ -162,7 +166,11 @@ export default function InstantAnalytics() {
           <div className="flex items-center space-x-4">
             <select
               value={selectedTimeframe}
-              onChange={(e) => setSelectedTimeframe(e.target.value as '1h' | '24h' | '7d' | '30d')}
+              onChange={(e) =>
+                setSelectedTimeframe(
+                  e.target.value as "1h" | "24h" | "7d" | "30d",
+                )
+              }
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-sg-primary focus:border-sg-primary"
             >
               <option value="1h">Last Hour</option>
@@ -174,11 +182,11 @@ export default function InstantAnalytics() {
               onClick={() => setAutoRefresh(!autoRefresh)}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 autoRefresh
-                  ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  ? "bg-green-100 text-green-800 hover:bg-green-200"
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"
               }`}
             >
-              {autoRefresh ? 'Auto Refresh ON' : 'Auto Refresh OFF'}
+              {autoRefresh ? "Auto Refresh ON" : "Auto Refresh OFF"}
             </button>
             <button
               onClick={loadInstantAnalytics}
@@ -206,8 +214,11 @@ export default function InstantAnalytics() {
                 <h3 className="text-lg font-semibold">{metric.name}</h3>
                 <div className="flex items-center space-x-2">
                   <span className="text-2xl">{getTrendIcon(metric.trend)}</span>
-                  <span className={`text-sm font-medium ${getTrendColor(metric.trend, metric.changePercent)}`}>
-                    {metric.changePercent >= 0 ? '+' : ''}{metric.changePercent}%
+                  <span
+                    className={`text-sm font-medium ${getTrendColor(metric.trend, metric.changePercent)}`}
+                  >
+                    {metric.changePercent >= 0 ? "+" : ""}
+                    {metric.changePercent}%
                   </span>
                 </div>
               </div>
@@ -217,14 +228,19 @@ export default function InstantAnalytics() {
                   {metric.value.toLocaleString()} {metric.unit}
                 </p>
                 <p className="text-sm opacity-75">
-                  {metric.changePercent >= 0 ? 'Increased' : 'Decreased'} from last period
+                  {metric.changePercent >= 0 ? "Increased" : "Decreased"} from
+                  last period
                 </p>
               </div>
 
               <div className="flex items-center justify-between text-xs">
-                <span>Updated: {new Date(metric.lastUpdated).toLocaleTimeString()}</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(getMetricStatus(metric))}`}>
-                  {getMetricStatus(metric).replace('-', ' ').toUpperCase()}
+                <span>
+                  Updated: {new Date(metric.lastUpdated).toLocaleTimeString()}
+                </span>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(getMetricStatus(metric))}`}
+                >
+                  {getMetricStatus(metric).replace("-", " ").toUpperCase()}
                 </span>
               </div>
             </div>
@@ -234,19 +250,29 @@ export default function InstantAnalytics() {
         {/* Real-Time Activity Feed */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Real-Time Activity Feed</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Real-Time Activity Feed
+            </h3>
           </div>
           <div className="p-6">
             <div className="space-y-4">
               {metrics.slice(0, 5).map((metric, index) => (
-                <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                  <div className={`w-3 h-3 rounded-full ${getTrendColor(metric.trend, metric.changePercent).replace('text-', 'bg-')}`}></div>
+                <div
+                  key={index}
+                  className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
+                >
+                  <div
+                    className={`w-3 h-3 rounded-full ${getTrendColor(metric.trend, metric.changePercent).replace("text-", "bg-")}`}
+                  ></div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{metric.name}</p>
                     <p className="text-sm text-gray-600">
                       {metric.value.toLocaleString()} {metric.unit}
-                      <span className={`ml-2 ${getTrendColor(metric.trend, metric.changePercent)}`}>
-                        ({metric.changePercent >= 0 ? '+' : ''}{metric.changePercent}%)
+                      <span
+                        className={`ml-2 ${getTrendColor(metric.trend, metric.changePercent)}`}
+                      >
+                        ({metric.changePercent >= 0 ? "+" : ""}
+                        {metric.changePercent}%)
                       </span>
                     </p>
                   </div>
@@ -262,15 +288,17 @@ export default function InstantAnalytics() {
         {/* Quick Actions */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <button
-            onClick={() => router.push('/projects/new')}
+            onClick={() => router.push("/projects/new")}
             className="p-6 bg-gradient-to-r from-sg-primary to-sg-accent text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
           >
             <h3 className="text-lg font-semibold mb-2">Create New Project</h3>
-            <p className="text-sm opacity-90">Start tracking a new SGE initiative</p>
+            <p className="text-sm opacity-90">
+              Start tracking a new SGE initiative
+            </p>
           </button>
 
           <button
-            onClick={() => router.push('/impact-analytics')}
+            onClick={() => router.push("/impact-analytics")}
             className="p-6 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
           >
             <h3 className="text-lg font-semibold mb-2">Impact Analysis</h3>
@@ -278,11 +306,13 @@ export default function InstantAnalytics() {
           </button>
 
           <button
-            onClick={() => router.push('/analytics')}
+            onClick={() => router.push("/analytics")}
             className="p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
           >
             <h3 className="text-lg font-semibold mb-2">Full Analytics</h3>
-            <p className="text-sm opacity-90">Comprehensive analytics dashboard</p>
+            <p className="text-sm opacity-90">
+              Comprehensive analytics dashboard
+            </p>
           </button>
         </div>
       </main>

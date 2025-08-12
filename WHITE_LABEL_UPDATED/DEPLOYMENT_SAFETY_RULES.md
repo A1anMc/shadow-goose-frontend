@@ -1,7 +1,9 @@
 # 🛡️ Deployment Safety Rules
+
 ## Comprehensive Rules to Prevent Deployment Failures
 
 ### **Overview**
+
 This document establishes mandatory rules and automated systems to prevent deployment failures like dependency conflicts, code errors, and TypeScript issues.
 
 ---
@@ -9,9 +11,11 @@ This document establishes mandatory rules and automated systems to prevent deplo
 ## 🚨 **Mandatory Pre-Deployment Rules**
 
 ### **Rule 1: Dependency Conflict Prevention**
+
 **Requirement**: All dependency conflicts must be resolved before deployment
 
 **Automated Checks**:
+
 ```bash
 # Must pass before deployment
 pip check
@@ -20,14 +24,17 @@ npm run type-check
 ```
 
 **Manual Verification**:
+
 - [ ] Review `requirements.txt` for version conflicts
 - [ ] Check compatibility matrix for target versions
 - [ ] Test locally with exact production dependencies
 
 ### **Rule 2: Code Quality Gates**
+
 **Requirement**: All code must pass quality checks before deployment
 
 **Automated Checks**:
+
 ```bash
 # Python
 pytest --cov=80
@@ -41,15 +48,18 @@ npm run test
 ```
 
 **Manual Verification**:
+
 - [ ] No TypeScript errors
 - [ ] No Python syntax errors
 - [ ] All tests passing
 - [ ] Code coverage > 80%
 
 ### **Rule 3: Environment Compatibility**
+
 **Requirement**: Code must be compatible with target deployment environment
 
 **Automated Checks**:
+
 ```bash
 # Python version compatibility
 python --version  # Must match runtime.txt
@@ -67,15 +77,18 @@ fi
 ```
 
 **Manual Verification**:
+
 - [ ] Runtime versions specified correctly
 - [ ] Dependencies compatible with target environment
 - [ ] Environment variables documented
 - [ ] Virtual environment is used for development
 
 ### **Rule 4: Virtual Environment Management**
+
 **Requirement**: All Python development must use virtual environments
 
 **Automated Checks**:
+
 ```bash
 # Check if virtual environment exists
 if [ ! -d "venv" ]; then
@@ -93,6 +106,7 @@ fi
 ```
 
 **Manual Verification**:
+
 - [ ] Virtual environment exists in project
 - [ ] Virtual environment is activated during development
 - [ ] Dependencies installed in virtual environment
@@ -103,6 +117,7 @@ fi
 ## 🤖 **Automated Detection Systems**
 
 ### **1. Pre-Commit Hooks**
+
 ```yaml
 # .pre-commit-config.yaml
 repos:
@@ -134,6 +149,7 @@ repos:
 ```
 
 ### **2. CI/CD Pipeline Rules**
+
 ```yaml
 # .github/workflows/deployment-safety.yml
 name: Deployment Safety Checks
@@ -183,13 +199,14 @@ jobs:
 ```
 
 ### **3. Automated Dependency Updates**
+
 ```yaml
 # .github/workflows/auto-update-dependencies.yml
 name: Auto-Update Dependencies
 
 on:
   schedule:
-    - cron: '0 2 * * 1'  # Every Monday at 2 AM
+    - cron: "0 2 * * 1" # Every Monday at 2 AM
   workflow_dispatch:
 
 jobs:
@@ -224,8 +241,8 @@ jobs:
         if: success()
         uses: peter-evans/create-pull-request@v4
         with:
-          title: 'chore: auto-update dependencies'
-          body: 'Automated dependency updates with tests passing'
+          title: "chore: auto-update dependencies"
+          body: "Automated dependency updates with tests passing"
           branch: auto-update-deps
 ```
 
@@ -234,6 +251,7 @@ jobs:
 ## 📋 **Deployment Checklist**
 
 ### **Pre-Deployment Checklist**
+
 - [ ] **Dependencies**: `pip check` passes
 - [ ] **Security**: `safety check` passes
 - [ ] **TypeScript**: `npm run type-check` passes
@@ -243,6 +261,7 @@ jobs:
 - [ ] **Compatibility**: Checked against target environment
 
 ### **Deployment Verification**
+
 - [ ] **Build Logs**: No errors in build process
 - [ ] **Startup**: Application starts without errors
 - [ ] **Health Check**: `/health` endpoint responds
@@ -250,6 +269,7 @@ jobs:
 - [ ] **Core Features**: All main features functional
 
 ### **Post-Deployment Monitoring**
+
 - [ ] **Error Rates**: Monitor for 24 hours
 - [ ] **Performance**: Response times acceptable
 - [ ] **User Feedback**: No critical issues reported
@@ -260,15 +280,16 @@ jobs:
 ## 🔧 **Automated Fix Rules**
 
 ### **Rule 1: Auto-Fix TypeScript Errors**
+
 ```javascript
 // scripts/auto-fix-typescript.js
-const fs = require('fs');
-const { execSync } = require('child_process');
+const fs = require("fs");
+const { execSync } = require("child_process");
 
 function autoFixTypeScriptErrors() {
   try {
     // Run TypeScript compiler
-    execSync('npx tsc --noEmit', { stdio: 'pipe' });
+    execSync("npx tsc --noEmit", { stdio: "pipe" });
   } catch (error) {
     const output = error.stdout.toString();
 
@@ -276,15 +297,15 @@ function autoFixTypeScriptErrors() {
     const fixes = [
       {
         pattern: /setNewComment\(undefined\)/g,
-        replacement: 'setNewComment("")'
+        replacement: 'setNewComment("")',
       },
       {
         pattern: /useState<undefined>/g,
-        replacement: 'useState<string>'
-      }
+        replacement: "useState<string>",
+      },
     ];
 
-    fixes.forEach(fix => {
+    fixes.forEach((fix) => {
       // Apply fixes to files
     });
   }
@@ -292,6 +313,7 @@ function autoFixTypeScriptErrors() {
 ```
 
 ### **Rule 2: Auto-Fix Dependency Conflicts**
+
 ```bash
 #!/bin/bash
 # scripts/auto-fix-dependencies.sh
@@ -319,6 +341,7 @@ fi
 ```
 
 ### **Rule 3: Auto-Fix Code Quality Issues**
+
 ```bash
 #!/bin/bash
 # scripts/auto-fix-code-quality.sh
@@ -340,6 +363,7 @@ prettier --write "**/*.{ts,tsx,js,jsx,json}"
 ## 🚨 **Emergency Response Rules**
 
 ### **Rule 1: Automatic Rollback**
+
 ```yaml
 # .github/workflows/auto-rollback.yml
 name: Auto-Rollback on Failure
@@ -362,13 +386,14 @@ jobs:
 ```
 
 ### **Rule 2: Health Check Monitoring**
+
 ```yaml
 # .github/workflows/health-monitor.yml
 name: Health Check Monitor
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Every 5 minutes
+    - cron: "*/5 * * * *" # Every 5 minutes
 
 jobs:
   health-check:
@@ -394,6 +419,7 @@ jobs:
 ## 📊 **Monitoring & Alerts**
 
 ### **Rule 1: Real-Time Monitoring**
+
 ```yaml
 # monitoring/dashboard.yml
 metrics:
@@ -411,26 +437,27 @@ metrics:
 ```
 
 ### **Rule 2: Automated Alerts**
+
 ```javascript
 // scripts/alert-system.js
 const alerts = {
   deploymentFailure: {
-    channels: ['slack', 'email'],
-    message: '🚨 Deployment failed - immediate attention required',
-    priority: 'high'
+    channels: ["slack", "email"],
+    message: "🚨 Deployment failed - immediate attention required",
+    priority: "high",
   },
 
   dependencyConflict: {
-    channels: ['slack'],
-    message: '⚠️ Dependency conflict detected - auto-fix attempted',
-    priority: 'medium'
+    channels: ["slack"],
+    message: "⚠️ Dependency conflict detected - auto-fix attempted",
+    priority: "medium",
   },
 
   typeScriptError: {
-    channels: ['slack'],
-    message: '🔧 TypeScript error detected - auto-fix applied',
-    priority: 'low'
-  }
+    channels: ["slack"],
+    message: "🔧 TypeScript error detected - auto-fix applied",
+    priority: "low",
+  },
 };
 ```
 
@@ -439,12 +466,14 @@ const alerts = {
 ## 🎯 **Success Metrics**
 
 ### **Key Performance Indicators**
+
 - **Deployment Success Rate**: >95%
 - **Build Failure Rate**: <5%
 - **Time to Fix Issues**: <30 minutes
 - **Automated Fix Success Rate**: >80%
 
 ### **Quality Gates**
+
 - **Code Coverage**: >80%
 - **TypeScript Errors**: 0
 - **Security Vulnerabilities**: 0
@@ -455,7 +484,9 @@ const alerts = {
 ## 📞 **Implementation Steps**
 
 ### **Phase 1: Immediate (This Week)**
+
 1. **Install Pre-Commit Hooks**
+
    ```bash
    pip install pre-commit
    pre-commit install
@@ -472,12 +503,14 @@ const alerts = {
    - Code quality auto-fix
 
 ### **Phase 2: Short Term (Next 2 Weeks)**
+
 1. **Implement Monitoring Dashboard**
 2. **Set Up Automated Alerts**
 3. **Create Emergency Response Procedures**
 4. **Train Team on New Rules**
 
 ### **Phase 3: Long Term (Next Month)**
+
 1. **Advanced Auto-Fix Systems**
 2. **Predictive Failure Detection**
 3. **Performance Optimization**
@@ -485,4 +518,4 @@ const alerts = {
 
 ---
 
-*These rules should be reviewed and updated monthly to ensure they remain effective and relevant.*
+_These rules should be reviewed and updated monthly to ensure they remain effective and relevant._

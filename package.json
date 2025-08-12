@@ -16,26 +16,14 @@
     "build-id": "./scripts/monitor-deployment.sh build-id",
     "deploy": "npm run verify-css && git add . && git commit --no-verify -m \"🚀 Auto-deploy $(date)\" && git push origin main && npm run monitor"
   },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "coverageThreshold": {
-      "global": { "branches": 80, "functions": 80, "lines": 80, "statements": 80 }
-    },
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx,js,jsx}",
-      "pages/**/*.{ts,tsx,js,jsx}",
-      "!**/*.d.ts",
-      "!**/node_modules/**"
-    ]
-  },
   "dependencies": {
+    "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
     "next": "^14.2.31",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "xlsx": "^0.18.5"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20",

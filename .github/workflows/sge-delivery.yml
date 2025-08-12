@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       week:
-        description: 'SGE Week to check (1, 2, 3, or 4)'
+        description: "SGE Week to check (1, 2, 3, or 4)"
         required: false
-        default: '1'
+        default: "1"
 
 jobs:
   sge-week-1-check:
@@ -24,13 +24,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -237,7 +237,8 @@ jobs:
   sge-delivery-summary:
     runs-on: ubuntu-latest
     name: SGE Delivery Summary
-    needs: [sge-week-1-check, sge-week-2-check, sge-week-3-check, sge-week-4-check]
+    needs:
+      [sge-week-1-check, sge-week-2-check, sge-week-3-check, sge-week-4-check]
     if: always()
     steps:
       - name: Generate SGE Progress Report

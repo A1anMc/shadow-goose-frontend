@@ -5,6 +5,7 @@
 This document provides complete instructions for white-labeling the NavImpact platform for any client. The platform is built with a sophisticated branding system that supports multiple clients with different visual identities, team structures, and functional requirements.
 
 **Current Platform Status:**
+
 - ✅ **Backend**: FastAPI with PostgreSQL database
 - ✅ **Frontend**: Next.js with Tailwind CSS
 - ✅ **Branding System**: Multi-client support
@@ -26,36 +27,41 @@ This document provides complete instructions for white-labeling the NavImpact pl
 
 ### Progress Tracking
 
-| Phase | Status | Completion | Priority |
-|-------|--------|------------|----------|
-| Phase 1 | ✅ Complete | 100% | - |
-| Phase 2 | 🚧 In Progress | 90% | 🔴 High |
-| Phase 3 | ⏳ Planned | 0% | 🟡 Medium |
-| Phase 4 | ⏳ Planned | 0% | 🟡 Medium |
-| Phase 5 | ⏳ Planned | 0% | 🟢 Low |
-| Phase 6 | ⏳ Planned | 0% | 🟢 Low |
+| Phase   | Status         | Completion | Priority  |
+| ------- | -------------- | ---------- | --------- |
+| Phase 1 | ✅ Complete    | 100%       | -         |
+| Phase 2 | 🚧 In Progress | 90%        | 🔴 High   |
+| Phase 3 | ⏳ Planned     | 0%         | 🟡 Medium |
+| Phase 4 | ⏳ Planned     | 0%         | 🟡 Medium |
+| Phase 5 | ⏳ Planned     | 0%         | 🟢 Low    |
+| Phase 6 | ⏳ Planned     | 0%         | 🟢 Low    |
 
 **Overall Completion: 85%**
 
 **Next 2 weeks (reference rollout)**
+
 - **Week 1**: Deploy frontend to Render, configure build/start, set env vars, verify health checks, run E2E tests
 - **Week 2**: Implement auth (login/logout, protected routes, registration, password reset), initial profiles and roles
 
 **White-label implications**
+
 - **Phase 2 (Deployment)** — Owners: Platform + DevOps; Client provides domain, branding assets, environment values
 - **Phase 3 (Auth & Users)** — Owners: Platform + Client Admin; Client provides user list, role matrix, optional SSO details
 - **Phase 4 (Grants & Reporting)** — Owners: Platform + Grants Lead; Client provides sample applications, report templates
 
 **Rollout timeline template**
+
 - **T0 (Kickoff)**: Confirm branding, domains, env vars, user/role matrix
 - **T+3 days (Staging)**: Branding live on staging; UAT begins
 - **T+7 days (Production)**: Go-live; monitoring and support windows active
 
 References:
+
 - Engineering roadmap: [docs/roadmap.md](../docs/roadmap.md)
 - White-label product roadmap: [NAVIMPACT_ROADMAP.md](../NAVIMPACT_ROADMAP.md)
 
 ## 📄 Client Rollout Brief
+
 - **Objectives**: Launch a branded, secure instance aligned to client OKRs and workflows
 - **Scope**: Branding, env/DNS, authentication & roles, grants & reporting, optional integrations
 - **Timeline**: Kickoff (T0) → Staging (T+3d) → Production (T+7d)
@@ -63,18 +69,21 @@ References:
 - **Artifacts**: Use the per‑client plan `docs/CLIENT_ROLLOUT_TEMPLATE.md`
 
 ## 🔌 Integrations: Slack & Notion (Optional)
+
 - **Slack env**: `SLACK_BOT_TOKEN`, `SLACK_SIGNING_SECRET`, `SLACK_DEFAULT_CHANNEL`, `SLACK_WEBHOOK_URL`
 - **Slack tasks**: Create app/bot, add to channels, map events, test in staging
 - **Notion env**: `NOTION_API_KEY`, `NOTION_REDIRECT_URI`, `NOTION_DATABASE_ID_GRANTS`, `NOTION_DATABASE_ID_TASKS`
 - **Notion tasks**: Connect workspace (OAuth), map properties, schedule sync, enable logs
 
 ## 📊 Analytics & Insights (Overview)
+
 - **Define KPIs** and map to OKRs; publish dashboards (exec, grants, impact)
 - **Instrument events** (grant_viewed, task_completed, report_generated)
 - **Env**: `NEXT_PUBLIC_ENABLE_ANALYTICS`, `NEXT_PUBLIC_ENV`, `SENTRY_DSN`; confirm `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_CLIENT`
 - See `docs/CLIENT_ROLLOUT_TEMPLATE.md` → Analytics & Insights
 
 ## 🧭 Dashboard Navigation & Tabs
+
 - **Insights** (`/insights`): AI Insights Dashboard (model status, grant recommendations, impact analysis)
 - **Integrations** (`/integrations`):
   - **Status** (`/integrations/status`): Env/config readiness checks
@@ -89,6 +98,7 @@ References:
 - **Status** (`/status`): API health overview
 
 Acceptance pointers (UAT):
+
 - [ ] Insights loads with no console errors and shows placeholders if data absent
 - [ ] Integrations Status lists required envs; Slack/Notion pages reachable
 - [ ] Grants Applications/Documents pages render tables/actions (stubs ok)
@@ -96,30 +106,35 @@ Acceptance pointers (UAT):
 - [ ] Notifications and Compliance pages render; Status shows `/api/health`
 
 ## 📦 Client Inputs Checklist
+
 - **Strategic alignment package**: Org mission/vision/values, strategic direction, annual/quarterly OKRs, top priorities; see `docs/CLIENT_ROLLOUT_TEMPLATE.md` → Strategic Alignment & OKRs
 - **Phase 2 (Deployment)**: Domains/DNS, branding assets (SVG logos, fonts), environment values (NEXT_PUBLIC_API_URL, NEXT_PUBLIC_CLIENT), staging/prod URLs
 - **Phase 3 (Auth & Users)**: User list, role matrix, SSO IdP metadata (optional), privacy/security approvals
 - **Phase 4 (Grants & Reporting)**: Sample grant applications, reporting templates, document storage policy
 
 ## 👥 Owner Matrix
-| Phase | Owners | Client deliverables | Platform deliverables |
-|------|--------|----------------------|------------------------|
-| 2: Deploy | Platform + DevOps | Domains, branding, env values | Provision services, configure CI/CD |
-| 3: Auth | Platform + Client Admin | User list, role matrix, SSO (if any) | Auth flows, protected routes, RBAC |
-| 4: Grants/Reports | Platform + Grants Lead | Samples, templates | AI matching, exports, report generation |
+
+| Phase             | Owners                  | Client deliverables                  | Platform deliverables                   |
+| ----------------- | ----------------------- | ------------------------------------ | --------------------------------------- |
+| 2: Deploy         | Platform + DevOps       | Domains, branding, env values        | Provision services, configure CI/CD     |
+| 3: Auth           | Platform + Client Admin | User list, role matrix, SSO (if any) | Auth flows, protected routes, RBAC      |
+| 4: Grants/Reports | Platform + Grants Lead  | Samples, templates                   | AI matching, exports, report generation |
 
 ## 🔧 Environment & DNS Requirements
+
 - **Frontend**: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_CLIENT`, `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_VERSION`
 - **Backend**: `DATABASE_URL`, `SECRET_KEY`, `JWT_SECRET_KEY`, `SENTRY_DSN`, `REDIS_URL`, `CORS_ORIGINS`
 - **Email branding**: `APP_NAME`, `BRAND_COLOR`, `BRAND_LOGO_URL`
 - **DNS**: CNAMEs to Render services for web and API; confirm staging and production hostnames
 
 ## ✅ Acceptance Criteria Per Phase
+
 - **Phase 2**: Branded pages load; health endpoints reachable; E2E tests pass; no console errors
 - **Phase 3**: Login/logout work; protected routes enforced; roles respected; JWT valid/expiring
 - **Phase 4**: Matching returns results; reports generate; CSV/PDF exports succeed; ML endpoints live (`/api/v1/ml-analytics/*`); grant model trained; OKR alignment dashboard populated; AI recommendations visible
 
 ## 🚀 Go‑Live Checklist
+
 - Preflight: `scripts/pre_deployment_check.sh`
 - Backend health: `scripts/verify-health.sh`
 - Deployment verification: `scripts/verify-deployment.sh`
@@ -127,6 +142,7 @@ Acceptance pointers (UAT):
 - Frontend preview for UAT: `cd frontend && npm run preview`
 
 Example (non‑interactive):
+
 ```bash
 bash scripts/pre_deployment_check.sh --env production
 bash scripts/verify-health.sh https://navimpact-api.onrender.com
@@ -134,11 +150,13 @@ bash scripts/verify-deployment.sh --web https://navimpact-web.onrender.com --api
 ```
 
 ## 🔁 Change Management
+
 - Semantic versioning for client releases
 - Maintain a CHANGELOG and release notes for each client rollout
 - Document configuration changes and rollback steps
 
 ## ✅ Dara Recommendations Checklist
+
 - **ML & OKR Alignment**: Grant model trained; `/api/v1/ml-analytics/*` live; OKR Alignment Dashboard populated; AI recommendations visible
 - **Slack Integration**: `SLACK_*` envs set; bot added to channels; task assignment notifications fire in staging
 - **Notion Integration**: OAuth connected; `NOTION_*` envs set; database IDs mapped; sync runs and logs visible
@@ -214,21 +232,25 @@ Note: SQL migration files in `alembic/versions/` and structured SQL under `scrip
 ## 🎯 **WHITE-LABELLING PROCESS OVERVIEW**
 
 ### **Phase 1: Client Discovery (1-2 days)**
+
 - Gather client requirements and branding assets
 - Define team structure and roles
 - Identify functional customisations needed
 
 ### **Phase 2: Branding Implementation (2-3 days)**
+
 - Update colour palette and typography
 - Implement client logo and visual identity
 - Customise UI components and layouts
 
 ### **Phase 3: Content Customisation (1-2 days)**
+
 - Add client team members and roles
 - Configure project types and workflows
 - Set up grant matching criteria
 
 ### **Phase 4: Testing & Deployment (1-2 days)**
+
 - Test all functionality with new branding
 - Deploy to staging environment
 - Client review and final deployment
@@ -264,13 +286,13 @@ The system automatically selects branding based on environment variables:
 
 ```typescript
 export function getBranding(): BrandingConfig {
-  const client = process.env.NEXT_PUBLIC_CLIENT || 'sge';
+  const client = process.env.NEXT_PUBLIC_CLIENT || "sge";
 
   switch (client) {
-    case 'sge':
-    case 'shadow-goose':
+    case "sge":
+    case "shadow-goose":
       return sgeBranding;
-    case 'navimpact':
+    case "navimpact":
     default:
       return navimpactBranding;
   }
@@ -461,7 +483,7 @@ export const clientBranding: BrandingConfig = {
   logo: "Client Logo",
   colors: {
     primary: "#CLIENT_PRIMARY_COLOR",
-    secondary: "#CLIENT_SECONDARY_COLOR", 
+    secondary: "#CLIENT_SECONDARY_COLOR",
     accent: "#CLIENT_ACCENT_COLOR",
     background: "#CLIENT_BACKGROUND_COLOR",
   },
@@ -473,14 +495,14 @@ export const clientBranding: BrandingConfig = {
 
 // Update getBranding function
 export function getBranding(): BrandingConfig {
-  const client = process.env.NEXT_PUBLIC_CLIENT || 'default';
+  const client = process.env.NEXT_PUBLIC_CLIENT || "default";
 
   switch (client) {
-    case 'client-name':
+    case "client-name":
       return clientBranding;
-    case 'sge':
+    case "sge":
       return sgeBranding;
-    case 'navimpact':
+    case "navimpact":
     default:
       return navimpactBranding;
   }
@@ -498,7 +520,7 @@ colors: {
   'client-secondary': '#CLIENT_SECONDARY_COLOR',
   'client-accent': '#CLIENT_ACCENT_COLOR',
   'client-background': '#CLIENT_BACKGROUND_COLOR',
-  
+
   // Keep existing colors for fallback
   primary: { /* existing */ },
   // ... other existing colors
@@ -516,7 +538,7 @@ fontFamily: {
 
 ```css
 /* Import client fonts */
-@import url('https://fonts.googleapis.com/css2?family=ClientFont:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=ClientFont:wght@300;400;500;600;700&display=swap");
 
 /* Client CSS variables */
 :root {
@@ -528,7 +550,12 @@ fontFamily: {
 
 /* Client-specific styles */
 .client-branded {
-  background: linear-gradient(135deg, var(--client-primary) 0%, var(--client-secondary) 50%, var(--client-accent) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--client-primary) 0%,
+    var(--client-secondary) 50%,
+    var(--client-accent) 100%
+  );
   color: var(--client-background);
 }
 ```
@@ -543,7 +570,7 @@ import { getBranding } from '../../lib/branding';
 
 export default function Sidebar() {
   const branding = getBranding();
-  
+
   return (
     <div className={`bg-gradient-to-br from-${branding.colors.primary} to-${branding.colors.secondary}`}>
       <div className="flex items-center space-x-3">
@@ -565,6 +592,7 @@ export default function Sidebar() {
 ### **Client Information Gathering**
 
 **Branding Requirements:**
+
 - [ ] Company name and tagline
 - [ ] Logo files (SVG preferred, PNG fallback)
 - [ ] Brand guidelines document
@@ -574,6 +602,7 @@ export default function Sidebar() {
 - [ ] Icon style preferences
 
 **Team Structure:**
+
 - [ ] Team member list with roles
 - [ ] Organisational hierarchy
 - [ ] Project assignments
@@ -582,6 +611,7 @@ export default function Sidebar() {
 - [ ] Team member photos and bios
 
 **Functional Requirements:**
+
 - [ ] Grant focus areas
 - [ ] Project types and workflows
 - [ ] Impact measurement frameworks
@@ -592,6 +622,7 @@ export default function Sidebar() {
 ### **Implementation Checklist**
 
 **Phase 1: Setup (1-2 days)**
+
 - [ ] Create client branch
 - [ ] Update branding configuration
 - [ ] Import client fonts
@@ -599,6 +630,7 @@ export default function Sidebar() {
 - [ ] Set up environment variables
 
 **Phase 2: Design (2-3 days)**
+
 - [ ] Redesign dashboard with client branding
 - [ ] Update navigation and sidebar
 - [ ] Customise team and profile pages
@@ -606,6 +638,7 @@ export default function Sidebar() {
 - [ ] Test responsive design
 
 **Phase 3: Content (1-2 days)**
+
 - [ ] Add client team members
 - [ ] Set up project assignments
 - [ ] Configure grant matching criteria
@@ -613,6 +646,7 @@ export default function Sidebar() {
 - [ ] Set up client-specific workflows
 
 **Phase 4: Testing (1 day)**
+
 - [ ] Test all functionality with new branding
 - [ ] Verify font loading in production
 - [ ] Check accessibility compliance
@@ -620,6 +654,7 @@ export default function Sidebar() {
 - [ ] Cross-browser testing
 
 **Phase 5: Deployment (1 day)**
+
 - [ ] Deploy to staging environment
 - [ ] Client review and feedback
 - [ ] Deploy to production
@@ -631,6 +666,7 @@ export default function Sidebar() {
 ## 🎯 **SUCCESS CRITERIA**
 
 ### **Branding Success:**
+
 - ✅ Client logo displays correctly across all pages
 - ✅ Colour scheme is consistent and accessible
 - ✅ Typography loads properly and looks professional
@@ -638,6 +674,7 @@ export default function Sidebar() {
 - ✅ No visual inconsistencies or broken elements
 
 ### **Functionality Success:**
+
 - ✅ All navigation and features work correctly
 - ✅ Team management functions as expected
 - ✅ Grant management system operates properly
@@ -645,6 +682,7 @@ export default function Sidebar() {
 - ✅ Performance remains optimal
 
 ### **Client Satisfaction:**
+
 - ✅ Platform feels like their own product
 - ✅ All requested customizations are implemented
 - ✅ Client team can use the platform effectively
@@ -658,29 +696,33 @@ export default function Sidebar() {
 ### **Common Issues and Solutions:**
 
 **Font Loading Issues:**
+
 ```css
 /* Ensure fonts load properly */
 @font-face {
-  font-family: 'ClientFont';
-  src: url('/fonts/client-font.woff2') format('woff2');
+  font-family: "ClientFont";
+  src: url("/fonts/client-font.woff2") format("woff2");
   font-display: swap;
 }
 ```
 
 **Colour Contrast Issues:**
+
 ```typescript
 // Use Tailwind's contrast utilities
-className="text-white bg-black" // High contrast
-className="text-gray-900 bg-gray-100" // Medium contrast
+className = "text-white bg-black"; // High contrast
+className = "text-gray-900 bg-gray-100"; // Medium contrast
 ```
 
 **Responsive Design Issues:**
+
 ```typescript
 // Use Tailwind's responsive prefixes
-className="w-full md:w-1/2 lg:w-1/3"
+className = "w-full md:w-1/2 lg:w-1/3";
 ```
 
 **Performance Issues:**
+
 - Optimise images and fonts
 - Use proper caching strategies
 - Minimise bundle size
@@ -691,6 +733,7 @@ className="w-full md:w-1/2 lg:w-1/3"
 ## 📈 **MONITORING AND MAINTENANCE**
 
 ### **Post-Deployment Monitoring:**
+
 - Monitor for any branding inconsistencies
 - Track performance metrics
 - Monitor user feedback
@@ -698,6 +741,7 @@ className="w-full md:w-1/2 lg:w-1/3"
 - Monitor error rates
 
 ### **Ongoing Maintenance:**
+
 - Regular branding updates
 - Performance optimisations
 - Security updates
@@ -711,6 +755,7 @@ className="w-full md:w-1/2 lg:w-1/3"
 This white-labeling system provides a robust, scalable solution for customizing the NavImpact platform for any client. The modular architecture ensures that branding changes don't affect core functionality, while the comprehensive testing process guarantees a high-quality end product.
 
 **Key Benefits:**
+
 - ✅ Rapid client onboarding (5-7 days)
 - ✅ Consistent quality across all clients
 - ✅ Scalable architecture
@@ -718,6 +763,7 @@ This white-labeling system provides a robust, scalable solution for customizing 
 - ✅ Professional delivery
 
 **Next Steps:**
+
 1. Use the provided prompts with your Cursor AI agent
 2. Follow the implementation checklist
 3. Test thoroughly before deployment
@@ -727,6 +773,7 @@ This white-labeling system provides a robust, scalable solution for customizing 
 ---
 
 ## 📞 Support
+
 - Email and Slack support channels per client contract
 - Incident response: SEV levels and response times documented in SLOs
 - Monitoring: Sentry alerts, deployment monitors, weekly health review
@@ -734,19 +781,22 @@ This white-labeling system provides a robust, scalable solution for customizing 
 ## 📎 Appendix: Templates
 
 ### Role matrix (example)
-| Role | Permissions | Notes |
-|------|-------------|-------|
-| Admin | Full access; manage users and roles | Client owner(s) |
-| Manager | Create/edit projects, approve tasks | Team leads |
-| User | View/edit assigned items | Staff |
+
+| Role    | Permissions                         | Notes           |
+| ------- | ----------------------------------- | --------------- |
+| Admin   | Full access; manage users and roles | Client owner(s) |
+| Manager | Create/edit projects, approve tasks | Team leads      |
+| User    | View/edit assigned items            | Staff           |
 
 ### Branding asset checklist
+
 - SVG/PNG logos (dark/light)
 - Brand colors (hex)
 - Typography (webfont files or names)
 - Favicon and social preview images
 
 ### UAT sign‑off checklist
+
 - Branding consistent across pages
 - Auth flows work for target roles
 - Key reports/export verified
@@ -754,7 +804,7 @@ This white-labeling system provides a robust, scalable solution for customizing 
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** August 7, 2025  
-**Prepared by:** Alan McCarthy  
-**Platform:** NavImpact V2 
+**Document Version:** 1.0
+**Last Updated:** August 7, 2025
+**Prepared by:** Alan McCarthy
+**Platform:** NavImpact V2

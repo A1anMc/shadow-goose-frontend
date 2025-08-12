@@ -1,9 +1,9 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { getBranding } from '../src/lib/branding';
-import { authService } from '../src/lib/auth';
-import { sgeProjectService, SGEProject } from '../src/lib/projects';
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { getBranding } from "../src/lib/branding";
+import { authService } from "../src/lib/auth";
+import { sgeProjectService, SGEProject } from "../src/lib/projects";
 
 // Production-ready dashboard with enhanced analytics and UI/UX
 // Version: 1.0.1 - Enhanced Dashboard with Analytics
@@ -28,7 +28,7 @@ export default function Dashboard() {
       try {
         // Check if user is authenticated
         if (!authService.isAuthenticated()) {
-          router.push('/login');
+          router.push("/login");
           return;
         }
 
@@ -36,7 +36,7 @@ export default function Dashboard() {
         const isValid = await authService.validateToken();
         if (!isValid) {
           authService.logout();
-          router.push('/login');
+          router.push("/login");
           return;
         }
 
@@ -50,8 +50,12 @@ export default function Dashboard() {
         setProjects(projectsData);
         setIsLoading(false);
       } catch (error) {
-        console.error('Dashboard loading error:', error);
-        setError(error instanceof Error ? error.message : 'Failed to load dashboard data');
+        console.error("Dashboard loading error:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to load dashboard data",
+        );
         setIsLoading(false);
       }
     };
@@ -125,17 +129,21 @@ export default function Dashboard() {
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
-                Welcome, SGE Team
-              </span>
-              <span className="text-xs text-gray-400">
-                v1.0.1 Enhanced
-              </span>
-              <button
-                className="bg-sg-primary text-white px-4 py-2 rounded-md text-sm hover:bg-sg-primary/90 transition-colors flex items-center space-x-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <span className="text-sm text-gray-600">Welcome, SGE Team</span>
+              <span className="text-xs text-gray-400">v1.0.1 Enhanced</span>
+              <button className="bg-sg-primary text-white px-4 py-2 rounded-md text-sm hover:bg-sg-primary/90 transition-colors flex items-center space-x-2">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
                 <span>Export</span>
               </button>
@@ -157,13 +165,27 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                <svg
+                  className="w-6 h-6 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Projects</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total_projects}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Projects
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.total_projects}
+                </p>
               </div>
             </div>
           </div>
@@ -171,13 +193,27 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-6 h-6 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Projects</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.active_projects}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Active Projects
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.active_projects}
+                </p>
               </div>
             </div>
           </div>
@@ -185,13 +221,27 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                <svg
+                  className="w-6 h-6 text-yellow-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Participants</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total_participants}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Participants
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.total_participants}
+                </p>
               </div>
             </div>
           </div>
@@ -199,13 +249,27 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                <svg
+                  className="w-6 h-6 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  />
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Funding</p>
-                <p className="text-2xl font-bold text-gray-900">${stats.total_funding.toLocaleString()}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Funding
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  ${stats.total_funding.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
@@ -218,7 +282,9 @@ export default function Dashboard() {
             className="p-6 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">Instant Analytics</h3>
-            <p className="text-sm opacity-90">Real-time insights and live updates</p>
+            <p className="text-sm opacity-90">
+              Real-time insights and live updates
+            </p>
           </Link>
 
           <Link
@@ -226,7 +292,9 @@ export default function Dashboard() {
             className="p-6 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">Impact Analytics</h3>
-            <p className="text-sm opacity-90">Deep dive into impact measurement</p>
+            <p className="text-sm opacity-90">
+              Deep dive into impact measurement
+            </p>
           </Link>
 
           <Link
@@ -234,7 +302,9 @@ export default function Dashboard() {
             className="p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">Full Analytics</h3>
-            <p className="text-sm opacity-90">Comprehensive analytics dashboard</p>
+            <p className="text-sm opacity-90">
+              Comprehensive analytics dashboard
+            </p>
           </Link>
 
           <Link
@@ -264,7 +334,9 @@ export default function Dashboard() {
 
         {/* Overall Progress */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Overall Progress</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Overall Progress
+          </h2>
           <div className="flex items-center">
             <div className="flex-1">
               <div className="flex justify-between text-sm text-gray-600 mb-1">
@@ -285,7 +357,9 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-gray-900">SGE Projects</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                SGE Projects
+              </h2>
               <Link
                 href="/projects/new"
                 className="bg-sg-primary text-white px-4 py-2 rounded-md text-sm hover:bg-sg-primary/90 transition-colors"
@@ -296,27 +370,43 @@ export default function Dashboard() {
           </div>
           <div className="divide-y divide-gray-200">
             {projects.map((project, index) => (
-              <div key={project.id || index} className="px-6 py-4 hover:bg-gray-50">
+              <div
+                key={project.id || index}
+                className="px-6 py-4 hover:bg-gray-50"
+              >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {project.name}
+                    </h3>
                     <p className="text-sm text-gray-600 mt-1">
                       {project.description}
                     </p>
                     <div className="flex items-center mt-2 space-x-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        project.status === 'active' ? 'bg-green-100 text-green-800' :
-                        project.status === 'completed' ? 'bg-blue-100 text-blue-800' :
-                        project.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          project.status === "active"
+                            ? "bg-green-100 text-green-800"
+                            : project.status === "completed"
+                              ? "bg-blue-100 text-blue-800"
+                              : project.status === "draft"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
                         {project.status}
                       </span>
                       <span className="text-sm text-gray-500">
-                        {project.current_data?.current_participants || 0} participants
+                        {project.current_data?.current_participants || 0}{" "}
+                        participants
                       </span>
                       <span className="text-sm text-gray-500">
-                        ${(project.current_data?.current_funding || project.amount || 0).toLocaleString()}
+                        $
+                        {(
+                          project.current_data?.current_funding ||
+                          project.amount ||
+                          0
+                        ).toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -330,7 +420,9 @@ export default function Dashboard() {
                     <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
                       <div
                         className="bg-sg-accent h-2 rounded-full"
-                        style={{ width: `${project.current_data?.progress_percentage || 0}%` }}
+                        style={{
+                          width: `${project.current_data?.progress_percentage || 0}%`,
+                        }}
                       ></div>
                     </div>
                   </div>

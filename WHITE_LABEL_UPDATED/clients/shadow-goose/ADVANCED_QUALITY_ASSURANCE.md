@@ -9,6 +9,7 @@ This document outlines the comprehensive quality assurance framework implemented
 ## **🔧 Proactive Prevention Rules**
 
 ### **1. Import Validation**
+
 ```python
 # Always test imports before using new modules
 try:
@@ -20,11 +21,13 @@ except ImportError as e:
 ```
 
 **Implementation:**
+
 - **Pre-deployment validation** of all imports
 - **Graceful fallbacks** for missing dependencies
 - **Automated testing** of import chains
 
 ### **2. Syntax Pre-check**
+
 ```bash
 # Run compilation tests before deployment
 python -m py_compile app/main.py
@@ -33,11 +36,13 @@ echo "✅ All files compile successfully"
 ```
 
 **Implementation:**
+
 - **Automated syntax validation** before every deployment
 - **Type checking** for TypeScript/JavaScript
 - **Linting** for code quality standards
 
 ### **3. Dependency Mapping**
+
 ```python
 # Maintain a clear dependency graph
 DEPENDENCY_MAP = {
@@ -48,11 +53,13 @@ DEPENDENCY_MAP = {
 ```
 
 **Implementation:**
+
 - **Visual dependency graphs** for system understanding
 - **Impact analysis** for changes
 - **Automated dependency updates**
 
 ### **4. Error Pattern Recognition**
+
 ```python
 # Learn from previous errors to prevent future ones
 ERROR_PATTERNS = {
@@ -63,11 +70,13 @@ ERROR_PATTERNS = {
 ```
 
 **Implementation:**
+
 - **Error pattern database** with solutions
 - **Automated error categorization**
 - **Predictive error prevention**
 
 ### **5. Graceful Degradation**
+
 ```python
 # Systems should work even if some components fail
 try:
@@ -78,6 +87,7 @@ except Exception as e:
 ```
 
 **Implementation:**
+
 - **Circuit breakers** for external dependencies
 - **Fallback mechanisms** for critical functions
 - **Degraded mode** operation
@@ -87,6 +97,7 @@ except Exception as e:
 ## **📋 Code Quality Enforcement**
 
 ### **No Magic Numbers**
+
 ```python
 # Use constants and configuration files
 GRANT_AMOUNT_MIN = 1000.00
@@ -100,11 +111,13 @@ if GRANT_AMOUNT_MIN <= amount <= GRANT_AMOUNT_MAX:
 ```
 
 **Implementation:**
+
 - **Configuration files** for all constants
 - **Environment-specific** settings
 - **Validation** against defined ranges
 
 ### **Consistent Naming**
+
 ```python
 # Python: snake_case for variables and functions
 grant_amount = 50000.00
@@ -120,31 +133,35 @@ interface GrantApplication {
 ```
 
 **Implementation:**
+
 - **Automated linting** for naming conventions
 - **Code style guides** for each language
 - **Pre-commit hooks** for enforcement
 
 ### **Function Length**
+
 ```python
 # Keep functions under 50 lines when possible
 def process_grant_application(application_data):
     """Process a grant application - keep focused and concise"""
     # Validate input
     validated_data = validate_application_data(application_data)
-    
+
     # Process business logic
     result = apply_business_rules(validated_data)
-    
+
     # Return result
     return result
 ```
 
 **Implementation:**
+
 - **Automated complexity analysis**
 - **Refactoring recommendations**
 - **Code review guidelines**
 
 ### **Comment Quality**
+
 ```python
 # Comments should explain WHY, not WHAT
 # BAD: "Loop through grants"
@@ -155,11 +172,13 @@ for grant in grants:
 ```
 
 **Implementation:**
+
 - **Comment quality guidelines**
 - **Documentation standards**
 - **Code review checklists**
 
 ### **Error Messages**
+
 ```python
 # Make them actionable and specific
 # BAD: "Error occurred"
@@ -175,6 +194,7 @@ def validate_grant_amount(amount):
 ```
 
 **Implementation:**
+
 - **Structured error messages** with context
 - **User-friendly** error descriptions
 - **Actionable** error guidance
@@ -184,6 +204,7 @@ def validate_grant_amount(amount):
 ## **🚀 Deployment & Operations**
 
 ### **Blue-Green Deployment**
+
 ```yaml
 # Render Blueprint configuration
 services:
@@ -196,11 +217,13 @@ services:
 ```
 
 **Implementation:**
+
 - **Zero-downtime deployments**
 - **Instant rollback capability**
 - **Traffic switching** between environments
 
 ### **Health Check Endpoints**
+
 ```python
 @app.get("/health")
 async def health_check():
@@ -220,11 +243,13 @@ async def health_check():
 ```
 
 **Implementation:**
+
 - **Comprehensive health monitoring**
 - **Dependency status** tracking
 - **Performance metrics** collection
 
 ### **Production Readiness Checklist**
+
 - [ ] **All endpoints have proper error handling**
 - [ ] **Logging is comprehensive and structured**
 - [ ] **Performance metrics are tracked**
@@ -237,6 +262,7 @@ async def health_check():
 ## **📊 Data Quality & Validation**
 
 ### **Data Integrity Rules**
+
 ```python
 # Input validation at API boundaries
 @validator('amount')
@@ -251,12 +277,14 @@ def validate_amount(cls, v):
 ```
 
 **Implementation:**
+
 - **Pydantic validation** for all data models
 - **Type safety** throughout the application
 - **Data transformation** validation
 - **Audit trails** for all changes
 
 ### **Currency & Localization Standards**
+
 ```python
 # Single source of truth for currency formatting
 CURRENCY_CODE = "AUD"
@@ -273,6 +301,7 @@ def format_currency(amount: float) -> str:
 ```
 
 **Implementation:**
+
 - **Consistent currency formatting** across the application
 - **Locale-aware** date and number formatting
 - **Error handling** for formatting failures
@@ -283,6 +312,7 @@ def format_currency(amount: float) -> str:
 ## **⚡ Technical Excellence**
 
 ### **Performance Optimization**
+
 ```python
 # Caching strategy for expensive operations
 def _get_cached_data(self, key: str) -> Optional[Any]:
@@ -296,12 +326,14 @@ def _get_cached_data(self, key: str) -> Optional[Any]:
 ```
 
 **Implementation:**
+
 - **Intelligent caching** with TTL
 - **Performance monitoring** and metrics
 - **Database query optimization**
 - **Resource management** and cleanup
 
 ### **Security Best Practices**
+
 ```python
 # Input sanitization and validation
 def validate_user_input(input_data: str) -> str:
@@ -315,6 +347,7 @@ def validate_user_input(input_data: str) -> str:
 ```
 
 **Implementation:**
+
 - **Input sanitization** for all user inputs
 - **Authentication** and authorization checks
 - **Data encryption** for sensitive information
@@ -325,6 +358,7 @@ def validate_user_input(input_data: str) -> str:
 ## **📈 Monitoring & Observability**
 
 ### **Comprehensive Monitoring**
+
 ```python
 @app.get("/metrics")
 async def get_metrics():
@@ -349,12 +383,14 @@ async def get_metrics():
 ```
 
 **Implementation:**
+
 - **Application metrics** (response times, error rates)
 - **Infrastructure metrics** (CPU, memory, disk)
 - **Business metrics** (user engagement, conversions)
 - **Custom metrics** for domain-specific measurements
 
 ### **Structured Logging**
+
 ```python
 # Structured logging with context
 logger.info("Grant application created", extra={
@@ -367,6 +403,7 @@ logger.info("Grant application created", extra={
 ```
 
 **Implementation:**
+
 - **JSON-structured logs** for machine readability
 - **Appropriate log levels** (DEBUG, INFO, WARNING, ERROR)
 - **Context information** in all log messages
@@ -377,22 +414,24 @@ logger.info("Grant application created", extra={
 ## **🎨 User Experience & Branding**
 
 ### **Professional Presentation**
+
 ```typescript
 // Consistent branding throughout the application
 const shadowGooseBranding = {
   colors: {
-    primary: '#1a365d',
-    secondary: '#2d3748',
-    accent: '#e53e3e'
+    primary: "#1a365d",
+    secondary: "#2d3748",
+    accent: "#e53e3e",
   },
   fonts: {
-    heading: 'Inter, sans-serif',
-    body: 'Inter, sans-serif'
-  }
+    heading: "Inter, sans-serif",
+    body: "Inter, sans-serif",
+  },
 };
 ```
 
 **Implementation:**
+
 - **Consistent branding** across all components
 - **Responsive design** for all device sizes
 - **Loading states** and indicators
@@ -400,15 +439,16 @@ const shadowGooseBranding = {
 - **Accessibility compliance** (WCAG guidelines)
 
 ### **Logo & Asset Management**
+
 ```typescript
 // Optimized asset loading with fallbacks
 const LogoComponent = ({ size = 'medium', fallback = true }) => {
   const [imageError, setImageError] = useState(false);
-  
+
   if (imageError && fallback) {
     return <div className="logo-placeholder">SG</div>;
   }
-  
+
   return (
     <img
       src={`/assets/logo-${size}.png`}
@@ -420,6 +460,7 @@ const LogoComponent = ({ size = 'medium', fallback = true }) => {
 ```
 
 **Implementation:**
+
 - **Multiple format support** (PNG, SVG, WebP)
 - **Image optimization** and compression
 - **CDN usage** for static assets
@@ -431,23 +472,25 @@ const LogoComponent = ({ size = 'medium', fallback = true }) => {
 ## **🔄 Continuous Improvement**
 
 ### **Iterative Development**
+
 ```python
 # Small, testable changes with immediate feedback
 def create_grant_application_v2(application_data: dict) -> GrantApplication:
     """Enhanced grant application creation with validation"""
     # Validate input
     validated_data = validate_application_data(application_data)
-    
+
     # Create application
     application = GrantApplication(**validated_data)
-    
+
     # Log audit event
     application.log_audit_event("created", validated_data.get("user_id"))
-    
+
     return application
 ```
 
 **Implementation:**
+
 - **Small, focused changes** for easier testing
 - **Immediate testing** of each change
 - **Quick feedback loops** for iteration
@@ -455,27 +498,29 @@ def create_grant_application_v2(application_data: dict) -> GrantApplication:
 - **Knowledge sharing** across the team
 
 ### **Quality Gates**
+
 ```yaml
 # Quality gates in CI/CD pipeline
 quality_gates:
   - name: "Code Review"
     required: true
     approvers: ["tech_lead", "senior_dev"]
-  
+
   - name: "Automated Testing"
     required: true
     coverage_threshold: 80
-  
+
   - name: "Performance Testing"
     required: true
     response_time_threshold: 500ms
-  
+
   - name: "Security Scanning"
     required: true
     vulnerability_threshold: 0
 ```
 
 **Implementation:**
+
 - **Code review** requirements for all changes
 - **Automated testing** with coverage thresholds
 - **Performance testing** for critical paths
@@ -487,6 +532,7 @@ quality_gates:
 ## **🎯 Success Patterns**
 
 ### **What Success Looks Like**
+
 - **Zero Downtime**: Deployments don't interrupt service
 - **Fast Recovery**: Quick rollback when issues occur
 - **High Availability**: 99.9%+ uptime
@@ -495,6 +541,7 @@ quality_gates:
 - **Happy Users**: Positive user feedback and engagement
 
 ### **Red Flags to Watch For**
+
 - **Silent Failures**: Errors that don't surface immediately
 - **Technical Debt**: Quick fixes that become permanent
 - **Performance Degradation**: Gradual slowdown over time
@@ -506,6 +553,7 @@ quality_gates:
 ## **🧠 Mindset & Approach**
 
 ### **Problem-Solving Mindset**
+
 1. **Systematic Approach**: Methodical investigation over guesswork
 2. **Evidence-Based**: Base decisions on data, not assumptions
 3. **User-Centric**: Always consider the user's perspective
@@ -513,6 +561,7 @@ quality_gates:
 5. **Continuous Learning**: Stay updated with best practices
 
 ### **Communication Standards**
+
 - **Clear Documentation**: Write for future maintainers
 - **Status Updates**: Regular progress reports
 - **Issue Tracking**: Document all issues and resolutions
@@ -524,6 +573,7 @@ quality_gates:
 ## **📊 Quality Metrics Dashboard**
 
 ### **Real-Time Monitoring**
+
 ```python
 # Quality metrics collection
 quality_metrics = {
@@ -546,6 +596,7 @@ quality_metrics = {
 ```
 
 ### **Quality Score Calculation**
+
 ```python
 def calculate_quality_score(metrics: dict) -> float:
     """Calculate overall quality score (0-100)"""
@@ -555,12 +606,12 @@ def calculate_quality_score(metrics: dict) -> float:
         "security": 0.2,
         "user_experience": 0.2
     }
-    
+
     score = 0
     for category, weight in weights.items():
         category_score = calculate_category_score(metrics[category])
         score += category_score * weight
-    
+
     return round(score, 2)
 ```
 
@@ -569,24 +620,28 @@ def calculate_quality_score(metrics: dict) -> float:
 ## **🚀 Implementation Roadmap**
 
 ### **Phase 1: Foundation (Week 1-2)**
+
 - [ ] **Basic quality gates** implementation
 - [ ] **Automated testing** setup
 - [ ] **Monitoring infrastructure** deployment
 - [ ] **Documentation standards** establishment
 
 ### **Phase 2: Enhancement (Week 3-4)**
+
 - [ ] **Advanced validation** rules
 - [ ] **Performance optimization** implementation
 - [ ] **Security hardening** measures
 - [ ] **User experience** improvements
 
 ### **Phase 3: Optimization (Week 5-6)**
+
 - [ ] **Advanced monitoring** and alerting
 - [ ] **Quality metrics** dashboard
 - [ ] **Continuous improvement** processes
 - [ ] **Team training** and knowledge sharing
 
 ### **Phase 4: Excellence (Week 7-8)**
+
 - [ ] **Advanced analytics** and insights
 - [ ] **Predictive quality** measures
 - [ ] **Automated optimization** recommendations
@@ -597,6 +652,7 @@ def calculate_quality_score(metrics: dict) -> float:
 ## **📚 Resources & References**
 
 ### **Tools & Technologies**
+
 - **Code Quality**: Pylint, ESLint, SonarQube
 - **Testing**: Pytest, Jest, Cypress
 - **Monitoring**: Prometheus, Grafana, Sentry
@@ -604,6 +660,7 @@ def calculate_quality_score(metrics: dict) -> float:
 - **Performance**: Lighthouse, WebPageTest, JMeter
 
 ### **Best Practices**
+
 - **Clean Code**: Robert C. Martin
 - **Site Reliability Engineering**: Google
 - **The Phoenix Project**: Gene Kim
@@ -611,6 +668,7 @@ def calculate_quality_score(metrics: dict) -> float:
 - **DevOps Handbook**: Gene Kim
 
 ### **Standards & Frameworks**
+
 - **ISO 25010**: Software Quality Model
 - **OWASP Top 10**: Security Standards
 - **WCAG 2.1**: Accessibility Guidelines
@@ -619,4 +677,4 @@ def calculate_quality_score(metrics: dict) -> float:
 
 ---
 
-**This comprehensive quality assurance framework ensures that the Shadow Goose Entertainment platform maintains the highest standards of quality, performance, and user experience while enabling rapid, safe, and reliable deployments.** 
+**This comprehensive quality assurance framework ensures that the Shadow Goose Entertainment platform maintains the highest standards of quality, performance, and user experience while enabling rapid, safe, and reliable deployments.**

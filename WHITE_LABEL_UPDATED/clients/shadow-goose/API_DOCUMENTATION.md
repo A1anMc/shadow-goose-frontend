@@ -1,6 +1,7 @@
 # Shadow Goose Entertainment - API Documentation
 
 ## Overview
+
 The Shadow Goose Entertainment API provides authentication, user management, and project management capabilities for the NavImpact platform.
 
 **Base URL:** `https://shadow-goose-api-staging.onrender.com` (Staging)
@@ -10,11 +11,13 @@ The Shadow Goose Entertainment API provides authentication, user management, and
 ## Authentication
 
 ### Login
+
 **POST** `/auth/login`
 
 Authenticate a user and receive a JWT token.
 
 **Request Body:**
+
 ```json
 {
   "username": "test",
@@ -23,6 +26,7 @@ Authenticate a user and receive a JWT token.
 ```
 
 **Response:**
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -37,6 +41,7 @@ Authenticate a user and receive a JWT token.
 ```
 
 ### Get User Info
+
 **GET** `/auth/user`
 
 Get current user information.
@@ -44,6 +49,7 @@ Get current user information.
 **Headers:** `Authorization: Bearer <token>`
 
 **Response:**
+
 ```json
 {
   "username": "test",
@@ -55,6 +61,7 @@ Get current user information.
 ## Projects
 
 ### List Projects
+
 **GET** `/api/projects`
 
 Get all projects for the authenticated user.
@@ -62,6 +69,7 @@ Get all projects for the authenticated user.
 **Headers:** `Authorization: Bearer <token>`
 
 **Response:**
+
 ```json
 {
   "projects": [
@@ -79,15 +87,18 @@ Get all projects for the authenticated user.
 ```
 
 ### Create Project
+
 **POST** `/api/projects`
 
 Create a new project.
 
-**Headers:** 
+**Headers:**
+
 - `Authorization: Bearer <token>`
 - `Content-Type: application/json`
 
 **Request Body:**
+
 ```json
 {
   "name": "New Project",
@@ -97,6 +108,7 @@ Create a new project.
 ```
 
 **Response:**
+
 ```json
 {
   "id": 2,
@@ -112,11 +124,13 @@ Create a new project.
 ## System Endpoints
 
 ### Health Check
+
 **GET** `/health`
 
 Check API health status.
 
 **Response:**
+
 ```json
 {
   "status": "ok",
@@ -125,11 +139,13 @@ Check API health status.
 ```
 
 ### Root
+
 **GET** `/`
 
 Get API information.
 
 **Response:**
+
 ```json
 {
   "message": "Shadow Goose API v4.0.0",
@@ -139,11 +155,13 @@ Get API information.
 ```
 
 ### Debug
+
 **GET** `/debug`
 
 Get debug information.
 
 **Response:**
+
 ```json
 {
   "version": "4.0.0",
@@ -156,6 +174,7 @@ Get debug information.
 ## Error Responses
 
 ### 401 Unauthorized
+
 ```json
 {
   "detail": "Invalid credentials"
@@ -163,6 +182,7 @@ Get debug information.
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "detail": "User not found"
@@ -170,6 +190,7 @@ Get debug information.
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "detail": "Failed to create project: <error_message>"
@@ -178,29 +199,30 @@ Get debug information.
 
 ## Status Codes
 
-| Status | Description |
-|--------|-------------|
-| 200 | Success |
-| 201 | Created |
-| 400 | Bad Request |
-| 401 | Unauthorized |
-| 404 | Not Found |
-| 500 | Internal Server Error |
+| Status | Description           |
+| ------ | --------------------- |
+| 200    | Success               |
+| 201    | Created               |
+| 400    | Bad Request           |
+| 401    | Unauthorized          |
+| 404    | Not Found             |
+| 500    | Internal Server Error |
 
 ## Project Status Values
 
-| Status | Description |
-|--------|-------------|
-| draft | Project in planning |
-| active | Project in progress |
-| completed | Project finished |
-| archived | Project archived |
+| Status    | Description         |
+| --------- | ------------------- |
+| draft     | Project in planning |
+| active    | Project in progress |
+| completed | Project finished    |
+| archived  | Project archived    |
 
 ## Testing
 
 ### cURL Examples
 
 **Login:**
+
 ```bash
 curl -X POST https://shadow-goose-api-staging.onrender.com/auth/login \
   -H "Content-Type: application/json" \
@@ -208,6 +230,7 @@ curl -X POST https://shadow-goose-api-staging.onrender.com/auth/login \
 ```
 
 **Create Project:**
+
 ```bash
 curl -X POST https://shadow-goose-api-staging.onrender.com/api/projects \
   -H "Content-Type: application/json" \
@@ -216,6 +239,7 @@ curl -X POST https://shadow-goose-api-staging.onrender.com/api/projects \
 ```
 
 **Get Projects:**
+
 ```bash
 curl -H "Authorization: Bearer <token>" \
   https://shadow-goose-api-staging.onrender.com/api/projects
@@ -223,16 +247,18 @@ curl -H "Authorization: Bearer <token>" \
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| SECRET_KEY | JWT secret key | shadow-goose-secret-key-2025-staging |
-| DATABASE_URL | PostgreSQL connection string | not_set |
-| CORS_ORIGINS | Allowed origins | * |
+| Variable     | Description                  | Default                              |
+| ------------ | ---------------------------- | ------------------------------------ |
+| SECRET_KEY   | JWT secret key               | shadow-goose-secret-key-2025-staging |
+| DATABASE_URL | PostgreSQL connection string | not_set                              |
+| CORS_ORIGINS | Allowed origins              | \*                                   |
 
 ## Rate Limiting
+
 Currently no rate limiting implemented.
 
 ## Security
+
 - JWT tokens expire after 30 minutes
 - CORS enabled for all origins
-- Input validation using Pydantic models 
+- Input validation using Pydantic models

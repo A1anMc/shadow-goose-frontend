@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 export interface ExcelData {
@@ -14,28 +14,50 @@ export interface ExportOptions {
 }
 
 class ExcelService {
-  // Export data to Excel file
-  exportToExcel(data: ExcelData[], options: ExportOptions = {}): void {
-    try {
-      const workbook = XLSX.utils.book_new();
+  private async createWorkbook(data: ExcelData[]): Promise<ExcelJS.Workbook> {
+    const workbook = new ExcelJS.Workbook();
+    data.forEach(sheetData => {
+      const worksheet = workbook.addWorksheet(sheetData.sheetName);
 
-      data.forEach((sheetData) => {
-        let worksheet;
-        
-        if (sheetData.headers) {
-          // Create worksheet with headers
-          const dataWithHeaders = [sheetData.headers, ...sheetData.data];
-          worksheet = XLSX.utils.aoa_to_sheet(dataWithHeaders);
+      if (sheetData.headers && sheetData.headers.length > 0) {
+        worksheet.addRow(sheetData.headers);
+      }
+
+      sheetData.data.forEach(row => {
+        if (Array.isArray(row)) {
+          worksheet.addRow(row);
         } else {
-          // Create worksheet from array of objects
-          worksheet = XLSX.utils.json_to_sheet(sheetData.data);
+          // Object to row using headers order if provided
+          const headers = sheetData.headers || Object.keys(row);
+          worksheet.addRow(headers.map(h => row[h]));
         }
-
-        XLSX.utils.book_append_sheet(workbook, worksheet, sheetData.sheetName);
       });
 
+      // Auto width
+      const columnCount = worksheet.columns.length;
+      for (let i = 1; i <= columnCount; i += 1) {
+        const col = worksheet.getColumn(i);
+        let maxLength = 10;
+        col.eachCell({ includeEmpty: true }, cell => {
+          const value = cell.value == null ? '' : String(cell.value);
+          maxLength = Math.max(maxLength, value.length + 2);
+        });
+        col.width = Math.min(maxLength, 60);
+      }
+    });
+
+    return workbook;
+  }
+
+  // Export data to Excel file
+  async exportToExcel(data: ExcelData[], options: ExportOptions = {}): Promise<void> {
+    try {
+      const workbook = await this.createWorkbook(data);
       const filename = options.filename || `sge-export-${Date.now()}.xlsx`;
-      XLSX.writeFile(workbook, filename);
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, filename);
     } catch (error) {
       console.error('Error exporting to Excel:', error);
       throw new Error('Failed to export to Excel');
@@ -43,7 +65,7 @@ class ExcelService {
   }
 
   // Export projects data
-  exportProjects(projects: any[], options: ExportOptions = {}): void {
+  async exportProjects(projects: any[], options: ExportOptions = {}): Promise<void> {
     const headers = [
       'ID',
       'Name',
@@ -70,15 +92,17 @@ class ExcelService {
       project.created_at,
     ]);
 
-    this.exportToExcel([{
-      sheetName: 'Projects',
-      data,
-      headers,
-    }], options);
+    await this.exportToExcel([
+      {
+        sheetName: 'Projects',
+        data,
+        headers,
+      },
+    ], options);
   }
 
   // Export OKRs data
-  exportOKRs(okrs: any[], options: ExportOptions = {}): void {
+  async exportOKRs(okrs: any[], options: ExportOptions = {}): Promise<void> {
     const headers = [
       'OKR ID',
       'Objective',
@@ -105,15 +129,17 @@ class ExcelService {
       okr.created_at,
     ]);
 
-    this.exportToExcel([{
-      sheetName: 'OKRs',
-      data,
-      headers,
-    }], options);
+    await this.exportToExcel([
+      {
+        sheetName: 'OKRs',
+        data,
+        headers,
+      },
+    ], options);
   }
 
   // Export OKR Key Results
-  exportKeyResults(okrs: any[], options: ExportOptions = {}): void {
+  async exportKeyResults(okrs: any[], options: ExportOptions = {}): Promise<void> {
     const headers = [
       'OKR ID',
       'Key Result ID',
@@ -127,7 +153,7 @@ class ExcelService {
     ];
 
     const data: any[] = [];
-    
+
     okrs.forEach(okr => {
       okr.keyResults?.forEach((kr: any) => {
         data.push([
@@ -144,15 +170,17 @@ class ExcelService {
       });
     });
 
-    this.exportToExcel([{
-      sheetName: 'Key Results',
-      data,
-      headers,
-    }], options);
+    await this.exportToExcel([
+      {
+        sheetName: 'Key Results',
+        data,
+        headers,
+      },
+    ], options);
   }
 
   // Export grants data
-  exportGrants(grants: any[], options: ExportOptions = {}): void {
+  async exportGrants(grants: any[], options: ExportOptions = {}): Promise<void> {
     const headers = [
       'ID',
       'Title',
@@ -179,15 +207,17 @@ class ExcelService {
       grant.created_at,
     ]);
 
-    this.exportToExcel([{
-      sheetName: 'Grants',
-      data,
-      headers,
-    }], options);
+    await this.exportToExcel([
+      {
+        sheetName: 'Grants',
+        data,
+        headers,
+      },
+    ], options);
   }
 
   // Export grant applications
-  exportGrantApplications(applications: any[], options: ExportOptions = {}): void {
+  async exportGrantApplications(applications: any[], options: ExportOptions = {}): Promise<void> {
     const headers = [
       'Application ID',
       'Grant ID',
@@ -212,15 +242,17 @@ class ExcelService {
       app.created_at,
     ]);
 
-    this.exportToExcel([{
-      sheetName: 'Grant Applications',
-      data,
-      headers,
-    }], options);
+    await this.exportToExcel([
+      {
+        sheetName: 'Grant Applications',
+        data,
+        headers,
+      },
+    ], options);
   }
 
   // Export comprehensive dashboard data
-  exportDashboardData(data: any, options: ExportOptions = {}): void {
+  async exportDashboardData(data: any, options: ExportOptions = {}): Promise<void> {
     const sheets: ExcelData[] = [];
 
     // Projects sheet
@@ -275,7 +307,7 @@ class ExcelService {
       });
     }
 
-    this.exportToExcel(sheets, {
+    await this.exportToExcel(sheets, {
       filename: options.filename || `sge-dashboard-export-${Date.now()}.xlsx`,
       ...options,
     });
@@ -286,8 +318,8 @@ class ExcelService {
     try {
       const csvContent = [
         headers.join(','),
-        ...data.map(row => 
-          Array.isArray(row) 
+        ...data.map(row =>
+          Array.isArray(row)
             ? row.map(cell => `"${cell}"`).join(',')
             : headers.map(header => `"${row[header] || ''}"`).join(',')
         ),

@@ -3,26 +3,31 @@
 ## **🎯 Root Cause Analysis Framework**
 
 ### **1. Start with the Obvious**
+
 - **Check the most common failure points first**
 - **Syntax errors** → **Import errors** → **Dependencies** → **Logic errors**
 - **Always verify basic functionality before diving deep**
 
 ### **2. Work Backwards**
+
 - **If endpoint X fails, trace back through the dependency chain**
 - **Frontend** → **API** → **Database** → **Environment** → **Configuration**
 - **Identify the exact point of failure in the chain**
 
 ### **3. Divide and Conquer**
+
 - **Test components individually to isolate issues**
 - **Separate concerns**: Backend logic, API endpoints, frontend rendering
 - **Isolate variables**: Test one change at a time
 
 ### **4. Document Everything**
+
 - **Every test, every error, every fix - document it all**
 - **Create detailed logs** of investigation steps
 - **Maintain knowledge base** of common issues and solutions
 
 ### **5. Assume Nothing**
+
 - **Don't assume something works just because it should**
 - **Validate every assumption** with actual testing
 - **Test edge cases** and error conditions
@@ -32,6 +37,7 @@
 ## **🔧 Systematic Debugging Process**
 
 ### **Layer by Layer Testing**
+
 ```bash
 # 1. Database Layer
 python -c "from app.database import get_db; print('✅ Database OK')"
@@ -47,16 +53,19 @@ curl -s https://app.example.com | head -5
 ```
 
 ### **Error Message Analysis**
+
 - **Parse error messages carefully** - they often contain the solution
 - **Look for specific error codes** and stack traces
 - **Search for similar errors** in documentation and forums
 
 ### **Version Control Investigation**
+
 - **Check if recent changes introduced the issue**
 - **Use git bisect** to find the exact commit causing problems
 - **Review recent pull requests** and merges
 
 ### **Environment Differences**
+
 - **Compare local vs deployed behavior**
 - **Check environment variables** and configuration
 - **Verify dependency versions** match across environments
@@ -68,6 +77,7 @@ curl -s https://app.example.com | head -5
 ### **Proactive Prevention Rules**
 
 #### **1. Import Validation**
+
 ```python
 # Always test imports before using new modules
 try:
@@ -79,6 +89,7 @@ except ImportError as e:
 ```
 
 #### **2. Syntax Pre-check**
+
 ```bash
 # Run compilation tests before deployment
 python -m py_compile app/main.py
@@ -87,6 +98,7 @@ echo "✅ All files compile successfully"
 ```
 
 #### **3. Dependency Mapping**
+
 ```python
 # Maintain a clear dependency graph
 DEPENDENCY_MAP = {
@@ -97,6 +109,7 @@ DEPENDENCY_MAP = {
 ```
 
 #### **4. Error Pattern Recognition**
+
 ```python
 # Learn from previous errors to prevent future ones
 ERROR_PATTERNS = {
@@ -107,6 +120,7 @@ ERROR_PATTERNS = {
 ```
 
 #### **5. Graceful Degradation**
+
 ```python
 # Systems should work even if some components fail
 try:
@@ -119,6 +133,7 @@ except Exception as e:
 ### **Code Quality Enforcement**
 
 #### **No Magic Numbers**
+
 ```python
 # Use constants and configuration files
 GRANT_AMOUNT_MIN = 1000.00
@@ -132,6 +147,7 @@ if GRANT_AMOUNT_MIN <= amount <= GRANT_AMOUNT_MAX:
 ```
 
 #### **Consistent Naming**
+
 ```python
 # Follow established naming conventions religiously
 # Python: snake_case for variables and functions
@@ -148,21 +164,23 @@ interface GrantApplication {
 ```
 
 #### **Function Length**
+
 ```python
 # Keep functions under 50 lines when possible
 def process_grant_application(application_data):
     """Process a grant application - keep focused and concise"""
     # Validate input
     validated_data = validate_application_data(application_data)
-    
+
     # Process business logic
     result = apply_business_rules(validated_data)
-    
+
     # Return result
     return result
 ```
 
 #### **Comment Quality**
+
 ```python
 # Comments should explain WHY, not WHAT
 # BAD: "Loop through grants"
@@ -173,6 +191,7 @@ for grant in grants:
 ```
 
 #### **Error Messages**
+
 ```python
 # Make them actionable and specific
 # BAD: "Error occurred"
@@ -192,11 +211,13 @@ def validate_grant_amount(amount):
 ## **📊 Quality Metrics Dashboard**
 
 ### **Investigation Success Metrics**
+
 - **Time to Resolution**: Track how long issues take to resolve
 - **Root Cause Accuracy**: Measure how often we identify the correct root cause
 - **Prevention Rate**: Track how many issues are prevented vs. fixed
 
 ### **Quality Assurance Metrics**
+
 - **Code Coverage**: Maintain high test coverage
 - **Error Rate**: Monitor and reduce error rates over time
 - **Performance**: Track response times and system performance
@@ -206,6 +227,7 @@ def validate_grant_amount(amount):
 ## **🎯 Implementation Checklist**
 
 ### **For Every Issue Investigation:**
+
 - [ ] **Start with obvious checks** (syntax, imports, basic functionality)
 - [ ] **Document the investigation process** step by step
 - [ ] **Test each component individually** to isolate the problem
@@ -214,6 +236,7 @@ def validate_grant_amount(amount):
 - [ ] **Document the solution** for future reference
 
 ### **For Every Code Change:**
+
 - [ ] **Run syntax pre-checks** before deployment
 - [ ] **Validate all imports** work correctly
 - [ ] **Follow naming conventions** consistently
@@ -227,13 +250,15 @@ def validate_grant_amount(amount):
 ## **🚀 Continuous Improvement**
 
 ### **Regular Reviews**
+
 - **Weekly**: Review investigation methodology effectiveness
 - **Monthly**: Update error patterns and prevention strategies
 - **Quarterly**: Refine quality assurance processes
 
 ### **Knowledge Sharing**
+
 - **Document common issues** and their solutions
 - **Share investigation techniques** across the team
 - **Maintain a troubleshooting guide** for the system
 
-**This methodology ensures we maintain the highest quality standards while efficiently resolving any issues that arise.** 
+**This methodology ensures we maintain the highest quality standards while efficiently resolving any issues that arise.**

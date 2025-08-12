@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       phase:
-        description: 'Phase to check (1, 2, or 3)'
+        description: "Phase to check (1, 2, or 3)"
         required: false
-        default: '1'
+        default: "1"
 
 jobs:
   phase-1-gates:
@@ -24,13 +24,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |

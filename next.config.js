@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable standalone output for Render
-  output: 'standalone',
+  output: "standalone",
 
   // Optimize for production
   compress: true,

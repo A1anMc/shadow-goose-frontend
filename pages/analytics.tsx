@@ -1,25 +1,33 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { getBranding } from '../src/lib/branding';
-import { authService, User } from '../src/lib/auth';
-import { DataSource, PredictiveModel, RealTimeMetric } from '../src/lib/analytics';
-import { mockAnalyticsService } from '../src/lib/mockAnalytics';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { getBranding } from "../src/lib/branding";
+import { authService, User } from "../src/lib/auth";
+import {
+  DataSource,
+  PredictiveModel,
+  RealTimeMetric,
+} from "../src/lib/analytics";
+import { mockAnalyticsService } from "../src/lib/mockAnalytics";
 
 export default function Analytics() {
   const router = useRouter();
   const branding = getBranding();
   const [user, setUser] = useState<User | null>(null);
   const [dataSources, setDataSources] = useState<DataSource[]>([]);
-  const [predictiveModels, setPredictiveModels] = useState<PredictiveModel[]>([]);
+  const [predictiveModels, setPredictiveModels] = useState<PredictiveModel[]>(
+    [],
+  );
   const [realTimeMetrics, setRealTimeMetrics] = useState<RealTimeMetric[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'models' | 'sources' | 'metrics'>('overview');
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "models" | "sources" | "metrics"
+  >("overview");
 
   useEffect(() => {
     // Check authentication
     const currentUser = authService.getCurrentUser();
     if (!currentUser) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
     setUser(currentUser);
@@ -43,7 +51,7 @@ export default function Analytics() {
       setPredictiveModels(modelsData);
       setRealTimeMetrics(metricsData);
     } catch (error) {
-      console.error('Error loading analytics data:', error);
+      console.error("Error loading analytics data:", error);
     } finally {
       setLoading(false);
     }
@@ -51,31 +59,31 @@ export default function Analytics() {
 
   const handleLogout = () => {
     authService.logout();
-    router.push('/login');
+    router.push("/login");
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
-      case 'ready':
-        return 'text-green-600 bg-green-100';
-      case 'training':
-        return 'text-yellow-600 bg-yellow-100';
-      case 'error':
-        return 'text-red-600 bg-red-100';
+      case "active":
+      case "ready":
+        return "text-green-600 bg-green-100";
+      case "training":
+        return "text-yellow-600 bg-yellow-100";
+      case "error":
+        return "text-red-600 bg-red-100";
       default:
-        return 'text-gray-600 bg-gray-100';
+        return "text-gray-600 bg-gray-100";
     }
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'up':
-        return '↗️';
-      case 'down':
-        return '↘️';
+      case "up":
+        return "↗️";
+      case "down":
+        return "↘️";
       default:
-        return '→';
+        return "→";
     }
   };
 
@@ -102,13 +110,13 @@ export default function Analytics() {
               </h1>
               <nav className="flex space-x-4">
                 <button
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push("/dashboard")}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Dashboard
                 </button>
                 <button
-                  onClick={() => router.push('/projects/new')}
+                  onClick={() => router.push("/projects/new")}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   New Project
@@ -136,18 +144,22 @@ export default function Analytics() {
         <div className="border-b border-gray-200 mb-8">
           <nav className="-mb-px flex space-x-8">
             {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'models', label: 'Predictive Models' },
-              { id: 'sources', label: 'Data Sources' },
-              { id: 'metrics', label: 'Real-Time Metrics' },
+              { id: "overview", label: "Overview" },
+              { id: "models", label: "Predictive Models" },
+              { id: "sources", label: "Data Sources" },
+              { id: "metrics", label: "Real-Time Metrics" },
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 'overview' | 'models' | 'sources' | 'metrics')}
+                onClick={() =>
+                  setActiveTab(
+                    tab.id as "overview" | "models" | "sources" | "metrics",
+                  )
+                }
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
-                    ? 'border-sg-primary text-sg-primary'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? "border-sg-primary text-sg-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
                 {tab.label}
@@ -157,33 +169,50 @@ export default function Analytics() {
         </div>
 
         {/* Overview Tab */}
-        {activeTab === 'overview' && (
+        {activeTab === "overview" && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Data Sources</h3>
-                <p className="text-3xl font-bold text-sg-primary">{dataSources.length}</p>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Data Sources
+                </h3>
+                <p className="text-3xl font-bold text-sg-primary">
+                  {dataSources.length}
+                </p>
                 <p className="text-sm text-gray-600">Active sources</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Predictive Models</h3>
-                <p className="text-3xl font-bold text-sg-primary">{predictiveModels.length}</p>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Predictive Models
+                </h3>
+                <p className="text-3xl font-bold text-sg-primary">
+                  {predictiveModels.length}
+                </p>
                 <p className="text-sm text-gray-600">Ready models</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Real-Time Metrics</h3>
-                <p className="text-3xl font-bold text-sg-primary">{realTimeMetrics.length}</p>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Real-Time Metrics
+                </h3>
+                <p className="text-3xl font-bold text-sg-primary">
+                  {realTimeMetrics.length}
+                </p>
                 <p className="text-sm text-gray-600">Active metrics</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Average Accuracy</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Average Accuracy
+                </h3>
                 <p className="text-3xl font-bold text-sg-primary">
                   {predictiveModels.length > 0
                     ? Math.round(
-                        predictiveModels.reduce((acc, model) => acc + model.accuracy, 0) /
-                          predictiveModels.length
+                        predictiveModels.reduce(
+                          (acc, model) => acc + model.accuracy,
+                          0,
+                        ) / predictiveModels.length,
                       )
-                    : 0}%
+                    : 0}
+                  %
                 </p>
                 <p className="text-sm text-gray-600">Model performance</p>
               </div>
@@ -192,17 +221,29 @@ export default function Analytics() {
             {/* Recent Activity */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Recent Activity
+                </h3>
               </div>
               <div className="p-6">
                 <div className="space-y-4">
                   {dataSources.slice(0, 3).map((source) => (
-                    <div key={source.id} className="flex items-center justify-between">
+                    <div
+                      key={source.id}
+                      className="flex items-center justify-between"
+                    >
                       <div>
-                        <p className="font-medium text-gray-900">{source.name}</p>
-                        <p className="text-sm text-gray-600">Last sync: {new Date(source.lastSync).toLocaleDateString()}</p>
+                        <p className="font-medium text-gray-900">
+                          {source.name}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Last sync:{" "}
+                          {new Date(source.lastSync).toLocaleDateString()}
+                        </p>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(source.status)}`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(source.status)}`}
+                      >
                         {source.status}
                       </span>
                     </div>
@@ -214,11 +255,13 @@ export default function Analytics() {
         )}
 
         {/* Predictive Models Tab */}
-        {activeTab === 'models' && (
+        {activeTab === "models" && (
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Predictive Models</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Predictive Models
+                </h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -248,19 +291,29 @@ export default function Analytics() {
                     {predictiveModels.map((model) => (
                       <tr key={model.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{model.name}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {model.name}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{model.type}</div>
+                          <div className="text-sm text-gray-900">
+                            {model.type}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{model.targetMetric}</div>
+                          <div className="text-sm text-gray-900">
+                            {model.targetMetric}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{model.accuracy}%</div>
+                          <div className="text-sm text-gray-900">
+                            {model.accuracy}%
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(model.status)}`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(model.status)}`}
+                          >
                             {model.status}
                           </span>
                         </td>
@@ -277,11 +330,13 @@ export default function Analytics() {
         )}
 
         {/* Data Sources Tab */}
-        {activeTab === 'sources' && (
+        {activeTab === "sources" && (
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Data Sources</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Data Sources
+                </h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -308,19 +363,29 @@ export default function Analytics() {
                     {dataSources.map((source) => (
                       <tr key={source.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{source.name}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {source.name}
+                          </div>
                           {source.url && (
-                            <div className="text-sm text-gray-500">{source.url}</div>
+                            <div className="text-sm text-gray-500">
+                              {source.url}
+                            </div>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{source.type}</div>
+                          <div className="text-sm text-gray-900">
+                            {source.type}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{source.refreshInterval} minutes</div>
+                          <div className="text-sm text-gray-900">
+                            {source.refreshInterval} minutes
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(source.status)}`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(source.status)}`}
+                          >
                             {source.status}
                           </span>
                         </td>
@@ -337,25 +402,36 @@ export default function Analytics() {
         )}
 
         {/* Real-Time Metrics Tab */}
-        {activeTab === 'metrics' && (
+        {activeTab === "metrics" && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {realTimeMetrics.map((metric) => (
-                <div key={metric.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div
+                  key={metric.id}
+                  className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+                >
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">{metric.name}</h3>
-                    <span className="text-2xl">{getTrendIcon(metric.trend)}</span>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {metric.name}
+                    </h3>
+                    <span className="text-2xl">
+                      {getTrendIcon(metric.trend)}
+                    </span>
                   </div>
                   <div className="mb-4">
                     <p className="text-3xl font-bold text-sg-primary">
                       {metric.value} {metric.unit}
                     </p>
-                    <p className={`text-sm ${metric.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {metric.changePercent >= 0 ? '+' : ''}{metric.changePercent}% from last period
+                    <p
+                      className={`text-sm ${metric.changePercent >= 0 ? "text-green-600" : "text-red-600"}`}
+                    >
+                      {metric.changePercent >= 0 ? "+" : ""}
+                      {metric.changePercent}% from last period
                     </p>
                   </div>
                   <div className="text-xs text-gray-500">
-                    Last updated: {new Date(metric.lastUpdated).toLocaleString()}
+                    Last updated:{" "}
+                    {new Date(metric.lastUpdated).toLocaleString()}
                   </div>
                 </div>
               ))}

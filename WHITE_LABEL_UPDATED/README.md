@@ -3,6 +3,7 @@
 This folder contains everything needed to white‑label and deploy NavImpact for a client.
 
 ## Contents
+
 - `WHITE_LABEL_GUIDE.md`: Full implementation and rollout guide
 - `CLIENT_ROLLOUT_TEMPLATE.md`: Per‑client plan template
 - `ENGINEERING_ROADMAP.md`: Engineering milestones & progress
@@ -16,6 +17,7 @@ This folder contains everything needed to white‑label and deploy NavImpact for
 - `branding/README.md`: Branding assets checklist
 
 ## Quick Start
+
 1. Duplicate `ENV_TEMPLATE.production` to your envs and fill values
 2. Fill `CLIENT_ROLLOUT_TEMPLATE.md` for the client
 3. Prepare branding assets per `branding/README.md`
@@ -23,11 +25,14 @@ This folder contains everything needed to white‑label and deploy NavImpact for
 5. Verify with `CHECKLISTS.md` and `SCRIPTS.md`
 
 ## Frontend Preview
+
 See `SCRIPTS.md` for:
+
 - Dev: `cd frontend && npm run dev`
 - Static preview: `cd frontend && npm run preview`
 
 ## Notes
+
 - Do not commit filled envs; use Render secrets
 - Keep migrations tracked; store DB dumps under `backups/` (ignored)
-- Integrations: set Slack/Notion envs and verify in staging 
+- Integrations: set Slack/Notion envs and verify in staging

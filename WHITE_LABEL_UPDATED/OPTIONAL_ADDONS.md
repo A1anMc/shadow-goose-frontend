@@ -3,6 +3,7 @@
 Offer these optional enhancements during client onboarding or post‑go‑live. Each add‑on includes prerequisites, deliverables, effort estimate, and acceptance criteria.
 
 ## How to request
+
 - Open a request referencing this doc and the client’s `CLIENT_ROLLOUT_TEMPLATE.md`
 - Include desired add‑ons, target date, decision maker(s)
 - We confirm feasibility, effort, and timeline with a short proposal
@@ -10,6 +11,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
 ---
 
 ## 1) Authentication & Security
+
 - SSO (OIDC/SAML: Okta, Azure AD, Auth0)
   - Prereq: IdP admin; metadata/redirect URIs
   - Deliverables: Login via IdP; role mapping; docs
@@ -23,6 +25,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: S; Acceptance: Logs present; allowlist enforced
 
 ## 2) Integrations
+
 - Jira/Asana Workflows
   - Prereq: API tokens; target projects
   - Deliverables: Two‑way sync (tasks/comments) or push only
@@ -38,6 +41,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: S; Acceptance: Sample Zap triggers reliably
 
 ## 3) Data & Analytics
+
 - GA4 / Mixpanel Product Analytics
   - Deliverables: Event schema; dashboards; env toggles
   - Effort: S; Acceptance: Events visible; dashboards live
@@ -50,6 +54,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: M‑L; Acceptance: Verified load + data checks
 
 ## 4) AI / ML Enhancements
+
 - Custom Grant Matching Model (Client‑tuned)
   - Deliverables: Feature engineering; retraining; A/B report
   - Effort: M‑L; Acceptance: Measurable lift vs baseline
@@ -62,6 +67,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: M‑L; Acceptance: Precision/recall targets
 
 ## 5) Reporting
+
 - Branded PDF Reports
   - Deliverables: Templates (exec/departmental)
   - Effort: M; Acceptance: Pixel‑perfect PDFs generated
@@ -70,6 +76,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: S; Acceptance: Timely delivery + content checks
 
 ## 6) Scrapers & Data Sources
+
 - New Grant Sources (Global/Philanthropic/Corporate)
   - Prereq: Source list + terms compliance
   - Deliverables: Scrapers + monitoring + retry
@@ -79,6 +86,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: M‑L; Acceptance: Data quality KPIs met
 
 ## 7) UX & Branding
+
 - Premium Theme Pack
   - Deliverables: Advanced components + animations
   - Effort: S‑M; Acceptance: Stakeholder visual sign‑off
@@ -87,6 +95,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: M; Acceptance: Language QA pass
 
 ## 8) Collaboration & Productivity
+
 - Real‑Time Notifications (WebSockets)
   - Deliverables: Live updates for tasks/comments
   - Effort: M; Acceptance: Latency < 1s in tests
@@ -95,11 +104,13 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: M; Acceptance: Functional parity with tasks
 
 ## 9) Mobile & Offline
+
 - PWA Install with Offline Cache
   - Deliverables: Installable app; cache key flows
   - Effort: S‑M; Acceptance: Lighthouse PWA pass
 
 ## 10) Performance & Scale
+
 - Redis Caching & CDN
   - Deliverables: Cache layer; CDN for assets
   - Effort: M; Acceptance: p95 latency improved >20%
@@ -108,6 +119,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: M; Acceptance: Target TPS/SLOs met
 
 ## 11) Compliance & Governance
+
 - GDPR Tooling & Data Retention Automation
   - Deliverables: Export/delete endpoints; retention jobs
   - Effort: M; Acceptance: DSR scenario tests pass
@@ -116,6 +128,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: M; Acceptance: Department format compliance
 
 ## 12) Deployment & Infra
+
 - Dedicated Environment / VPC Peering
   - Prereq: Cloud account and peering details
   - Deliverables: Isolated services; network policy
@@ -125,6 +138,7 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
   - Effort: L; Acceptance: Design review approved
 
 ## 13) Support & Training
+
 - Premium SLA (24/7 with RTO/RPO targets)
   - Deliverables: SLA document + on‑call rotation
   - Effort: S; Acceptance: Escalation tested
@@ -135,5 +149,6 @@ Offer these optional enhancements during client onboarding or post‑go‑live. 
 ---
 
 Notes
+
 - Effort S/M/L are relative (S ≤ 2 days, M 3–7 days, L 1–3 weeks)
-- Bundles available (e.g., “Enterprise Security”, “Advanced Analytics”, “AI Suite”) 
+- Bundles available (e.g., “Enterprise Security”, “Advanced Analytics”, “AI Suite”)

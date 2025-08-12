@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 import { getBranding } from "../src/lib/branding";
 import { authService } from "../src/lib/auth";
 
@@ -10,9 +10,9 @@ export default function Home() {
   useEffect(() => {
     // Redirect based on authentication status
     if (authService.isAuthenticated()) {
-      router.push('/dashboard');
+      router.push("/dashboard");
     } else {
-      router.push('/login');
+      router.push("/login");
     }
   }, [router]);
 

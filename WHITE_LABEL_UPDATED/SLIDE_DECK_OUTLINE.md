@@ -38,21 +38,27 @@
    - UAT plan and sign‑off process
 
 10. Go‑Live Plan
-   - Deployment steps (Render configs)
-   - Verification scripts and alert enablement
+
+- Deployment steps (Render configs)
+- Verification scripts and alert enablement
 
 11. Monitoring & SLOs
-   - Sentry alerts, health checks
-   - SLO targets (availability, latency, error rate)
+
+- Sentry alerts, health checks
+- SLO targets (availability, latency, error rate)
 
 12. Support & Escalation
-   - Channels, SEV levels, runbooks
+
+- Channels, SEV levels, runbooks
 
 13. Risks & Mitigations
-   - DNS, envs, data migration, integration credentials
+
+- DNS, envs, data migration, integration credentials
 
 14. Next Steps
-   - Owners, dates, actions; link to `ONBOARDING_PROCESS.md` and `CLIENT_ROLLOUT_TEMPLATE.md`
+
+- Owners, dates, actions; link to `ONBOARDING_PROCESS.md` and `CLIENT_ROLLOUT_TEMPLATE.md`
 
 Appendix
-- Links to `WHITE_LABEL_GUIDE.md`, `CHECKLISTS.md`, `SCRIPTS.md`, `INTEGRATIONS_QUICKSTART.md` 
+
+- Links to `WHITE_LABEL_GUIDE.md`, `CHECKLISTS.md`, `SCRIPTS.md`, `INTEGRATIONS_QUICKSTART.md`

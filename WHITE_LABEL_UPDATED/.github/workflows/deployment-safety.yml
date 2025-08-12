@@ -19,13 +19,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Cache Python dependencies
         uses: actions/cache@v3
@@ -112,13 +112,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install Python dependencies
         run: |
@@ -208,13 +208,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Verify Python build
         run: |
@@ -309,12 +309,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Python security scan
         run: |
@@ -357,7 +357,14 @@ jobs:
   summary:
     runs-on: ubuntu-latest
     name: Summary
-    needs: [dependency-safety, code-quality, build-verification, environment-compatibility, security-scan]
+    needs:
+      [
+        dependency-safety,
+        code-quality,
+        build-verification,
+        environment-compatibility,
+        security-scan,
+      ]
     if: always()
     steps:
       - name: Generate summary

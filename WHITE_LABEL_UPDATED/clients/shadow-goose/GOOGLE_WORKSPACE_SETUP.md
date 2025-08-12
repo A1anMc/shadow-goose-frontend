@@ -3,11 +3,13 @@
 ## 📋 Team Access Requirements
 
 ### **Primary Admin Access:**
+
 - **Alan McCarthy** (Impact Director) - alanmccarthy00@gmail.com
   - **Role:** Full admin access
   - **Permissions:** User management, system administration, analytics
 
 ### **Management Access:**
+
 - **Ursula Searle** (Managing Director) - ursula@shadow-goose.com
   - **Role:** Manager access
   - **Permissions:** Project management, team coordination, production oversight
@@ -17,11 +19,13 @@
   - **Permissions:** Project management, content creation, stakeholder coordination
 
 ### **Creative Access:**
+
 - **Shamita Siva** (Creative Director) - shamita@shadow-goose.com
   - **Role:** Manager access
   - **Permissions:** Content management, creative workflows, project coordination
 
 ### **Operations Access:**
+
 - **Mish Rep** (Operations Officer) - mish@shadow-goose.com
   - **Role:** User access
   - **Permissions:** Operational workflows, data management, process efficiency
@@ -29,11 +33,13 @@
 ## 🔧 Google Workspace Setup Steps
 
 ### **Step 1: Domain Verification**
+
 - [ ] Verify shadow-goose.com domain ownership
 - [ ] Set up Google Workspace for shadow-goose.com
 - [ ] Configure DNS records for Google Workspace
 
 ### **Step 2: User Account Creation**
+
 - [ ] Create Google Workspace accounts for all team members
 - [ ] Set up email addresses:
   - alanmccarthy00@gmail.com (Alan McCarthy - Admin)
@@ -43,12 +49,14 @@
   - mish@shadow-goose.com
 
 ### **Step 3: SSO Configuration**
+
 - [ ] Configure Google Workspace SSO for NavImpact platform
 - [ ] Set up OAuth 2.0 credentials
 - [ ] Configure redirect URIs for staging and production
 - [ ] Test SSO login flow
 
 ### **Step 4: Security Settings**
+
 - [ ] Enable 2-factor authentication (MFA)
 - [ ] Set password policy (min 12 characters)
 - [ ] Configure session timeout (90-day rotation)
@@ -57,6 +65,7 @@
 ## 🚀 NavImpact Platform Integration
 
 ### **Environment Variables to Set:**
+
 ```
 # Google Workspace SSO Configuration
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -71,12 +80,14 @@ USER_EMAILS=mish@shadow-goose.com
 ```
 
 ### **SSO Endpoints to Configure:**
+
 - **Staging:** https://shadow-goose-web-staging.onrender.com/auth/google
 - **Production:** https://shadow-goose-web.onrender.com/auth/google
 
 ## 📧 Email Templates for Team Invitations
 
 ### **Admin User Invitation (Alan McCarthy):**
+
 ```
 Subject: Welcome to Shadow Goose Entertainment - NavImpact Platform Access
 
@@ -97,6 +108,7 @@ Shadow Goose Entertainment Team
 ```
 
 ### **Manager User Invitations (Ursula, Ash, Shamita):**
+
 ```
 Subject: Welcome to Shadow Goose Entertainment - NavImpact Platform Access
 
@@ -117,6 +129,7 @@ Shadow Goose Entertainment Team
 ```
 
 ### **User Invitation (Mish Rep):**
+
 ```
 Subject: Welcome to Shadow Goose Entertainment - NavImpact Platform Access
 
@@ -139,6 +152,7 @@ Shadow Goose Entertainment Team
 ## 🔍 Testing Checklist
 
 ### **SSO Testing:**
+
 - [ ] All users can log in with Google Workspace credentials
 - [ ] Role-based access control working correctly
 - [ ] Session management and timeout functioning
@@ -146,6 +160,7 @@ Shadow Goose Entertainment Team
 - [ ] Password policy enforcement active
 
 ### **User Management Testing:**
+
 - [ ] Admin can view all users
 - [ ] Admin can manage user roles
 - [ ] Admin can create/edit/delete users
@@ -153,6 +168,7 @@ Shadow Goose Entertainment Team
 - [ ] Email notifications working
 
 ### **Security Testing:**
+
 - [ ] 2FA enforcement working
 - [ ] Session timeout functioning
 - [ ] Secure token handling
@@ -162,10 +178,12 @@ Shadow Goose Entertainment Team
 ## 📞 Support Contacts
 
 **For Google Workspace Issues:**
+
 - **Primary:** Alan McCarthy (alanmccarthy00@gmail.com)
 - **Backup:** Shadow Goose IT Support
 
 **For NavImpact Platform Issues:**
+
 - **Primary:** Alan McCarthy (alanmccarthy00@gmail.com)
 - **Slack:** #dev-uat channel
 - **SLA:** 1 business day response
@@ -178,4 +196,4 @@ Shadow Goose Entertainment Team
 4. **Begin UAT testing** with real user accounts
 5. **Monitor and support** during testing phase
 
-**Ready to proceed with Google Workspace setup!** 🚀 
+**Ready to proceed with Google Workspace setup!** 🚀

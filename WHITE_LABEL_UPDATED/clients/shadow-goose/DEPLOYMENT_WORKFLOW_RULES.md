@@ -5,6 +5,7 @@
 The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment approvals, and commit management. These rules ensure secure, controlled, and automated deployment processes.
 
 ### **Key Features:**
+
 - ✅ **Production Deployment Approval**: Admin approval required for production deployments
 - ✅ **Staging Auto-Deploy**: Automatic staging deployment on main branch
 - ✅ **Critical Bug Hotfix**: Emergency deployment for critical fixes
@@ -17,6 +18,7 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ## 🏗️ **Architecture**
 
 ### **Core Components:**
+
 1. **Deployment Rules Engine**: Automated deployment decision-making
 2. **Commit Workflow Management**: Code review and approval processes
 3. **Health Monitoring**: Deployment status tracking and rollback
@@ -24,6 +26,7 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 5. **Notification System**: Slack/email alerts for deployment events
 
 ### **Rule Types:**
+
 - **WORKFLOW**: Deployment and commit automation
 - **COMPLIANCE**: Security and regulatory compliance
 - **NOTIFICATION**: Automated alerts and notifications
@@ -33,6 +36,7 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ## 📊 **Deployment Rules**
 
 ### **1. Production Deployment Approval**
+
 ```json
 {
   "name": "Production Deployment Approval",
@@ -80,15 +84,18 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ```
 
 **Triggers:**
+
 - Production environment deployment
 - Non-admin user attempting deployment
 
 **Actions:**
+
 - Require admin approval
 - Send Slack notification
 - Log approval event
 
 ### **2. Staging Auto-Deploy**
+
 ```json
 {
   "name": "Staging Auto-Deploy",
@@ -135,15 +142,18 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ```
 
 **Triggers:**
+
 - Main branch push
 - Staging environment
 - Feature commit message
 
 **Actions:**
+
 - Trigger staging deployment workflow
 - Send deployment notification
 
 ### **3. Critical Bug Hotfix**
+
 ```json
 {
   "name": "Critical Bug Hotfix",
@@ -194,15 +204,18 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ```
 
 **Triggers:**
+
 - Hotfix commit message
 - Critical priority flag
 
 **Actions:**
+
 - Emergency production deployment
 - Skip tests for speed
 - Critical alert notification
 
 ### **4. Deployment Health Check**
+
 ```json
 {
   "name": "Deployment Health Check",
@@ -252,10 +265,12 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ```
 
 **Triggers:**
+
 - Failed deployment status
 - Production environment
 
 **Actions:**
+
 - Trigger rollback workflow
 - Send failure alert
 - Log rollback event
@@ -265,6 +280,7 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ## 📝 **Commit Rules**
 
 ### **5. Code Review Required**
+
 ```json
 {
   "name": "Code Review Required",
@@ -304,14 +320,17 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ```
 
 **Triggers:**
+
 - Non-admin user
 - Main branch commit
 
 **Actions:**
+
 - Require admin approval
 - Send review notification
 
 ### **6. Security Scan on Deploy**
+
 ```json
 {
   "name": "Security Scan on Deploy",
@@ -353,10 +372,12 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ```
 
 **Triggers:**
+
 - Production deployment
 - Security scan not passed
 
 **Actions:**
+
 - Trigger security scan
 - Block deployment until passed
 - Send security notification
@@ -366,15 +387,18 @@ The Shadow Goose Deployment Workflow Rules automate CI/CD pipelines, deployment 
 ## 🔧 **API Endpoints**
 
 ### **Deployment Management:**
+
 - `POST /api/deployments` - Create new deployment
 - `GET /api/deployments` - Get all deployments (admin only)
 - `POST /api/deployments/{id}/status` - Update deployment status
 
 ### **Commit Management:**
+
 - `POST /api/commits` - Create new commit
 - `GET /api/commits` - Get all commits (admin only)
 
 ### **Example Usage:**
+
 ```bash
 # Create production deployment
 curl -X POST -H "Authorization: Bearer TOKEN" \
@@ -404,17 +428,20 @@ curl -X POST -H "Authorization: Bearer TOKEN" \
 ## 🎨 **Frontend Interface**
 
 ### **Access:**
+
 - URL: https://shadow-goose-web-staging.onrender.com/deployments
 - Admin access required
 - Navigate from Dashboard → "Deployments" button
 
 ### **Features:**
+
 - **Deployment Management**: Create and track deployments
 - **Commit Tracking**: Monitor commit history
 - **Status Monitoring**: Real-time deployment status
 - **Statistics**: Deployment metrics and analytics
 
 ### **Navigation:**
+
 1. Login as admin user (`test` / `test`)
 2. Go to Dashboard
 3. Click "Deployments" button (indigo)
@@ -425,21 +452,25 @@ curl -X POST -H "Authorization: Bearer TOKEN" \
 ## 📈 **Use Cases**
 
 ### **1. Production Deployment Workflow**
+
 ```
 Developer → Create Deployment → Rules Engine → Admin Approval → Deploy → Health Check
 ```
 
 ### **2. Staging Auto-Deploy**
+
 ```
 Git Push → Main Branch → Rules Engine → Auto-Deploy Staging → Notification
 ```
 
 ### **3. Emergency Hotfix**
+
 ```
 Critical Bug → Hotfix Commit → Rules Engine → Emergency Deploy → Alert Team
 ```
 
 ### **4. Security Compliance**
+
 ```
 Production Deploy → Security Scan → Pass/Fail → Deploy/Block → Log Event
 ```
@@ -449,6 +480,7 @@ Production Deploy → Security Scan → Pass/Fail → Deploy/Block → Log Event
 ## 🔄 **Integration Examples**
 
 ### **GitHub Actions Integration:**
+
 ```yaml
 name: Deploy to Staging
 on:
@@ -469,6 +501,7 @@ jobs:
 ```
 
 ### **Slack Integration:**
+
 ```python
 # Rules engine automatically sends notifications
 notification_rule = {
@@ -486,6 +519,7 @@ notification_rule = {
 ## 🛠️ **Development & Testing**
 
 ### **Testing Deployment Rules:**
+
 ```bash
 # Test production deployment approval
 curl -X POST \
@@ -501,6 +535,7 @@ curl -X POST \
 ```
 
 ### **Testing Commit Rules:**
+
 ```bash
 # Test code review requirement
 curl -X POST \
@@ -520,12 +555,14 @@ curl -X POST \
 ## 📊 **Monitoring & Analytics**
 
 ### **Deployment Metrics:**
+
 - Deployment success rate
 - Average deployment time
 - Rollback frequency
 - Security scan pass rate
 
 ### **Commit Metrics:**
+
 - Code review compliance
 - Commit frequency by user
 - Branch protection effectiveness
@@ -536,6 +573,7 @@ curl -X POST \
 ## 🚀 **Future Enhancements**
 
 ### **Planned Features:**
+
 - **Blue-Green Deployments**: Zero-downtime deployment strategy
 - **Canary Deployments**: Gradual rollout with monitoring
 - **Automated Testing**: Integration with test suites
@@ -544,6 +582,7 @@ curl -X POST \
 - **Multi-Environment**: Support for multiple environments
 
 ### **Integration Roadmap:**
+
 - **GitHub/GitLab**: Direct repository integration
 - **Jenkins/CircleCI**: CI/CD platform integration
 - **Kubernetes**: Container orchestration
@@ -556,6 +595,7 @@ curl -X POST \
 ## 🎯 **Getting Started**
 
 ### **Quick Start:**
+
 1. **Access Deployments**: Login as admin → Dashboard → Deployments
 2. **Create Test Deployment**: Use the form to create a staging deployment
 3. **Test Rules**: Create commits and deployments to trigger rules
@@ -563,10 +603,11 @@ curl -X POST \
 5. **Review Logs**: Monitor deployment and commit history
 
 ### **Next Steps:**
+
 1. **Configure Environments**: Set up staging and production
 2. **Customize Rules**: Modify rules for your workflow
 3. **Integrate CI/CD**: Connect with your existing pipeline
 4. **Set Up Monitoring**: Configure alerts and dashboards
 5. **Train Team**: Educate team on new workflow
 
-**The Shadow Goose Deployment Workflow Rules are now ready for production use!** 🚀 
+**The Shadow Goose Deployment Workflow Rules are now ready for production use!** 🚀

@@ -4,7 +4,7 @@ services:
     env: node
     plan: starter
     repo: https://github.com/A1anMc/shadow-goose-frontend.git
-    branch: main  # DEPLOY FROM MAIN BRANCH - ENHANCED DASHBOARD
+    branch: main # DEPLOY FROM MAIN BRANCH - ENHANCED DASHBOARD
     rootDir: .
     buildCommand: npm ci && npm run build
     startCommand: PORT=$PORT node .next/standalone/server.js

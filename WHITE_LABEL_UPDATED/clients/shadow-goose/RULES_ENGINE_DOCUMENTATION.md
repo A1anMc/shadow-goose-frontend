@@ -5,6 +5,7 @@
 The Shadow Goose Rules Engine is a comprehensive business logic automation system that allows you to create, manage, and execute JSON-based rules for automated decision-making, workflows, and business processes.
 
 ### **Key Features:**
+
 - ✅ **JSON-based Rules**: Easy to create and modify rules
 - ✅ **Condition Evaluation**: Multiple operators for complex logic
 - ✅ **Action Execution**: Automated actions based on conditions
@@ -17,6 +18,7 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 ## 🏗️ **Architecture**
 
 ### **Core Components:**
+
 1. **Rules Engine** (`app/rules_engine.py`)
    - Rule evaluation and execution
    - Condition operators and logic
@@ -37,6 +39,7 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 ## 📊 **Rule Structure**
 
 ### **Basic Rule Format:**
+
 ```json
 {
   "name": "Rule Name",
@@ -63,6 +66,7 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 ```
 
 ### **Rule Types:**
+
 - **project_approval**: Project creation and approval workflows
 - **grant_matching**: Grant recommendation and matching
 - **user_access**: User permission and assignment rules
@@ -71,6 +75,7 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 - **compliance**: Regulatory and policy compliance
 
 ### **Condition Operators:**
+
 - **equals**: Exact match
 - **not_equals**: Not equal to
 - **greater_than**: Numeric comparison
@@ -86,6 +91,7 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 - **not_exists**: Field does not exist
 
 ### **Action Types:**
+
 - **send_notification**: Email, Slack, or other notifications
 - **update_status**: Change entity status
 - **require_approval**: Trigger approval workflow
@@ -100,6 +106,7 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 ## 🚀 **Default Rules**
 
 ### **1. High Value Project Approval**
+
 ```json
 {
   "name": "High Value Project Approval",
@@ -139,6 +146,7 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 ```
 
 ### **2. Grant Deadline Alert**
+
 ```json
 {
   "name": "Grant Deadline Alert",
@@ -170,6 +178,7 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 ```
 
 ### **3. New User Assignment**
+
 ```json
 {
   "name": "New User Assignment",
@@ -206,16 +215,19 @@ The Shadow Goose Rules Engine is a comprehensive business logic automation syste
 ## 🔧 **API Endpoints**
 
 ### **Rule Management:**
+
 - `GET /api/rules` - Get all rules (admin only)
 - `POST /api/rules` - Create new rule (admin only)
 - `GET /api/rules/types` - Get available rule types and operators
 - `GET /api/rules/examples` - Get example rules
 
 ### **Rule Processing:**
+
 - `POST /api/rules/process` - Process rules against context
 - `POST /api/rules/test` - Test rule against context
 
 ### **Example Usage:**
+
 ```bash
 # Get all rules
 curl -H "Authorization: Bearer TOKEN" \
@@ -233,17 +245,20 @@ curl -X POST -H "Authorization: Bearer TOKEN" \
 ## 🎨 **Frontend Interface**
 
 ### **Access:**
+
 - URL: https://shadow-goose-web-staging.onrender.com/rules
 - Admin access required
 - Navigate from Dashboard → "Rules Engine" button
 
 ### **Features:**
+
 - **Rule Statistics**: Total rules, rule types, action types
 - **Rule Management**: View, create, and manage rules
 - **Rule Creation**: Form-based rule creation
 - **Rule Testing**: Test rules against contexts
 
 ### **Navigation:**
+
 1. Login as admin user (`test` / `test`)
 2. Go to Dashboard
 3. Click "Rules Engine" button (orange)
@@ -254,21 +269,25 @@ curl -X POST -H "Authorization: Bearer TOKEN" \
 ## 📈 **Use Cases**
 
 ### **1. Project Approval Workflows**
+
 - Automatic approval for low-value projects
 - Admin approval required for high-value projects
 - Notification to stakeholders on approval decisions
 
 ### **2. Grant Management**
+
 - Deadline alerts for upcoming grant deadlines
 - Automatic grant matching based on criteria
 - Status updates and notifications
 
 ### **3. User Management**
+
 - Automatic user assignment to projects
 - Role-based access control
 - Permission management
 
 ### **4. Compliance & Reporting**
+
 - Regulatory compliance checks
 - Automated reporting triggers
 - Audit trail creation
@@ -278,6 +297,7 @@ curl -X POST -H "Authorization: Bearer TOKEN" \
 ## 🔄 **Integration Examples**
 
 ### **Project Creation with Rules:**
+
 ```python
 # When creating a project, rules are automatically processed
 project_data = {
@@ -299,6 +319,7 @@ results = rules_engine.process_rules(context, ["project_approval"])
 ```
 
 ### **Notification Integration:**
+
 ```python
 # Rules can trigger various notification types
 notification_rule = {
@@ -316,6 +337,7 @@ notification_rule = {
 ## 🛠️ **Development & Testing**
 
 ### **Testing Rules:**
+
 ```bash
 # Test a rule against context
 curl -X POST \
@@ -335,6 +357,7 @@ curl -X POST \
 ```
 
 ### **Adding Custom Actions:**
+
 ```python
 # Extend the rules engine with custom actions
 def custom_action_handler(params, context):
@@ -349,12 +372,14 @@ rules_engine.action_handlers["custom_action"] = custom_action_handler
 ## 📊 **Monitoring & Analytics**
 
 ### **Rule Execution Metrics:**
+
 - Rules triggered per day
 - Action success rates
 - Performance metrics
 - Error tracking
 
 ### **Dashboard Integration:**
+
 - Rule statistics in admin dashboard
 - Real-time rule execution status
 - Performance monitoring
@@ -364,6 +389,7 @@ rules_engine.action_handlers["custom_action"] = custom_action_handler
 ## 🚀 **Future Enhancements**
 
 ### **Planned Features:**
+
 - **Visual Rule Builder**: Drag-and-drop rule creation
 - **Rule Templates**: Pre-built rule templates
 - **Advanced Conditions**: Complex logical operators
@@ -373,6 +399,7 @@ rules_engine.action_handlers["custom_action"] = custom_action_handler
 - **Machine Learning**: Automated rule optimization
 
 ### **Integration Roadmap:**
+
 - **Slack Integration**: Real-time notifications
 - **Email Integration**: Automated email workflows
 - **Calendar Integration**: Deadline management
@@ -383,6 +410,7 @@ rules_engine.action_handlers["custom_action"] = custom_action_handler
 ## 🎯 **Getting Started**
 
 ### **Quick Start:**
+
 1. **Access Rules Engine**: Login as admin → Dashboard → Rules Engine
 2. **View Default Rules**: See pre-configured rules
 3. **Create Test Rule**: Use the form to create a simple rule
@@ -390,10 +418,11 @@ rules_engine.action_handlers["custom_action"] = custom_action_handler
 5. **Monitor Results**: Check rule execution in logs
 
 ### **Next Steps:**
+
 1. **Customize Rules**: Modify default rules for your needs
 2. **Add New Rules**: Create rules for specific business processes
 3. **Integrate Actions**: Connect with external systems
 4. **Monitor Performance**: Track rule effectiveness
 5. **Scale Up**: Add more complex rule logic
 
-**The Shadow Goose Rules Engine is now ready for production use!** 🎯 
+**The Shadow Goose Rules Engine is now ready for production use!** 🎯

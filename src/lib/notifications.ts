@@ -46,7 +46,7 @@ class NotificationService {
 
   // Mark all notifications as read
   markAllAsRead() {
-    this.notifications.forEach(n => n.read = true);
+    this.notifications.forEach(n => (n.read = true));
     this.notifyListeners();
   }
 
@@ -79,22 +79,27 @@ class NotificationService {
 
   private showBrowserNotification(notification: WSNotification) {
     if (typeof window !== 'undefined' && 'Notification' in window) {
-      if (Notification.permission === 'granted') {
+      const trigger = () => {
         new Notification(notification.title, {
           body: notification.message,
           icon: '/favicon.ico',
           tag: notification.id,
         });
+      };
+
+      if (Notification.permission === 'granted') {
+        trigger();
       } else if (Notification.permission === 'default') {
-        Notification.requestPermission()await permission => {
-          if (permission === 'granted') {
-            new Notification(notification.title, {
-              body: notification.message,
-              icon: '/favicon.ico',
-              tag: notification.id,
-            });
+        (async () => {
+          try {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+              trigger();
+            }
+          } catch (err) {
+            // ignore permission errors
           }
-        });
+        })();
       }
     }
   }

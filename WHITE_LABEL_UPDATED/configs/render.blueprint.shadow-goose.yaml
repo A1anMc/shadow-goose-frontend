@@ -65,9 +65,9 @@ services:
     name: shadow-goose-api-staging
     env: python
     plan: starter
-    repo: https://github.com/ORG/BACKEND_REPO.git  # TODO: set your repo URL
+    repo: https://github.com/ORG/BACKEND_REPO.git # TODO: set your repo URL
     branch: main
-    rootDir: .  # adjust if backend lives in a subfolder
+    rootDir: . # adjust if backend lives in a subfolder
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVarGroups:
@@ -78,9 +78,9 @@ services:
     name: shadow-goose-web-staging
     env: node
     plan: starter
-    repo: https://github.com/ORG/FRONTEND_REPO.git  # TODO: set your repo URL
+    repo: https://github.com/ORG/FRONTEND_REPO.git # TODO: set your repo URL
     branch: main
-    rootDir: .  # set to "frontend" if monorepo
+    rootDir: . # set to "frontend" if monorepo
     buildCommand: npm ci && npm run build
     startCommand: PORT=$PORT node .next/standalone/server.js
     envVarGroups:
@@ -91,7 +91,7 @@ services:
     name: shadow-goose-api
     env: python
     plan: starter
-    repo: https://github.com/ORG/BACKEND_REPO.git  # TODO: set your repo URL
+    repo: https://github.com/ORG/BACKEND_REPO.git # TODO: set your repo URL
     branch: main
     rootDir: .
     buildCommand: pip install -r requirements.txt
@@ -104,11 +104,11 @@ services:
     name: shadow-goose-web
     env: node
     plan: starter
-    repo: https://github.com/ORG/FRONTEND_REPO.git  # TODO: set your repo URL
+    repo: https://github.com/ORG/FRONTEND_REPO.git # TODO: set your repo URL
     branch: main
-    rootDir: .  # set to "frontend" if monorepo
+    rootDir: . # set to "frontend" if monorepo
     buildCommand: npm ci && npm run build
     startCommand: PORT=$PORT node .next/standalone/server.js
     envVarGroups:
       - shadow-goose-web-production
-    healthCheckPath: /api/health 
+    healthCheckPath: /api/health

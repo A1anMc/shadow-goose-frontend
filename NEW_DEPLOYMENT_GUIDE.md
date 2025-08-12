@@ -3,6 +3,7 @@
 ## 🎯 **The Best Fix: New Deployment Service**
 
 ### **Why This Works:**
+
 - ✅ **Clean slate** - No old configuration conflicts
 - ✅ **Full control** - We control the entire deployment
 - ✅ **Immediate results** - New service will deploy latest code
@@ -13,6 +14,7 @@
 ## 📋 **Deployment Steps:**
 
 ### **Step 1: Deploy to Render**
+
 1. Go to [Render Dashboard](https://dashboard.render.com)
 2. Click **"New +"** → **"Web Service"**
 3. Connect to GitHub repository: `https://github.com/A1anMc/shadow-goose-frontend.git`
@@ -23,7 +25,9 @@
 8. **Plan**: Starter (Free)
 
 ### **Step 2: Environment Variables**
+
 Add these environment variables in Render:
+
 ```
 NEXT_PUBLIC_API_URL = https://shadow-goose-api.onrender.com
 NEXT_PUBLIC_CLIENT = shadow-goose
@@ -33,6 +37,7 @@ NEXT_PUBLIC_ENV = production
 ```
 
 ### **Step 3: Deploy**
+
 - Click **"Create Web Service"**
 - Render will automatically deploy from the main branch
 - Wait 5-10 minutes for deployment
@@ -42,6 +47,7 @@ NEXT_PUBLIC_ENV = production
 ## 🔍 **Verification Checklist:**
 
 ### **After Deployment:**
+
 - [ ] New service URL is available (e.g., `https://sge-enhanced-dashboard.onrender.com`)
 - [ ] Dashboard shows "v1.0.1 Enhanced" version indicator
 - [ ] Instant Analytics navigation button visible
@@ -51,6 +57,7 @@ NEXT_PUBLIC_ENV = production
 - [ ] No "Loading..." screens
 
 ### **Test URLs:**
+
 - **Dashboard**: `https://sge-enhanced-dashboard.onrender.com/dashboard`
 - **Instant Analytics**: `https://sge-enhanced-dashboard.onrender.com/instant-analytics`
 - **Impact Analytics**: `https://sge-enhanced-dashboard.onrender.com/impact-analytics`
@@ -61,6 +68,7 @@ NEXT_PUBLIC_ENV = production
 ## 🎉 **Expected Results:**
 
 ### **Enhanced Dashboard Features:**
+
 - ✅ **Navigation Bar**: Instant Analytics, Impact Analytics, Analytics, New Project
 - ✅ **Quick Actions**: 4 gradient cards for easy navigation
 - ✅ **Sample Data**: 2 active projects with real metrics
@@ -68,6 +76,7 @@ NEXT_PUBLIC_ENV = production
 - ✅ **Modern UI/UX**: Professional design with gradients
 
 ### **Analytics Pages:**
+
 - ✅ **Instant Analytics**: Real-time metrics with auto-refresh
 - ✅ **Impact Analytics**: Comprehensive impact measurement
 - ✅ **Full Analytics**: Complete analytics dashboard
@@ -77,12 +86,14 @@ NEXT_PUBLIC_ENV = production
 ## 🔧 **Troubleshooting:**
 
 ### **If Deployment Fails:**
+
 1. Check build logs in Render dashboard
 2. Verify environment variables are set
 3. Ensure repository access is granted
 4. Check for any build errors
 
 ### **If Old Version Shows:**
+
 1. Clear browser cache
 2. Check if new service URL is being used
 3. Verify deployment completed successfully
@@ -93,6 +104,7 @@ NEXT_PUBLIC_ENV = production
 ## 📊 **Success Metrics:**
 
 ### **Deployment Success:**
+
 - [ ] New service URL accessible
 - [ ] Enhanced dashboard loads correctly
 - [ ] All navigation buttons work
@@ -101,6 +113,7 @@ NEXT_PUBLIC_ENV = production
 - [ ] Version indicator visible
 
 ### **Performance:**
+
 - [ ] Page load time < 3 seconds
 - [ ] No console errors
 - [ ] Responsive design works

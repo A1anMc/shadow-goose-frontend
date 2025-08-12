@@ -37,4 +37,4 @@ services:
         value: 1.0.0
       - key: NEXT_PUBLIC_ENV
         value: production
-    healthCheckPath: /api/health 
+    healthCheckPath: /api/health

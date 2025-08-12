@@ -1,35 +1,35 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { getBranding } from '../src/lib/branding';
-import { authService, LoginCredentials } from '../src/lib/auth';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { getBranding } from "../src/lib/branding";
+import { authService, LoginCredentials } from "../src/lib/auth";
 
 export default function Login() {
   const router = useRouter();
   const branding = getBranding();
   const [credentials, setCredentials] = useState<LoginCredentials>({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // Redirect if already authenticated
     if (authService.isAuthenticated()) {
-      router.push('/dashboard');
+      router.push("/dashboard");
     }
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       await authService.login(credentials);
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
-      setError('Invalid username or password. Please try again.');
+      setError("Invalid username or password. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -37,7 +37,7 @@ export default function Login() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCredentials(prev => ({
+    setCredentials((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -48,8 +48,18 @@ export default function Login() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-sg-primary">
-            <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="h-8 w-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-sg-primary">
@@ -98,14 +108,22 @@ export default function Login() {
             <div className="rounded-md bg-red-50 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="h-5 w-5 text-red-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
-                    {error}
-                  </h3>
+                  <h3 className="text-sm font-medium text-red-800">{error}</h3>
                 </div>
               </div>
             </div>
@@ -123,14 +141,15 @@ export default function Login() {
                   Signing in...
                 </div>
               ) : (
-                'Sign in'
+                "Sign in"
               )}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-xs text-gray-500">
-              Demo Credentials: <code className="bg-gray-100 px-1 rounded">test / test</code>
+              Demo Credentials:{" "}
+              <code className="bg-gray-100 px-1 rounded">test / test</code>
             </p>
           </div>
         </form>

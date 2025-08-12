@@ -10,9 +10,11 @@ Provide the following assets for the client:
 - Brand guidelines: PDF or link
 
 File placement suggestions
+
 - Frontend public assets: `frontend/public/clients/<client>/`
 - Fonts: `frontend/public/fonts/<client>/`
 
 Env mapping
+
 - `NEXT_PUBLIC_CLIENT`, `NEXT_PUBLIC_APP_NAME`
-- Email branding: `APP_NAME`, `BRAND_COLOR`, `BRAND_LOGO_URL` 
+- Email branding: `APP_NAME`, `BRAND_COLOR`, `BRAND_LOGO_URL`

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { getBranding } from '../src/lib/branding';
-import { okrService, OKR } from '../src/lib/okrs';
-import { authService } from '../src/lib/auth';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { getBranding } from "../src/lib/branding";
+import { okrService, OKR } from "../src/lib/okrs";
+import { authService } from "../src/lib/auth";
 
 export default function OKRs() {
   const router = useRouter();
@@ -20,14 +20,14 @@ export default function OKRs() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
 
   useEffect(() => {
     const loadOKRs = async () => {
       try {
         // Check authentication
         if (!authService.isAuthenticated()) {
-          router.push('/login');
+          router.push("/login");
           return;
         }
 
@@ -40,8 +40,8 @@ export default function OKRs() {
         setStats(statsData);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error loading OKRs:', error);
-        setError('Failed to load OKR data');
+        console.error("Error loading OKRs:", error);
+        setError("Failed to load OKR data");
         setIsLoading(false);
       }
     };
@@ -51,28 +51,28 @@ export default function OKRs() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'on_track':
-        return 'bg-green-100 text-green-800';
-      case 'at_risk':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'behind':
-        return 'bg-red-100 text-red-800';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800';
+      case "on_track":
+        return "bg-green-100 text-green-800";
+      case "at_risk":
+        return "bg-yellow-100 text-yellow-800";
+      case "behind":
+        return "bg-red-100 text-red-800";
+      case "completed":
+        return "bg-blue-100 text-blue-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 80) return 'bg-green-500';
-    if (progress >= 60) return 'bg-yellow-500';
-    if (progress >= 40) return 'bg-orange-500';
-    return 'bg-red-500';
+    if (progress >= 80) return "bg-green-500";
+    if (progress >= 60) return "bg-yellow-500";
+    if (progress >= 40) return "bg-orange-500";
+    return "bg-red-500";
   };
 
-  const filteredOKRs = okrs.filter(okr => {
-    if (filter === 'all') return true;
+  const filteredOKRs = okrs.filter((okr) => {
+    if (filter === "all") return true;
     return okr.status === filter;
   });
 
@@ -116,13 +116,13 @@ export default function OKRs() {
               </h1>
               <nav className="flex space-x-4">
                 <button
-                  onClick={() => router.push('/dashboard')}
+                  onClick={() => router.push("/dashboard")}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Dashboard
                 </button>
                 <button
-                  onClick={() => router.push('/grants')}
+                  onClick={() => router.push("/grants")}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Grants
@@ -130,9 +130,7 @@ export default function OKRs() {
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
-                Welcome, SGE Team
-              </span>
+              <span className="text-sm text-gray-600">Welcome, SGE Team</span>
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="bg-sg-primary text-white px-4 py-2 rounded-md text-sm hover:bg-sg-primary/90 transition-colors"
@@ -155,13 +153,27 @@ export default function OKRs() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-blue-100 rounded-lg">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  <svg
+                    className="w-6 h-6 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total OKRs</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total_okrs}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total OKRs
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.total_okrs}
+                  </p>
                 </div>
               </div>
             </div>
@@ -169,13 +181,25 @@ export default function OKRs() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-green-100 rounded-lg">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-6 h-6 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">On Track</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.on_track_okrs}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.on_track_okrs}
+                  </p>
                 </div>
               </div>
             </div>
@@ -183,13 +207,25 @@ export default function OKRs() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-yellow-100 rounded-lg">
-                  <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  <svg
+                    className="w-6 h-6 text-yellow-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                    />
                   </svg>
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">At Risk</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.at_risk_okrs}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.at_risk_okrs}
+                  </p>
                 </div>
               </div>
             </div>
@@ -197,13 +233,27 @@ export default function OKRs() {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-purple-100 rounded-lg">
-                  <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  <svg
+                    className="w-6 h-6 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Avg Progress</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.average_progress}%</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Avg Progress
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.average_progress}%
+                  </p>
                 </div>
               </div>
             </div>
@@ -214,10 +264,14 @@ export default function OKRs() {
         <div className="bg-white rounded-lg shadow p-6 mb-8">
           <div className="flex flex-wrap gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
               <select
                 value={filter}
-                onChange={(e) => setFilter(e.target.value as 'all' | 'active' | 'completed')}
+                onChange={(e) =>
+                  setFilter(e.target.value as "all" | "active" | "completed")
+                }
                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
               >
                 <option value="all">All Status</option>
@@ -234,21 +288,33 @@ export default function OKRs() {
             <div key={okr.id} className="bg-white rounded-lg shadow p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900">{okr.objective}</h3>
-                  <p className="text-gray-600 mt-1">{okr.objective_description || ''}</p>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {okr.objective}
+                  </h3>
+                  <p className="text-gray-600 mt-1">
+                    {okr.objective_description || ""}
+                  </p>
                   <div className="flex items-center space-x-4 mt-2">
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(okr.status)}`}>
-                      {okr.status.replace('_', ' ')}
+                    <span
+                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(okr.status)}`}
+                    >
+                      {okr.status.replace("_", " ")}
                     </span>
                     <span className="text-sm text-gray-500">
-                      Target: {okr.deadline || 'No deadline set'}
+                      Target: {okr.deadline || "No deadline set"}
                     </span>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-gray-500">Overall Progress</div>
                   <div className="text-2xl font-bold text-sg-primary">
-                    {Math.round(okr.key_results.reduce((sum, kr) => sum + kr.progress_percentage, 0) / okr.key_results.length)}%
+                    {Math.round(
+                      okr.key_results.reduce(
+                        (sum, kr) => sum + kr.progress_percentage,
+                        0,
+                      ) / okr.key_results.length,
+                    )}
+                    %
                   </div>
                 </div>
               </div>
@@ -257,17 +323,25 @@ export default function OKRs() {
               <div className="space-y-4">
                 <h4 className="font-medium text-gray-900">Key Results</h4>
                 {okr.key_results.map((kr) => (
-                  <div key={kr.id} className="border border-gray-200 rounded-lg p-4">
+                  <div
+                    key={kr.id}
+                    className="border border-gray-200 rounded-lg p-4"
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{kr.description}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {kr.description}
+                        </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          Target: {kr.target_value} {kr.unit} | Current: {kr.current_value} {kr.unit}
+                          Target: {kr.target_value} {kr.unit} | Current:{" "}
+                          {kr.current_value} {kr.unit}
                         </p>
                       </div>
                       <div className="text-right">
-                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(kr.status)}`}>
-                          {kr.status.replace('_', ' ')}
+                        <span
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(kr.status)}`}
+                        >
+                          {kr.status.replace("_", " ")}
                         </span>
                       </div>
                     </div>
@@ -281,7 +355,9 @@ export default function OKRs() {
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(kr.progress_percentage)}`}
-                            style={{ width: `${Math.min(kr.progress_percentage, 100)}%` }}
+                            style={{
+                              width: `${Math.min(kr.progress_percentage, 100)}%`,
+                            }}
                           ></div>
                         </div>
                       </div>
@@ -299,7 +375,9 @@ export default function OKRs() {
                           }}
                           className="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-sg-primary"
                         />
-                        <span className="text-sm text-gray-500 self-center">{kr.unit}</span>
+                        <span className="text-sm text-gray-500 self-center">
+                          {kr.unit}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -319,10 +397,12 @@ export default function OKRs() {
 
         {filteredOKRs.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No OKRs found matching your filters.</p>
+            <p className="text-gray-500">
+              No OKRs found matching your filters.
+            </p>
             <button
               onClick={() => {
-                setFilter('all');
+                setFilter("all");
               }}
               className="mt-2 text-sg-primary hover:text-sg-primary/90"
             >
@@ -336,10 +416,12 @@ export default function OKRs() {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Create New OKR</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Create New OKR
+            </h2>
             <CreateOKRForm
               onSubmit={(data) => {
-                console.log('OKR creation not implemented yet:', data);
+                console.log("OKR creation not implemented yet:", data);
                 setShowCreateModal(false);
               }}
               onCancel={() => setShowCreateModal(false)}
@@ -352,19 +434,25 @@ export default function OKRs() {
 }
 
 // Create OKR Form Component
-function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: unknown) => void; onCancel: () => void }) {
+function CreateOKRForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: unknown) => void;
+  onCancel: () => void;
+}) {
   const [formData, setFormData] = useState({
-    objective: '',
-    objective_description: '',
-    deadline: '',
-    key_results: [{ description: '', target_value: 0, unit: '' }],
+    objective: "",
+    objective_description: "",
+    deadline: "",
+    key_results: [{ description: "", target_value: 0, unit: "" }],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
       ...formData,
-      key_results: formData.key_results.map(kr => ({
+      key_results: formData.key_results.map((kr) => ({
         description: kr.description,
         target_value: kr.target_value,
         current_value: 0, // Start at 0 for new key results
@@ -376,7 +464,10 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: unknown) => vo
   const addKeyResult = () => {
     setFormData({
       ...formData,
-      key_results: [...formData.key_results, { description: '', target_value: 0, unit: '' }],
+      key_results: [
+        ...formData.key_results,
+        { description: "", target_value: 0, unit: "" },
+      ],
     });
   };
 
@@ -387,7 +478,11 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: unknown) => vo
     });
   };
 
-  const updateKeyResult = (index: number, field: string, value: string | number) => {
+  const updateKeyResult = (
+    index: number,
+    field: string,
+    value: string | number,
+  ) => {
     const newKeyResults = [...formData.key_results];
     newKeyResults[index] = { ...newKeyResults[index], [field]: value };
     setFormData({ ...formData, key_results: newKeyResults });
@@ -396,21 +491,29 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: unknown) => vo
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Objective</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Objective
+        </label>
         <input
           type="text"
           value={formData.objective}
-          onChange={(e) => setFormData({ ...formData, objective: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, objective: e.target.value })
+          }
           className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Description
+        </label>
         <textarea
           value={formData.objective_description}
-          onChange={(e) => setFormData({ ...formData, objective_description: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, objective_description: e.target.value })
+          }
           className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
           rows={3}
         />
@@ -418,18 +521,24 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: unknown) => vo
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Deadline
+          </label>
           <input
             type="date"
             value={formData.deadline}
-            onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, deadline: e.target.value })
+            }
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Key Results</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Key Results
+        </label>
         <div className="space-y-3">
           {formData.key_results.map((kr, index) => (
             <div key={index} className="flex space-x-2">
@@ -437,7 +546,9 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: unknown) => vo
                 type="text"
                 placeholder="Description"
                 value={kr.description}
-                onChange={(e) => updateKeyResult(index, 'description', e.target.value)}
+                onChange={(e) =>
+                  updateKeyResult(index, "description", e.target.value)
+                }
                 className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
                 required
               />
@@ -445,7 +556,9 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: unknown) => vo
                 type="number"
                 placeholder="Target"
                 value={kr.target_value}
-                onChange={(e) => updateKeyResult(index, 'target_value', Number(e.target.value))}
+                onChange={(e) =>
+                  updateKeyResult(index, "target_value", Number(e.target.value))
+                }
                 className="w-24 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
                 required
               />
@@ -453,7 +566,7 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: unknown) => vo
                 type="text"
                 placeholder="Unit"
                 value={kr.unit}
-                onChange={(e) => updateKeyResult(index, 'unit', e.target.value)}
+                onChange={(e) => updateKeyResult(index, "unit", e.target.value)}
                 className="w-20 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
                 required
               />
