@@ -1,9 +1,90 @@
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { getBranding } from '../src/lib/branding';
+import { authService } from '../src/lib/auth';
+import { sgeProjectService } from '../src/lib/projects';
 
 // Production-ready dashboard with enhanced analytics and UI/UX
 // Version: 1.0.1 - Enhanced Dashboard with Analytics
+
 export default function Dashboard() {
+  const router = useRouter();
   const branding = getBranding();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState({
+    total_projects: 0,
+    active_projects: 0,
+    completed_projects: 0,
+    total_participants: 0,
+    total_funding: 0,
+    average_progress: 0,
+  });
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    const checkAuthAndLoadData = async () => {
+      try {
+        // Check if user is authenticated
+        if (!authService.isAuthenticated()) {
+          router.push('/login');
+          return;
+        }
+
+        // Validate token with backend
+        const isValid = await authService.validateToken();
+        if (!isValid) {
+          authService.logout();
+          router.push('/login');
+          return;
+        }
+
+        // Load dashboard data
+        const [statsData, projectsData] = await Promise.all([
+          sgeProjectService.getProjectStats(),
+          sgeProjectService.getProjects(),
+        ]);
+
+        setStats(statsData);
+        setProjects(projectsData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Dashboard loading error:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load dashboard data');
+        setIsLoading(false);
+      }
+    };
+
+    checkAuthAndLoadData();
+  }, [router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-sg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sg-primary mx-auto"></div>
+          <p className="mt-4 text-sg-primary">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-sg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-xl mb-4">⚠️ Dashboard Error</div>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-sg-primary text-white px-4 py-2 rounded-md hover:bg-sg-primary/90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-sg-background">
@@ -81,7 +162,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Projects</p>
-                <p className="text-2xl font-bold text-gray-900">2</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total_projects}</p>
               </div>
             </div>
           </div>
@@ -95,7 +176,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Active Projects</p>
-                <p className="text-2xl font-bold text-gray-900">2</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.active_projects}</p>
               </div>
             </div>
           </div>
@@ -109,7 +190,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Participants</p>
-                <p className="text-2xl font-bold text-gray-900">529</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total_participants}</p>
               </div>
             </div>
           </div>
@@ -123,7 +204,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Funding</p>
-                <p className="text-2xl font-bold text-gray-900">$275,000</p>
+                <p className="text-2xl font-bold text-gray-900">${stats.total_funding.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -187,12 +268,12 @@ export default function Dashboard() {
             <div className="flex-1">
               <div className="flex justify-between text-sm text-gray-600 mb-1">
                 <span>Average Progress</span>
-                <span>65.4%</span>
+                <span>{stats.average_progress}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
                   className="bg-sg-accent h-2 rounded-full transition-all duration-300"
-                  style={{ width: '65.4%' }}
+                  style={{ width: `${stats.average_progress}%` }}
                 ></div>
               </div>
             </div>
@@ -213,64 +294,37 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="divide-y divide-gray-200">
-            <div className="px-6 py-4 hover:bg-gray-50">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="text-lg font-medium text-gray-900">Youth Employment Initiative</h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Supporting young people in finding meaningful employment opportunities
-                  </p>
-                  <div className="flex items-center mt-2 space-x-4">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Active
-                    </span>
-                    <span className="text-sm text-gray-500">342 participants</span>
-                    <span className="text-sm text-gray-500">$180,000</span>
+            {projects.map((project, index) => (
+              <div key={index} className="px-6 py-4 hover:bg-gray-50">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {project.description}
+                    </p>
+                    <div className="flex items-center mt-2 space-x-4">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        {project.status}
+                      </span>
+                      <span className="text-sm text-gray-500">Participants: {project.participants_count}</span>
+                      <span className="text-sm text-gray-500">Funding: ${project.total_funding.toLocaleString()}</span>
+                    </div>
                   </div>
-                </div>
-                <div className="ml-4">
-                  <div className="text-right">
-                    <div className="text-sm text-gray-600 mb-1">Progress</div>
-                    <div className="text-lg font-semibold text-gray-900">68.4%</div>
-                  </div>
-                  <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
-                    <div 
-                      className="bg-sg-accent h-2 rounded-full"
-                      style={{ width: '68.4%' }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="px-6 py-4 hover:bg-gray-50">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="text-lg font-medium text-gray-900">Community Health Program</h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Improving health outcomes in underserved communities
-                  </p>
-                  <div className="flex items-center mt-2 space-x-4">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Active
-                    </span>
-                    <span className="text-sm text-gray-500">187 participants</span>
-                    <span className="text-sm text-gray-500">$95,000</span>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <div className="text-right">
-                    <div className="text-sm text-gray-600 mb-1">Progress</div>
-                    <div className="text-lg font-semibold text-gray-900">62.3%</div>
-                  </div>
-                  <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
-                    <div 
-                      className="bg-sg-accent h-2 rounded-full"
-                      style={{ width: '62.3%' }}
-                    ></div>
+                  <div className="ml-4">
+                    <div className="text-right">
+                      <div className="text-sm text-gray-600 mb-1">Progress</div>
+                      <div className="text-lg font-semibold text-gray-900">{project.progress}%</div>
+                    </div>
+                    <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-sg-accent h-2 rounded-full"
+                        style={{ width: `${project.progress}%` }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </main>

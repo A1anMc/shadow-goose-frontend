@@ -21,62 +21,32 @@ class AuthService {
   private tokenKey = 'sge_auth_token';
   private userKey = 'sge_user_data';
 
-  // Mock login for development (no backend required)
-  async mockLogin(credentials: LoginCredentials): Promise<AuthResponse> {
-    // Create a mock user for development
-    const mockUser: User = {
-      id: 1,
-      username: credentials.username || 'test',
-      email: 'test@shadow-goose.com',
-      role: 'admin',
-      name: 'Test User',
-    };
+  // Login user - REAL AUTHENTICATION ONLY
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      throw new Error('API URL not configured');
+    }
 
-    const mockResponse: AuthResponse = {
-      access_token: 'mock_token_' + Date.now(),
-      token_type: 'Bearer',
-      user: mockUser,
-    };
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `Login failed: ${response.status}`);
+    }
+
+    const data: AuthResponse = await response.json();
 
     // Store token and user data
-    localStorage.setItem(this.tokenKey, mockResponse.access_token);
-    localStorage.setItem(this.userKey, JSON.stringify(mockResponse.user));
+    localStorage.setItem(this.tokenKey, data.access_token);
+    localStorage.setItem(this.userKey, JSON.stringify(data.user));
 
-    return mockResponse;
-  }
-
-  // Login user
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    try {
-      // For development, use mock login if API is not available
-      if (!process.env.NEXT_PUBLIC_API_URL) {
-        return this.mockLogin(credentials);
-      }
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-
-      const data: AuthResponse = await response.json();
-
-      // Store token and user data
-      localStorage.setItem(this.tokenKey, data.access_token);
-      localStorage.setItem(this.userKey, JSON.stringify(data.user));
-
-      return data;
-    } catch (error) {
-      console.error('Login error:', error);
-      // Fallback to mock login for development
-      return this.mockLogin(credentials);
-    }
+    return data;
   }
 
   // Logout user
@@ -146,6 +116,25 @@ class AuthService {
     } catch (error) {
       console.error('Failed to refresh user data:', error);
       return null;
+    }
+  }
+
+  // Validate token with backend
+  async validateToken(): Promise<boolean> {
+    try {
+      const token = this.getToken();
+      if (!token) return false;
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/validate`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      return response.ok;
+    } catch (error) {
+      console.error('Token validation failed:', error);
+      return false;
     }
   }
 }
