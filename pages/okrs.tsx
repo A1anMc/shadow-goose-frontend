@@ -241,14 +241,14 @@ export default function OKRs() {
                       {okr.status.replace('_', ' ')}
                     </span>
                     <span className="text-sm text-gray-500">
-                      Target: {okr.targetDate}
+                      Target: {okr.deadline || 'No deadline set'}
                     </span>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-gray-500">Overall Progress</div>
                   <div className="text-2xl font-bold text-sg-primary">
-                    {Math.round(okr.keyResults.reduce((sum, kr) => sum + kr.progress, 0) / okr.keyResults.length)}%
+                    {Math.round(okr.key_results.reduce((sum, kr) => sum + kr.progress_percentage, 0) / okr.key_results.length)}%
                   </div>
                 </div>
               </div>
@@ -256,13 +256,13 @@ export default function OKRs() {
               {/* Key Results */}
               <div className="space-y-4">
                 <h4 className="font-medium text-gray-900">Key Results</h4>
-                {okr.keyResults.map((kr) => (
+                {okr.key_results.map((kr) => (
                   <div key={kr.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-gray-900">{kr.description}</p>
                         <p className="text-xs text-gray-500 mt-1">
-                          Target: {kr.target} {kr.unit} | Current: {kr.current} {kr.unit}
+                          Target: {kr.target_value} {kr.unit} | Current: {kr.current_value} {kr.unit}
                         </p>
                       </div>
                       <div className="text-right">
@@ -276,12 +276,12 @@ export default function OKRs() {
                       <div className="flex-1">
                         <div className="flex justify-between text-xs text-gray-600 mb-1">
                           <span>Progress</span>
-                          <span>{kr.progress.toFixed(1)}%</span>
+                          <span>{kr.progress_percentage.toFixed(1)}%</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
-                            className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(kr.progress)}`}
-                            style={{ width: `${Math.min(kr.progress, 100)}%` }}
+                            className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(kr.progress_percentage)}`}
+                            style={{ width: `${Math.min(kr.progress_percentage, 100)}%` }}
                           ></div>
                         </div>
                       </div>
@@ -289,7 +289,7 @@ export default function OKRs() {
                       <div className="flex space-x-2">
                         <input
                           type="number"
-                          value={kr.current}
+                          value={kr.current_value}
                           onChange={(e) => {
                             const newValue = Number(e.target.value);
                             if (!isNaN(newValue) && newValue >= 0) {
@@ -357,43 +357,42 @@ export default function OKRs() {
 function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
   const [formData, setFormData] = useState({
     objective: '',
-    description: '',
-    targetDate: '',
-    priority: 'medium' as 'low' | 'medium' | 'high' | 'critical',
-    keyResults: [{ description: '', target: 0, unit: '' }],
+    objective_description: '',
+    deadline: '',
+    key_results: [{ description: '', target_value: 0, unit: '' }],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-         onSubmit({
-       ...formData,
-       keyResults: formData.keyResults.map(kr => ({
-         description: kr.description,
-         target: kr.target,
-         current: 0, // Start at 0 for new key results
-         unit: kr.unit,
-       })),
-     });
+    onSubmit({
+      ...formData,
+      key_results: formData.key_results.map(kr => ({
+        description: kr.description,
+        target_value: kr.target_value,
+        current_value: 0, // Start at 0 for new key results
+        unit: kr.unit,
+      })),
+    });
   };
 
   const addKeyResult = () => {
     setFormData({
       ...formData,
-      keyResults: [...formData.keyResults, { description: '', target: 0, unit: '' }],
+      key_results: [...formData.key_results, { description: '', target_value: 0, unit: '' }],
     });
   };
 
   const removeKeyResult = (index: number) => {
     setFormData({
       ...formData,
-      keyResults: formData.keyResults.filter((_, i) => i !== index),
+      key_results: formData.key_results.filter((_, i) => i !== index),
     });
   };
 
   const updateKeyResult = (index: number, field: string, value: string | number) => {
-    const newKeyResults = [...formData.keyResults];
+    const newKeyResults = [...formData.key_results];
     newKeyResults[index] = { ...newKeyResults[index], [field]: value };
-    setFormData({ ...formData, keyResults: newKeyResults });
+    setFormData({ ...formData, key_results: newKeyResults });
   };
 
   return (
@@ -412,44 +411,29 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
         <textarea
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          value={formData.objective_description}
+          onChange={(e) => setFormData({ ...formData, objective_description: e.target.value })}
           className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
           rows={3}
-          required
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Target Date</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
           <input
             type="date"
-            value={formData.targetDate}
-            onChange={(e) => setFormData({ ...formData, targetDate: e.target.value })}
+            value={formData.deadline}
+            onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
-            required
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-          <select
-            value={formData.priority}
-            onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="critical">Critical</option>
-          </select>
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Key Results</label>
         <div className="space-y-3">
-          {formData.keyResults.map((kr, index) => (
+          {formData.key_results.map((kr, index) => (
             <div key={index} className="flex space-x-2">
               <input
                 type="text"
@@ -462,8 +446,8 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; 
               <input
                 type="number"
                 placeholder="Target"
-                value={kr.target}
-                onChange={(e) => updateKeyResult(index, 'target', Number(e.target.value))}
+                value={kr.target_value}
+                onChange={(e) => updateKeyResult(index, 'target_value', Number(e.target.value))}
                 className="w-24 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
                 required
               />
@@ -475,7 +459,7 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; 
                 className="w-20 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
                 required
               />
-              {formData.keyResults.length > 1 && (
+              {formData.key_results.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeKeyResult(index)}
