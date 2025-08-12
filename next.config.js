@@ -12,7 +12,7 @@ const nextConfig = {
   },
 
   // Ensure proper CSS handling
-  webpack: (config, { isServer, dev }) => {
+  webpack: (config, { isServer }) => {
     // Optimize bundle size
     if (!isServer) {
       config.resolve.fallback = {
@@ -22,21 +22,6 @@ const nextConfig = {
     }
 
     return config;
-  },
-
-  // Headers for proper CSS caching
-  async headers() {
-    return [
-      {
-        source: '/_next/static/css/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ];
   },
 };
 
