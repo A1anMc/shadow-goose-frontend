@@ -42,7 +42,7 @@
 
 ### **Step 1: Manual Render Deployment** ⏳
 
-1. **Go to**: https://dashboard.render.com
+1. **Go to**: <https://dashboard.render.com>
 2. **Find**: `shadow-goose-api-staging` service
 3. **Click**: "Manual Deploy" → "Deploy latest commit"
 4. **Monitor**: Deployment logs for success

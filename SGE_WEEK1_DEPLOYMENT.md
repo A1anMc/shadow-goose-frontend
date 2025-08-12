@@ -111,6 +111,7 @@ SGE V3 GIIS/
    ```
 
 3. **Run Deployment Script**
+
    ```bash
    ./deploy-week1.sh
    ```
@@ -147,17 +148,17 @@ SGE V3 GIIS/
 
 ### Development
 
-- **Local Server**: http://localhost:3000
-- **Dashboard**: http://localhost:3000/dashboard
-- **Analytics**: http://localhost:3000/analytics
-- **New Project**: http://localhost:3000/projects/new
-- **Login**: http://localhost:3000/login
+- **Local Server**: <http://localhost:3000>
+- **Dashboard**: <http://localhost:3000/dashboard>
+- **Analytics**: <http://localhost:3000/analytics>
+- **New Project**: <http://localhost:3000/projects/new>
+- **Login**: <http://localhost:3000/login>
 
 ### Production
 
-- **Main App**: https://your-app-name.onrender.com
-- **Dashboard**: https://your-app-name.onrender.com/dashboard
-- **Analytics**: https://your-app-name.onrender.com/analytics
+- **Main App**: <https://your-app-name.onrender.com>
+- **Dashboard**: <https://your-app-name.onrender.com/dashboard>
+- **Analytics**: <https://your-app-name.onrender.com/analytics>
 
 ## 📊 Analytics Features
 

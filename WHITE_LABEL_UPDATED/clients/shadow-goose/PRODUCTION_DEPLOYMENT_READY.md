@@ -63,7 +63,7 @@ WHITE_LABEL_UPDATED/clients/shadow-goose/ENV.production
 
 **3. Deploy to Production:**
 
-- Go to Render Dashboard: https://dashboard.render.com
+- Go to Render Dashboard: <https://dashboard.render.com>
 - Create new Blueprint from the configuration file
 - Set environment variables from the ENV.production file
 - Deploy the Blueprint

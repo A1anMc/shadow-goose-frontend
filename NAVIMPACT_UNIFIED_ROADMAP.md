@@ -10,7 +10,7 @@ This roadmap combines **immediate deployment readiness** with **strategic featur
 
 ## **Phase 1 – Foundation & Credibility (0–2 months)**
 
-### **Goal**: Make the platform secure, branded, and capable of credible impact tracking from day one.
+### **Goal**: Make the platform secure, branded, and capable of credible impact tracking from day one
 
 ### **🔧 Infrastructure & Security (Week 1-2)**
 
@@ -52,7 +52,7 @@ This roadmap combines **immediate deployment readiness** with **strategic featur
 
 ## **Phase 2 – Depth & Attribution (2–4 months)**
 
-### **Goal**: Move from tracking to evidence-backed, attributable impact analysis.
+### **Goal**: Move from tracking to evidence-backed, attributable impact analysis
 
 ### **📈 Advanced Impact Tracking (Month 3)**
 
@@ -83,7 +83,7 @@ This roadmap combines **immediate deployment readiness** with **strategic featur
 
 ## **Phase 3 – Predictive & Comparative Intelligence (4–8 months)**
 
-### **Goal**: Provide forecasting, scenario planning, and cross-tenant insights.
+### **Goal**: Provide forecasting, scenario planning, and cross-tenant insights
 
 ### **🤖 AI & Predictive Analytics (Month 5-6)**
 

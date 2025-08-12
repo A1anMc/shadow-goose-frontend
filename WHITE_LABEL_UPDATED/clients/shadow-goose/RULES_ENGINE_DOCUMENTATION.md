@@ -246,7 +246,7 @@ curl -X POST -H "Authorization: Bearer TOKEN" \
 
 ### **Access:**
 
-- URL: https://shadow-goose-web-staging.onrender.com/rules
+- URL: <https://shadow-goose-web-staging.onrender.com/rules>
 - Admin access required
 - Navigate from Dashboard → "Rules Engine" button
 

@@ -38,9 +38,9 @@ NEXT_PUBLIC_ENV=production
 
 ### **✅ Target Production URLs**
 
-- **Frontend**: https://app.shadowgoose.org
-- **API**: https://api.shadowgoose.org
-- **Health Check**: https://api.shadowgoose.org/health
+- **Frontend**: <https://app.shadowgoose.org>
+- **API**: <https://api.shadowgoose.org>
+- **Health Check**: <https://api.shadowgoose.org/health>
 
 ---
 
@@ -136,7 +136,7 @@ NEXT_PUBLIC_ENV=production
 ### **Emergency Contacts**
 
 - **Technical Lead**: Alan McCarthy
-- **Email**: alan@shadow-goose.com
+- **Email**: <alan@shadow-goose.com>
 - **Response Time**: 4 hours for critical issues
 
 ### **Monitoring & Alerts**

@@ -17,7 +17,7 @@
 ### **1. Authentication & User Management**
 
 - [ ] **Login Flow**
-  - [ ] Navigate to: https://shadow-goose-web-staging.onrender.com
+  - [ ] Navigate to: <https://shadow-goose-web-staging.onrender.com>
   - [ ] Click "Sign In" → redirects to login page
   - [ ] Login with: `test` / `test`
   - [ ] Verify redirect to dashboard
@@ -114,6 +114,7 @@
   - [ ] Configure DNS records
 
 - [ ] **Environment Variables**
+
   ```bash
   # Production Environment
   DATABASE_URL=postgresql://[production_db_url]
@@ -197,7 +198,7 @@
 ### **UAT Support**
 
 - **Slack Channel**: #dev-uat
-- **Email**: alan@shadow-goose.com
+- **Email**: <alan@shadow-goose.com>
 - **Response Time**: 1 business day
 
 ### **Go-Live Support**

@@ -15,11 +15,11 @@
 
 | Page        | URL                                | Status Code | Result  |
 | ----------- | ---------------------------------- | ----------- | ------- |
-| Home Page   | http://localhost:3000              | 200         | ✅ PASS |
-| Dashboard   | http://localhost:3000/dashboard    | 200         | ✅ PASS |
-| Analytics   | http://localhost:3000/analytics    | 200         | ✅ PASS |
-| New Project | http://localhost:3000/projects/new | 200         | ✅ PASS |
-| Login       | http://localhost:3000/login        | 200         | ✅ PASS |
+| Home Page   | <http://localhost:3000>              | 200         | ✅ PASS |
+| Dashboard   | <http://localhost:3000/dashboard>    | 200         | ✅ PASS |
+| Analytics   | <http://localhost:3000/analytics>    | 200         | ✅ PASS |
+| New Project | <http://localhost:3000/projects/new> | 200         | ✅ PASS |
+| Login       | <http://localhost:3000/login>        | 200         | ✅ PASS |
 
 **Result**: ✅ All pages responding correctly with HTTP 200 status
 

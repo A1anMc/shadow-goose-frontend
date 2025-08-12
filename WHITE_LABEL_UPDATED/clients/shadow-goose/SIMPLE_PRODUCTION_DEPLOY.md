@@ -16,7 +16,7 @@
 
 ### **Step 1: Deploy the Blueprint (5 minutes)**
 
-1. Go to: https://dashboard.render.com
+1. Go to: <https://dashboard.render.com>
 2. Click "New" → "Blueprint"
 3. Upload: `WHITE_LABEL_UPDATED/configs/render.shadow-goose.yaml`
 4. Click "Apply"
@@ -39,8 +39,8 @@
 
 ### **Step 3: Test Production (5 minutes)**
 
-- **Backend**: https://shadow-goose-api.onrender.com/health
-- **Frontend**: https://shadow-goose-web.onrender.com
+- **Backend**: <https://shadow-goose-api.onrender.com/health>
+- **Frontend**: <https://shadow-goose-web.onrender.com>
 - **Login**: `test` / `test`
 
 ---

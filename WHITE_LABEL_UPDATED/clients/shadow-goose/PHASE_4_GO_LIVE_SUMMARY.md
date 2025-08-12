@@ -16,8 +16,8 @@
 
 ### **Live URLs**
 
-- **Frontend**: https://shadow-goose-web-staging.onrender.com
-- **Backend API**: https://shadow-goose-api-staging.onrender.com
+- **Frontend**: <https://shadow-goose-web-staging.onrender.com>
+- **Backend API**: <https://shadow-goose-api-staging.onrender.com>
 - **Login Credentials**: `test` / `test`
 
 ### **Key Features Available**
@@ -48,7 +48,7 @@
 
 ### **Step 1: Basic System Test**
 
-1. Open: https://shadow-goose-web-staging.onrender.com
+1. Open: <https://shadow-goose-web-staging.onrender.com>
 2. Click "Sign In"
 3. Login with: `test` / `test`
 4. Verify dashboard loads with "Welcome, test (admin)"
@@ -124,7 +124,7 @@ curl -X POST https://shadow-goose-api-staging.onrender.com/auth/login \
 
 ### **Technical Support**
 
-- **Email**: alan@shadow-goose.com
+- **Email**: <alan@shadow-goose.com>
 - **Response Time**: 1 business day
 - **Emergency Contact**: Alan McCarthy
 

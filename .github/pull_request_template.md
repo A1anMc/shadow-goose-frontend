@@ -37,7 +37,7 @@ What actually failed or what outcome we are adding.
 
 ## Docs
 
-Files and sections updated.
+Files and sections updated. Confirm `MCP.md` and `README.md` are accurate.
 
 ## Risk and Rollback
 
@@ -54,3 +54,12 @@ Files and sections updated.
 - Week 2: OKR, Realtime, Reporting, Users
 - Week 3: Story, Photo Upload, Stakeholder Feedback, Attribution
 - Week 4: PDF, Impact Metrics, Dashboard UX, Data Validation
+
+## MCP Gate Checklist (required)
+
+- [ ] Lint clean (`npm run lint`)
+- [ ] Type clean (`npm run typecheck`)
+- [ ] Build success (`npm run build`)
+- [ ] Tests ≥ 80% coverage
+- [ ] Security audit clean (`npm audit --audit-level=high`)
+- [ ] No mocks/dev-only code in production paths

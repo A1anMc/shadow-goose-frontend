@@ -4,7 +4,7 @@
 
 ### **1. Branding Verification**
 
-**Test URL:** https://shadow-goose-web-staging.onrender.com
+**Test URL:** <https://shadow-goose-web-staging.onrender.com>
 
 **✅ Expected Results:**
 
@@ -18,8 +18,8 @@
 
 **Test URLs:**
 
-- [ ] https://shadow-goose-api-staging.onrender.com/health
-- [ ] https://shadow-goose-web-staging.onrender.com/api/health
+- [ ] <https://shadow-goose-api-staging.onrender.com/health>
+- [ ] <https://shadow-goose-web-staging.onrender.com/api/health>
 
 **✅ Expected Results:**
 
@@ -55,35 +55,35 @@
 
 ### **Scenario 2: Admin User (Alan McCarthy)**
 
-1. Login with Google Workspace credentials (alanmccarthy00@gmail.com)
+1. Login with Google Workspace credentials (<alanmccarthy00@gmail.com>)
 2. Access admin dashboard
 3. Test user management features
 4. Verify analytics access
 
 ### **Scenario 3: Managing Director (Ursula Searle)**
 
-1. Login with Google Workspace credentials (ursula@shadow-goose.com)
+1. Login with Google Workspace credentials (<ursula@shadow-goose.com>)
 2. Create a new project
 3. Assign team members
 4. Test project management features
 
 ### **Scenario 4: Managing Director (Ash Dorman)**
 
-1. Login with Google Workspace credentials (ash@shadow-goose.com)
+1. Login with Google Workspace credentials (<ash@shadow-goose.com>)
 2. Create content projects
 3. Manage stakeholder coordination
 4. Test content management features
 
 ### **Scenario 5: Creative Director (Shamita Siva)**
 
-1. Login with Google Workspace credentials (shamita@shadow-goose.com)
+1. Login with Google Workspace credentials (<shamita@shadow-goose.com>)
 2. Manage creative content
 3. Coordinate creative workflows
 4. Test content management features
 
 ### **Scenario 6: Operations Officer (Mish Rep)**
 
-1. Login with Google Workspace credentials (mish@shadow-goose.com)
+1. Login with Google Workspace credentials (<mish@shadow-goose.com>)
 2. View assigned operational tasks
 3. Manage data and processes
 4. Test operational workflows
@@ -170,13 +170,13 @@
 
 **Primary Contact:**
 
-- **Alan McCarthy** (Impact Director) - alanmccarthy00@gmail.com
+- **Alan McCarthy** (Impact Director) - <alanmccarthy00@gmail.com>
 
 **Test Users:**
 
-- **Ursula Searle** (Managing Director) - ursula@shadow-goose.com
-- **Ash Dorman** (Managing Director) - ash@shadow-goose.com
-- **Shamita Siva** (Creative Director) - shamita@shadow-goose.com
-- **Mish Rep** (Operations Officer) - mish@shadow-goose.com
+- **Ursula Searle** (Managing Director) - <ursula@shadow-goose.com>
+- **Ash Dorman** (Managing Director) - <ash@shadow-goose.com>
+- **Shamita Siva** (Creative Director) - <shamita@shadow-goose.com>
+- **Mish Rep** (Operations Officer) - <mish@shadow-goose.com>
 
 **Support Channel:** Slack #dev-uat

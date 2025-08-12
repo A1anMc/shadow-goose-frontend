@@ -105,6 +105,7 @@ Use this template to plan and execute a white‑label rollout for a specific cli
 - [ ] Stakeholder review and sign‑off (Executive + Functional Leads)
 
 Optional tracker
+
 | Item | Source/Link | Owner | Due | Status |
 |------|-------------|-------|-----|--------|
 | Mission/Vision | | | | |
@@ -125,6 +126,7 @@ Optional tracker
 - Mapping to OKRs/goals:
 
 KPI definition template
+
 | KPI | Definition | Target | Data source | Owner | Review cadence |
 |-----|------------|--------|-------------|-------|----------------|
 | | | | | | |
@@ -145,6 +147,7 @@ KPI definition template
   - report_generated, export_downloaded
 
 Event dictionary
+
 | Event | Description | Properties | Trigger | Owner |
 |-------|-------------|------------|---------|-------|
 | | | | | |
@@ -211,6 +214,7 @@ Env & setup
 - `SLACK_WEBHOOK_URL=` (if using incoming webhooks)
 
 Notification mapping
+
 | Event | Channel | Message format |
 |-------|---------|----------------|
 | task_assigned | #team | "Task {title} assigned to {assignee} (due {due_date})" |
@@ -247,6 +251,7 @@ Env & setup
 - `NOTION_DATABASE_ID_TASKS=`
 
 Database property mapping
+
 | NavImpact field | Notion property | Type |
 |-----------------|------------------|------|
 | grant_title | Name | title |
