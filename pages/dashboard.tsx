@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { getBranding } from '../src/lib/branding';
 import RealTimeStatus from '../src/components/RealTimeStatus';
+import ExportPanel from '../src/components/ExportPanel';
 
 // Production-ready dashboard with enhanced analytics and UI/UX
 // Version: 1.0.1 - Enhanced Dashboard with Analytics
@@ -52,6 +53,22 @@ export default function Dashboard() {
               <span className="text-xs text-gray-400">
                 v1.0.1 Enhanced
               </span>
+              <ExportPanel
+                data={{
+                  totalProjects: 2,
+                  activeProjects: 2,
+                  totalParticipants: 529,
+                  totalFunding: 275000,
+                  averageProgress: 65.4,
+                  okrsOnTrack: 1,
+                  recentActivity: [
+                    { description: 'Youth Employment Initiative progress updated to 68.4%' },
+                    { description: 'New OKR created for Digital Literacy program' },
+                    { description: 'Grant application submitted for Community Health' },
+                  ],
+                }}
+                dataType="dashboard"
+              />
               <button
                 onClick={() => router.push('/')}
                 className="bg-sg-accent text-white px-4 py-2 rounded-md text-sm hover:bg-sg-accent/90 transition-colors"
