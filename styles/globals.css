@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+  --sg-primary: #1A1A1A;
+  --sg-secondary: #FFFFFF;
+  --sg-accent: #FF6600;
+  --sg-background: #F5F5F5;
+}
+
+html, body { 
+  font-family: var(--font-body, 'Open Sans'), ui-sans-serif, system-ui; 
+}
+
+.sg-heading { 
+  font-family: var(--font-heading, 'Poppins'), ui-sans-serif, system-ui; 
+}
+
+/* Custom utility classes */
+.bg-sg-background {
+  background-color: var(--sg-background);
+}
+
+.text-sg-primary {
+  color: var(--sg-primary);
+}
+
+.bg-sg-primary {
+  background-color: var(--sg-primary);
+}
+
+.text-sg-accent {
+  color: var(--sg-accent);
+}
+
+.bg-sg-accent {
+  background-color: var(--sg-accent);
+}
+
+.hover\:bg-sg-primary\/90:hover {
+  background-color: rgba(26, 26, 26, 0.9);
+}
+
+.hover\:bg-sg-accent\/90:hover {
+  background-color: rgba(255, 102, 0, 0.9);
+}
