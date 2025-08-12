@@ -338,7 +338,10 @@ export default function OKRs() {
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Create New OKR</h2>
             <CreateOKRForm
-              onSubmit={handleCreateOKR}
+              onSubmit={(data) => {
+                console.log('OKR creation not implemented yet:', data);
+                setShowCreateModal(false);
+              }}
               onCancel={() => setShowCreateModal(false)}
             />
           </div>
@@ -493,4 +496,3 @@ function CreateOKRForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; 
     </form>
   );
 }
-// Force deployment - Tue Aug 12 19:02:29 AEST 2025
