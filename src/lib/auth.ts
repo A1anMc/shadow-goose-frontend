@@ -42,28 +42,70 @@ class AuthService {
 
     const data: AuthResponse = await response.json();
 
-    // Store token and user data
-    localStorage.setItem(this.tokenKey, data.access_token);
-    localStorage.setItem(this.userKey, JSON.stringify(data.user));
+    // Store token and user data with proper error handling
+    this.saveToken(data.access_token);
+    this.saveUser(data.user);
 
     return data;
   }
 
-  // Logout user
+  // Improved token storage with browser checks
+  private saveToken(token: string): void {
+    try {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.setItem(this.tokenKey, token);
+      }
+    } catch (error) {
+      console.error('Failed to save token:', error);
+    }
+  }
+
+  // Improved user storage with browser checks
+  private saveUser(user: User): void {
+    try {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.setItem(this.userKey, JSON.stringify(user));
+      }
+    } catch (error) {
+      console.error('Failed to save user:', error);
+    }
+  }
+
+  // Logout user with proper error handling
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
+    try {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.removeItem(this.tokenKey);
+        localStorage.removeItem(this.userKey);
+      }
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
   }
 
-  // Get current user
+  // Get current user with proper error handling
   getCurrentUser(): User | null {
-    const userData = localStorage.getItem(this.userKey);
-    return userData ? JSON.parse(userData) : null;
+    try {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const userData = localStorage.getItem(this.userKey);
+        return userData ? JSON.parse(userData) : null;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve user data:', error);
+    }
+    return null;
   }
 
-  // Get auth token
+  // Get auth token with proper error handling
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    try {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        return localStorage.getItem(this.tokenKey);
+      }
+    } catch (error) {
+      console.error('Failed to retrieve token:', error);
+    }
+    return null;
   }
 
   // Check if user is authenticated
@@ -82,21 +124,23 @@ class AuthService {
     return this.hasRole('admin');
   }
 
-  // Make authenticated API request
+  // Make authenticated API request with improved error handling
   async authenticatedRequest(url: string, options: RequestInit = {}): Promise<Response> {
     const token = this.getToken();
 
     if (!token) {
-      throw new Error('No authentication token');
+      throw new Error('No authentication token available');
     }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers,
+    };
 
     return fetch(url, {
       ...options,
-      headers: {
-        ...options.headers,
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+      headers,
     });
   }
 
