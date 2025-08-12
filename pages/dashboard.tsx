@@ -1,7 +1,5 @@
 import { useRouter } from 'next/router';
 import { getBranding } from '../src/lib/branding';
-import RealTimeStatus from '../src/components/RealTimeStatus';
-import ExportPanel from '../src/components/ExportPanel';
 
 // Production-ready dashboard with enhanced analytics and UI/UX
 // Version: 1.0.1 - Enhanced Dashboard with Analytics
@@ -53,22 +51,14 @@ export default function Dashboard() {
               <span className="text-xs text-gray-400">
                 v1.0.1 Enhanced
               </span>
-              <ExportPanel
-                data={{
-                  totalProjects: 2,
-                  activeProjects: 2,
-                  totalParticipants: 529,
-                  totalFunding: 275000,
-                  averageProgress: 65.4,
-                  okrsOnTrack: 1,
-                  recentActivity: [
-                    { description: 'Youth Employment Initiative progress updated to 68.4%' },
-                    { description: 'New OKR created for Digital Literacy program' },
-                    { description: 'Grant application submitted for Community Health' },
-                  ],
-                }}
-                dataType="dashboard"
-              />
+              <button
+                className="bg-sg-primary text-white px-4 py-2 rounded-md text-sm hover:bg-sg-primary/90 transition-colors flex items-center space-x-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Export</span>
+              </button>
               <button
                 onClick={() => router.push('/')}
                 className="bg-sg-accent text-white px-4 py-2 rounded-md text-sm hover:bg-sg-accent/90 transition-colors"
@@ -82,9 +72,6 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Real-time Status */}
-        <RealTimeStatus refreshInterval={30} />
-
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
@@ -195,7 +182,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Progress Overview */}
+        {/* Overall Progress */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Overall Progress</h2>
           <div className="flex items-center">
@@ -205,7 +192,7 @@ export default function Dashboard() {
                 <span>65.4%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
+                <div 
                   className="bg-sg-accent h-2 rounded-full transition-all duration-300"
                   style={{ width: '65.4%' }}
                 ></div>
@@ -232,7 +219,9 @@ export default function Dashboard() {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <h3 className="text-lg font-medium text-gray-900">Youth Employment Initiative</h3>
-                  <p className="text-sm text-gray-600 mt-1">Supporting young people in finding meaningful employment opportunities</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Supporting young people in finding meaningful employment opportunities
+                  </p>
                   <div className="flex items-center mt-2 space-x-4">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                       Active
@@ -247,7 +236,7 @@ export default function Dashboard() {
                     <div className="text-lg font-semibold text-gray-900">68.4%</div>
                   </div>
                   <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
-                    <div
+                    <div 
                       className="bg-sg-accent h-2 rounded-full"
                       style={{ width: '68.4%' }}
                     ></div>
@@ -259,7 +248,9 @@ export default function Dashboard() {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <h3 className="text-lg font-medium text-gray-900">Community Health Program</h3>
-                  <p className="text-sm text-gray-600 mt-1">Improving health outcomes in underserved communities</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Improving health outcomes in underserved communities
+                  </p>
                   <div className="flex items-center mt-2 space-x-4">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                       Active
@@ -274,7 +265,7 @@ export default function Dashboard() {
                     <div className="text-lg font-semibold text-gray-900">62.3%</div>
                   </div>
                   <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
-                    <div
+                    <div 
                       className="bg-sg-accent h-2 rounded-full"
                       style={{ width: '62.3%' }}
                     ></div>
