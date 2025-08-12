@@ -173,7 +173,7 @@ class SGEProjectService {
         return this.getMockProjects();
       }
 
-      const response = await fetch(`${this.baseUrl}/api/sge/projects`, {
+      const response = await fetch(`${this.baseUrl}/api/projects`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
         },
@@ -195,7 +195,7 @@ class SGEProjectService {
   // Get single SGE project
   async getProject(id: number): Promise<SGEProject | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/sge/projects/${id}`, {
+      const response = await fetch(`${this.baseUrl}/api/projects/${id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
         },
@@ -215,7 +215,7 @@ class SGEProjectService {
   // Create new SGE project
   async createProject(projectData: CreateProjectRequest): Promise<SGEProject | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/sge/projects`, {
+      const response = await fetch(`${this.baseUrl}/api/projects`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
@@ -238,7 +238,7 @@ class SGEProjectService {
   // Update SGE project
   async updateProject(id: number, updates: Partial<SGEProject>): Promise<SGEProject | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/sge/projects/${id}`, {
+      const response = await fetch(`${this.baseUrl}/api/projects/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
@@ -261,7 +261,7 @@ class SGEProjectService {
   // Update project current data (progress tracking)
   async updateCurrentData(projectId: number, currentData: Partial<CurrentData>): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/sge/projects/${projectId}/current-data`, {
+      const response = await fetch(`${this.baseUrl}/api/projects/${projectId}/current-data`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
@@ -292,7 +292,7 @@ class SGEProjectService {
         return this.getMockStats();
       }
 
-      const response = await fetch(`${this.baseUrl}/api/sge/projects/stats`, {
+      const response = await fetch(`${this.baseUrl}/api/projects/stats`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
         },
@@ -313,7 +313,7 @@ class SGEProjectService {
   // Export project data
   async exportProjectData(projectId: number, format: 'pdf' | 'csv' | 'excel'): Promise<Blob | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/sge/projects/${projectId}/export?format=${format}`, {
+      const response = await fetch(`${this.baseUrl}/api/projects/${projectId}/export?format=${format}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
         },
