@@ -121,6 +121,12 @@ export default function Dashboard() {
                   Impact Analytics
                 </Link>
                 <Link
+                  href="/teams"
+                  className="text-gray-600 hover:text-sg-primary transition-colors"
+                >
+                  Teams
+                </Link>
+                <Link
                   href="/projects/new"
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
@@ -321,6 +327,14 @@ export default function Dashboard() {
           >
             <h3 className="text-lg font-semibold mb-2">OKR Management</h3>
             <p className="text-sm opacity-90">Objectives & Key Results</p>
+          </Link>
+
+          <Link
+            href="/teams"
+            className="p-6 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
+          >
+            <h3 className="text-lg font-semibold mb-2">Team Management</h3>
+            <p className="text-sm opacity-90">Manage team members & roles</p>
           </Link>
 
           <Link
