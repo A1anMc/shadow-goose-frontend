@@ -70,10 +70,23 @@ export default function Grants() {
     try {
       setLoading(true);
       const results = await grantService.searchGrants(searchFilters);
-      setGrants(results.grants || results);
-      setDataSource(results.dataSource || 'api');
+
+      // Ensure we have the correct structure
+      if (results && typeof results === 'object' && 'grants' in results) {
+        setGrants(results.grants || []);
+        setDataSource(results.dataSource || 'api');
+      } else {
+        // Fallback if results structure is unexpected
+        console.warn('Unexpected results structure:', results);
+        setGrants([]);
+        setDataSource('fallback');
+      }
     } catch (error) {
       console.error("Error searching grants:", error);
+      // Use fallback data on error
+      const fallbackData = await grantService.getGrants();
+      setGrants(fallbackData.grants);
+      setDataSource('fallback');
     } finally {
       setLoading(false);
     }
