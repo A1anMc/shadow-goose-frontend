@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { getBranding } from '../src/lib/branding';
 import { okrService, OKR, OKRStats, CreateOKRRequest } from '../src/lib/okrs';
 import { sgeProjectService } from '../src/lib/projects';
+import RealTimeStatus from '../src/components/RealTimeStatus';
 
 export default function OKRs() {
   const router = useRouter();
@@ -158,6 +159,9 @@ export default function OKRs() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Real-time Status */}
+        <RealTimeStatus onDataRefresh={loadData} refreshInterval={30} />
+
         {/* Statistics Overview */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
