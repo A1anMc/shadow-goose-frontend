@@ -331,7 +331,7 @@ class OKRService {
       return data.okrs || [];
     } catch (error) {
       console.error('Error fetching project OKRs:', error);
-      return this.getSGEStrategicOKRs();
+      return this.getMockOKRs().filter(okr => okr.projectId === projectId);
     }
   }
 
@@ -473,7 +473,153 @@ class OKRService {
     }
   }
 
-
+  // Mock data for development
+  private getMockOKRs(): OKR[] {
+    return [
+      {
+        id: 1,
+        objective: "Increase Youth Employment in Creative Industries",
+        description: "Support young people in finding meaningful employment opportunities in the creative sector",
+        keyResults: [
+          {
+            id: 1,
+            okr_id: 1,
+            description: "Place 500 young people in creative industry jobs",
+            target: 500,
+            current: 342,
+            unit: "people",
+            progress: 68.4,
+            status: "on-track",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+          {
+            id: 2,
+            okr_id: 1,
+            description: "Achieve 75% employment rate within 6 months",
+            target: 75,
+            current: 68.4,
+            unit: "%",
+            progress: 91.2,
+            status: "on-track",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+          {
+            id: 3,
+            okr_id: 1,
+            description: "Partner with 20 creative industry employers",
+            target: 20,
+            current: 15,
+            unit: "employers",
+            progress: 75,
+            status: "at-risk",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+        ],
+        projectId: 1,
+        grantId: 1,
+        targetDate: "2025-12-31T23:59:59Z",
+        status: "on-track",
+        priority: "high",
+        created_by: 1,
+        created_at: "2025-01-15T00:00:00Z",
+        updated_at: "2025-08-11T10:30:00Z",
+      },
+      {
+        id: 2,
+        objective: "Enhance Community Digital Literacy",
+        description: "Improve digital skills and access to technology for underserved communities",
+        keyResults: [
+          {
+            id: 4,
+            okr_id: 2,
+            description: "Train 1,000 community members in digital skills",
+            target: 1000,
+            current: 750,
+            unit: "people",
+            progress: 75,
+            status: "on-track",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+          {
+            id: 5,
+            okr_id: 2,
+            description: "Establish 5 community tech hubs",
+            target: 5,
+            current: 3,
+            unit: "hubs",
+            progress: 60,
+            status: "at-risk",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+          {
+            id: 6,
+            okr_id: 2,
+            description: "Achieve 90% satisfaction rate from participants",
+            target: 90,
+            current: 87,
+            unit: "%",
+            progress: 96.7,
+            status: "on-track",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+        ],
+        projectId: 2,
+        targetDate: "2025-11-30T23:59:59Z",
+        status: "at-risk",
+        priority: "medium",
+        created_by: 1,
+        created_at: "2025-02-01T00:00:00Z",
+        updated_at: "2025-08-11T10:30:00Z",
+      },
+      {
+        id: 3,
+        objective: "Reduce Environmental Impact Through Innovation",
+        description: "Develop and implement sustainable solutions for environmental challenges",
+        keyResults: [
+          {
+            id: 7,
+            okr_id: 3,
+            description: "Launch 10 environmental innovation projects",
+            target: 10,
+            current: 8,
+            unit: "projects",
+            progress: 80,
+            status: "on-track",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+          {
+            id: 8,
+            okr_id: 3,
+            description: "Reduce carbon footprint by 25%",
+            target: 25,
+            current: 18,
+            unit: "%",
+            progress: 72,
+            status: "on-track",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+          {
+            id: 9,
+            okr_id: 3,
+            description: "Engage 500 community members in environmental initiatives",
+            target: 500,
+            current: 420,
+            unit: "people",
+            progress: 84,
+            status: "on-track",
+            last_updated: "2025-08-11T10:30:00Z",
+          },
+        ],
+        projectId: 3,
+        targetDate: "2025-10-31T23:59:59Z",
+        status: "on-track",
+        priority: "high",
+        created_by: 1,
+        created_at: "2025-03-01T00:00:00Z",
+        updated_at: "2025-08-11T10:30:00Z",
+      },
+    ];
+  }
 
   private getMockStats(): OKRStats {
     return {
