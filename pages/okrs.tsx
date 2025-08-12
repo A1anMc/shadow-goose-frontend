@@ -309,13 +309,8 @@ export default function OKRs() {
               {/* Project and Grant Links */}
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <div className="flex space-x-4 text-sm text-gray-600">
-                  {okr.projectId && (
-                    <span>Project ID: {okr.projectId}</span>
-                  )}
-                  {okr.grantId && (
-                    <span>Grant ID: {okr.grantId}</span>
-                  )}
                   <span>Created: {okr.created_at}</span>
+                  <span>Updated: {okr.updated_at}</span>
                 </div>
               </div>
             </div>
