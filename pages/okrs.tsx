@@ -235,7 +235,7 @@ export default function OKRs() {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900">{okr.objective}</h3>
-                  <p className="text-gray-600 mt-1">{okr.description}</p>
+                  <p className="text-gray-600 mt-1">{okr.objective_description || ''}</p>
                   <div className="flex items-center space-x-4 mt-2">
                     <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(okr.status)}`}>
                       {okr.status.replace('_', ' ')}
