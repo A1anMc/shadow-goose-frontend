@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { getBranding } from '../src/lib/branding';
 import { authService } from '../src/lib/auth';
-import { sgeProjectService } from '../src/lib/projects';
+import { sgeProjectService, SGEProject } from '../src/lib/projects';
 
 // Production-ready dashboard with enhanced analytics and UI/UX
 // Version: 1.0.1 - Enhanced Dashboard with Analytics
@@ -20,7 +20,7 @@ export default function Dashboard() {
     total_funding: 0,
     average_progress: 0,
   });
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<SGEProject[]>([]);
 
   useEffect(() => {
     const checkAuthAndLoadData = async () => {
@@ -295,7 +295,7 @@ export default function Dashboard() {
           </div>
           <div className="divide-y divide-gray-200">
             {projects.map((project, index) => (
-              <div key={index} className="px-6 py-4 hover:bg-gray-50">
+              <div key={project.id || index} className="px-6 py-4 hover:bg-gray-50">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
@@ -303,22 +303,33 @@ export default function Dashboard() {
                       {project.description}
                     </p>
                     <div className="flex items-center mt-2 space-x-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        project.status === 'active' ? 'bg-green-100 text-green-800' :
+                        project.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+                        project.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
                         {project.status}
                       </span>
-                      <span className="text-sm text-gray-500">Participants: {project.participants_count}</span>
-                      <span className="text-sm text-gray-500">Funding: ${project.total_funding.toLocaleString()}</span>
+                      <span className="text-sm text-gray-500">
+                        {project.current_data?.current_participants || 0} participants
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        ${(project.current_data?.current_funding || project.amount || 0).toLocaleString()}
+                      </span>
                     </div>
                   </div>
                   <div className="ml-4">
                     <div className="text-right">
                       <div className="text-sm text-gray-600 mb-1">Progress</div>
-                      <div className="text-lg font-semibold text-gray-900">{project.progress}%</div>
+                      <div className="text-lg font-semibold text-gray-900">
+                        {project.current_data?.progress_percentage || 0}%
+                      </div>
                     </div>
                     <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
                       <div 
                         className="bg-sg-accent h-2 rounded-full"
-                        style={{ width: `${project.progress}%` }}
+                        style={{ width: `${project.current_data?.progress_percentage || 0}%` }}
                       ></div>
                     </div>
                   </div>

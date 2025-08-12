@@ -74,7 +74,8 @@ class SGEProjectService {
       throw new Error(errorData.detail || `Failed to fetch projects: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data.projects || [];
   }
 
   // Get specific SGE project
