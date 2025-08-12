@@ -3,8 +3,9 @@ export interface SGEProject {
   name: string;
   description: string;
   status: 'active' | 'completed' | 'draft' | 'paused';
-  baseline_data: BaselineData;
-  current_data: CurrentData;
+  amount?: number;
+  baseline_data?: BaselineData;
+  current_data?: CurrentData;
   created_by: number;
   created_at: string;
   updated_at: string;
