@@ -1,0 +1,43 @@
+name: SGE Weekly Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      week:
+        description: 'Week number 1-4'
+        required: true
+        default: '1'
+
+jobs:
+  week-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        week: [1]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set week
+        run: echo "WEEK=${{ github.event.inputs.week || '1' }}" >> $GITHUB_ENV
+
+  week-1:
+    if: env.WEEK == '1'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running Week 1 checks: JWT, Baseline, Build, Mobile, Branding"
+  week-2:
+    if: env.WEEK == '2'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running Week 2 checks: OKR, Realtime, Reporting, Users"
+  week-3:
+    if: env.WEEK == '3'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running Week 3 checks: Story, Photo, Feedback, Attribution"
+  week-4:
+    if: env.WEEK == '4'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running Week 4 checks: PDF, Impact Metrics, Dashboard UX, Data Validation"

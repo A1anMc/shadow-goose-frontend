@@ -1,0 +1,5 @@
+# Require at least one domain owner on every PR
+/docs/                       @A1anMc
+/frontend/                   @A1anMc @shadow-goose/web
+/app/                        @A1anMc @shadow-goose/api
+/.github/                    @A1anMc
