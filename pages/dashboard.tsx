@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { getBranding } from '../src/lib/branding';
 import { authService } from '../src/lib/auth';
 import { sgeProjectService, SGEProject } from '../src/lib/projects';
@@ -97,30 +98,30 @@ export default function Dashboard() {
                 {branding.name} Dashboard
               </h1>
               <nav className="flex space-x-4">
-                <a
+                <Link
                   href="/instant-analytics"
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Instant Analytics
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/analytics"
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Analytics
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/impact-analytics"
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Impact Analytics
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/projects/new"
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   New Project
-                </a>
+                </Link>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
@@ -138,12 +139,12 @@ export default function Dashboard() {
                 </svg>
                 <span>Export</span>
               </button>
-              <a
+              <Link
                 href="/"
                 className="bg-sg-accent text-white px-4 py-2 rounded-md text-sm hover:bg-sg-accent/90 transition-colors"
               >
                 Logout
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -212,53 +213,53 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
-          <a
+          <Link
             href="/instant-analytics"
             className="p-6 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">Instant Analytics</h3>
             <p className="text-sm opacity-90">Real-time insights and live updates</p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/impact-analytics"
             className="p-6 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">Impact Analytics</h3>
             <p className="text-sm opacity-90">Deep dive into impact measurement</p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/analytics"
             className="p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">Full Analytics</h3>
             <p className="text-sm opacity-90">Comprehensive analytics dashboard</p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/grants"
             className="p-6 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">Grant Management</h3>
             <p className="text-sm opacity-90">Find & apply for grants</p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/okrs"
             className="p-6 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">OKR Management</h3>
             <p className="text-sm opacity-90">Objectives & Key Results</p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/projects/new"
             className="p-6 bg-gradient-to-r from-sg-primary to-sg-accent text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >
             <h3 className="text-lg font-semibold mb-2">New Project</h3>
             <p className="text-sm opacity-90">Create a new SGE initiative</p>
-          </a>
+          </Link>
         </div>
 
         {/* Overall Progress */}
@@ -271,7 +272,7 @@ export default function Dashboard() {
                 <span>{stats.average_progress}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className="bg-sg-accent h-2 rounded-full transition-all duration-300"
                   style={{ width: `${stats.average_progress}%` }}
                 ></div>
@@ -285,12 +286,12 @@ export default function Dashboard() {
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900">SGE Projects</h2>
-              <a
+              <Link
                 href="/projects/new"
                 className="bg-sg-primary text-white px-4 py-2 rounded-md text-sm hover:bg-sg-primary/90 transition-colors"
               >
                 Create New Project
-              </a>
+              </Link>
             </div>
           </div>
           <div className="divide-y divide-gray-200">
@@ -327,7 +328,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="w-20 bg-gray-200 rounded-full h-2 mt-2">
-                      <div 
+                      <div
                         className="bg-sg-accent h-2 rounded-full"
                         style={{ width: `${project.current_data?.progress_percentage || 0}%` }}
                       ></div>

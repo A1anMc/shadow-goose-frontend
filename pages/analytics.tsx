@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getBranding } from '../src/lib/branding';
 import { authService, User } from '../src/lib/auth';
-import { analyticsService, DataSource, PredictiveModel, RealTimeMetric } from '../src/lib/analytics';
+import { DataSource, PredictiveModel, RealTimeMetric } from '../src/lib/analytics';
 import { mockAnalyticsService } from '../src/lib/mockAnalytics';
 
 export default function Analytics() {
@@ -143,7 +143,7 @@ export default function Analytics() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'models' | 'sources' | 'metrics')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-sg-primary text-sg-primary'

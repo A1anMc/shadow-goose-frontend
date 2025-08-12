@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { websocketService } from '../lib/websocket';
 import { notificationService } from '../lib/notifications';
+import { ProjectUpdateData, OKRUpdateData, NotificationData } from '../types/websocket';
 
 interface RealTimeStatusProps {
   onDataRefresh?: () => void;
@@ -13,7 +14,7 @@ export default function RealTimeStatus({ onDataRefresh, refreshInterval = 30 }: 
   const [nextRefresh, setNextRefresh] = useState(new Date(Date.now() + refreshInterval * 1000));
   const [notificationCount, setNotificationCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<NotificationData[]>([]);
 
   useEffect(() => {
     // Connect to WebSocket
@@ -32,7 +33,7 @@ export default function RealTimeStatus({ onDataRefresh, refreshInterval = 30 }: 
     }, refreshInterval * 1000);
 
     // Set up WebSocket message handlers
-    const handleProjectUpdate = (data: any) => {
+    const handleProjectUpdate = (data: ProjectUpdateData) => {
       notificationService.addNotification({
         type: 'info',
         title: 'Project Update',
@@ -42,7 +43,7 @@ export default function RealTimeStatus({ onDataRefresh, refreshInterval = 30 }: 
       onDataRefresh?.();
     };
 
-    const handleOKRUpdate = (data: any) => {
+    const handleOKRUpdate = (data: OKRUpdateData) => {
       notificationService.addNotification({
         type: 'info',
         title: 'OKR Update',
@@ -52,7 +53,7 @@ export default function RealTimeStatus({ onDataRefresh, refreshInterval = 30 }: 
       onDataRefresh?.();
     };
 
-    const handleNotification = (data: any) => {
+    const handleNotification = (data: NotificationData) => {
       notificationService.addNotification(data);
     };
 
@@ -202,7 +203,7 @@ export default function RealTimeStatus({ onDataRefresh, refreshInterval = 30 }: 
                               {notification.message}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                              {new Date(notification.timestamp).toLocaleString()}
+                              {notification.timestamp ? new Date(notification.timestamp).toLocaleString() : 'Just now'}
                             </p>
                           </div>
                           <button

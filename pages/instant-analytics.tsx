@@ -67,7 +67,7 @@ export default function InstantAnalytics() {
   };
 
   const getMetricStatus = (metric: RealTimeMetric) => {
-    const value = metric.value;
+    // const value = metric.value;
     const change = metric.changePercent;
 
     if (change > 5) return 'excellent';
@@ -162,7 +162,7 @@ export default function InstantAnalytics() {
           <div className="flex items-center space-x-4">
             <select
               value={selectedTimeframe}
-              onChange={(e) => setSelectedTimeframe(e.target.value as any)}
+              onChange={(e) => setSelectedTimeframe(e.target.value as '1h' | '24h' | '7d' | '30d')}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-sg-primary focus:border-sg-primary"
             >
               <option value="1h">Last Hour</option>

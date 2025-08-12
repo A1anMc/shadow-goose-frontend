@@ -30,7 +30,7 @@ export default function ImpactAnalytics() {
   const router = useRouter();
   const branding = getBranding();
   const [user, setUser] = useState<User | null>(null);
-  const [metrics, setMetrics] = useState<RealTimeMetric[]>([]);
+  const [, setMetrics] = useState<RealTimeMetric[]>([]);
   const [impactStories, setImpactStories] = useState<ImpactStory[]>([]);
   const [impactMetrics, setImpactMetrics] = useState<ImpactMetric[]>([]);
   const [loading, setLoading] = useState(true);
@@ -291,7 +291,7 @@ export default function ImpactAnalytics() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'stories' | 'metrics' | 'analysis')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-sg-primary text-sg-primary'

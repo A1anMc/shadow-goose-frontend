@@ -86,7 +86,7 @@ class NotificationService {
           tag: notification.id,
         });
       } else if (Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
+        Notification.requestPermission()await permission => {
           if (permission === 'granted') {
             new Notification(notification.title, {
               body: notification.message,
