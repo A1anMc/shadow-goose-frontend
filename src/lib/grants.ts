@@ -74,71 +74,57 @@ export interface GrantRecommendation {
 class GrantService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // Get all available grants
-  async getGrants(): Promise<{ grants: Grant[], dataSource: 'api' | 'fallback' | 'mock' }> {
+  // Get all available grants - NO FALLBACK, ONLY REAL API
+  async getGrants(): Promise<{ grants: Grant[], dataSource: 'api' }> {
     if (!this.baseUrl) {
-      console.warn('API URL not configured, using fallback data');
-      return {
-        grants: this.getFallbackGrants(),
-        dataSource: 'fallback'
-      };
+      throw new Error('API URL not configured - cannot fetch real grants data');
     }
 
-    try {
-      const token = localStorage.getItem('sge_auth_token');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${this.baseUrl}/api/grants`, {
-        method: 'GET',
-        headers,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.warn('Grants API error:', errorData.detail || `Status: ${response.status}`);
-        // Return fallback data with clear indicator
-        return {
-          grants: this.getFallbackGrants(),
-          dataSource: 'fallback'
-        };
-      }
-
-      const data = await response.json();
-
-      // Validate data structure
-      if (!data || !Array.isArray(data.grants)) {
-        console.warn('Invalid grants data structure:', data);
-        return {
-          grants: this.getFallbackGrants(),
-          dataSource: 'fallback'
-        };
-      }
-
-      const grants = data.grants || [];
-
-      // Mark API data with source indicator
-      const grantsWithSource = grants.map(grant => ({
-        ...grant,
-        data_source: 'api' as const
-      }));
-
-      return {
-        grants: grantsWithSource,
-        dataSource: 'api'
-      };
-    } catch (error) {
-      console.error('Grants API failed:', error);
-      return {
-        grants: this.getFallbackGrants(),
-        dataSource: 'fallback'
-      };
+    const token = localStorage.getItem('sge_auth_token');
+    if (!token) {
+      throw new Error('Authentication required - cannot fetch real grants data');
     }
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    const response = await fetch(`${this.baseUrl}/api/grants`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Grants API failed: ${errorData.detail || `Status: ${response.status}`}`);
+    }
+
+    const data = await response.json();
+
+    // Validate data structure
+    if (!data || !Array.isArray(data.grants)) {
+      throw new Error('Invalid grants data structure from API');
+    }
+
+    const grants = data.grants || [];
+
+    // Validate each grant has data_source === 'api'
+    const invalidGrants = grants.filter(grant => grant.data_source !== 'api');
+    if (invalidGrants.length > 0) {
+      throw new Error(`Found ${invalidGrants.length} grants with non-API data source`);
+    }
+
+    // Mark API data with source indicator
+    const grantsWithSource = grants.map(grant => ({
+      ...grant,
+      data_source: 'api' as const
+    }));
+
+    return {
+      grants: grantsWithSource,
+      dataSource: 'api'
+    };
   }
 
   // SGE-specific grants data when API is unavailable
@@ -186,70 +172,58 @@ class GrantService {
     }
   }
 
-  // Search grants with filters
-  async searchGrants(filters: GrantSearchFilters): Promise<{ grants: Grant[], dataSource: 'api' | 'fallback' | 'mock' }> {
+  // Search grants with filters - NO FALLBACK, ONLY REAL API
+  async searchGrants(filters: GrantSearchFilters): Promise<{ grants: Grant[], dataSource: 'api' }> {
     if (!this.baseUrl) {
-      console.warn('API URL not configured, using fallback data');
-      return {
-        grants: this.getFallbackGrants(),
-        dataSource: 'fallback'
-      };
+      throw new Error('API URL not configured - cannot search real grants data');
     }
 
-    try {
-      const token = localStorage.getItem('sge_auth_token');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${this.baseUrl}/api/grants/search`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(filters),
-      });
-
-      if (!response.ok) {
-        console.warn('Search grants API failed, using SGE fallback data');
-        return {
-          grants: this.getFallbackGrants(),
-          dataSource: 'fallback'
-        };
-      }
-
-      const data = await response.json();
-
-      // Validate data structure
-      if (!data || !Array.isArray(data.grants)) {
-        console.warn('Invalid search results structure:', data);
-        return {
-          grants: this.getFallbackGrants(),
-          dataSource: 'fallback'
-        };
-      }
-
-      const grants = data.grants || [];
-
-      // Mark API data with source indicator
-      const grantsWithSource = grants.map(grant => ({
-        ...grant,
-        data_source: 'api' as const
-      }));
-
-      return {
-        grants: grantsWithSource,
-        dataSource: 'api'
-      };
-    } catch (error) {
-      console.error('Search grants failed:', error);
-      return {
-        grants: this.getFallbackGrants(),
-        dataSource: 'fallback'
-      };
+    const token = localStorage.getItem('sge_auth_token');
+    if (!token) {
+      throw new Error('Authentication required - cannot search real grants data');
     }
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    const response = await fetch(`${this.baseUrl}/api/grants/search`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(filters),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Search grants API failed: ${errorData.detail || `Status: ${response.status}`}`);
+    }
+
+    const data = await response.json();
+
+    // Validate data structure
+    if (!data || !Array.isArray(data.grants)) {
+      throw new Error('Invalid search results structure from API');
+    }
+
+    const grants = data.grants || [];
+
+    // Validate each grant has data_source === 'api'
+    const invalidGrants = grants.filter(grant => grant.data_source !== 'api');
+    if (invalidGrants.length > 0) {
+      throw new Error(`Found ${invalidGrants.length} search results with non-API data source`);
+    }
+
+    // Mark API data with source indicator
+    const grantsWithSource = grants.map(grant => ({
+      ...grant,
+      data_source: 'api' as const
+    }));
+
+    return {
+      grants: grantsWithSource,
+      dataSource: 'api'
+    };
   }
 
   // Get AI-powered grant recommendations

@@ -1,0 +1,32 @@
+[Unit]
+Description=Grants API Monitoring Bot
+Documentation=https://sge-enhanced-dashboard.onrender.com
+After=network.target
+
+[Service]
+Type=simple
+User=alanmccarthy
+WorkingDirectory=/Users/alanmccarthy/Library/CloudStorage/OneDrive-SharedLibraries-Onedrive/SGE V3 GIIS
+ExecStart=/Users/alanmccarthy/Library/CloudStorage/OneDrive-SharedLibraries-Onedrive/SGE V3 GIIS/scripts/monitor-grants-api.sh
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=grants-monitor
+
+# Environment variables
+Environment=API_URL=https://shadow-goose-api.onrender.com
+Environment=FRONTEND_URL=https://sge-enhanced-dashboard.onrender.com
+Environment=CHECK_INTERVAL=300
+Environment=MAX_RESPONSE_TIME=2.0
+Environment=MIN_SUCCESS_RATE=95
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/Users/alanmccarthy/Library/CloudStorage/OneDrive-SharedLibraries-Onedrive/SGE V3 GIIS
+
+[Install]
+WantedBy=multi-user.target
