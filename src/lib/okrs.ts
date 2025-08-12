@@ -475,17 +475,7 @@ class OKRService {
 
 
 
-  private getMockStats(): OKRStats {
-    return {
-      total_okrs: 3,
-      on_track: 2,
-      at_risk: 1,
-      behind: 0,
-      completed: 0,
-      average_progress: 78.5,
-      critical_okrs: 1,
-    };
-  }
+
 }
 
 export const okrService = new OKRService();

@@ -67,27 +67,23 @@ class GrantService {
 
   // Get all available grants
   async getGrants(): Promise<Grant[]> {
-    try {
-      if (!this.baseUrl) {
-        return this.getMockGrants();
-      }
-
-      const response = await fetch(`${this.baseUrl}/api/grants`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch grants');
-      }
-
-      const data = await response.json();
-      return data.grants || [];
-    } catch (error) {
-      console.error('Error fetching grants:', error);
-      return this.getMockGrants();
+    if (!this.baseUrl) {
+      throw new Error('API URL not configured');
     }
+
+    const response = await fetch(`${this.baseUrl}/api/grants`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `Failed to fetch grants: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.grants || [];
   }
 
   // Get specific grant details
@@ -112,49 +108,49 @@ class GrantService {
 
   // Search grants with filters
   async searchGrants(filters: GrantSearchFilters): Promise<Grant[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/grants/search`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(filters),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to search grants');
-      }
-
-      const data = await response.json();
-      return data.grants || [];
-    } catch (error) {
-      console.error('Error searching grants:', error);
-      return this.getMockGrants();
+    if (!this.baseUrl) {
+      throw new Error('API URL not configured');
     }
+
+    const response = await fetch(`${this.baseUrl}/api/grants/search`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filters),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `Failed to search grants: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.grants || [];
   }
 
   // Get AI-powered grant recommendations
   async getRecommendations(): Promise<GrantRecommendation[]> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/grants/recommendations`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to get recommendations');
-      }
-
-      const data = await response.json();
-      return data.recommendations || [];
-    } catch (error) {
-      console.error('Error getting recommendations:', error);
-      return this.getMockRecommendations();
+    if (!this.baseUrl) {
+      throw new Error('API URL not configured');
     }
+
+    const response = await fetch(`${this.baseUrl}/api/grants/recommendations`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `Failed to get recommendations: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.recommendations || [];
   }
 
   // Get grant categories
@@ -195,7 +191,7 @@ class GrantService {
       return data.applications || [];
     } catch (error) {
       console.error('Error fetching applications:', error);
-      return this.getMockApplications();
+      throw new Error('Failed to fetch grant applications');
     }
   }
 
@@ -300,121 +296,11 @@ class GrantService {
       return await response.json();
     } catch (error) {
       console.error('Error fetching stats:', error);
-      return this.getMockStats();
+      throw new Error('Failed to fetch grant statistics');
     }
   }
 
-  // Mock data for development
-  private getMockGrants(): Grant[] {
-    return [
-      {
-        id: 1,
-        name: "Victorian Creative Industries Grant",
-        description: "Supporting creative projects in Victoria",
-        amount: 50000,
-        category: "Arts & Culture",
-        deadline: "2025-09-15T23:59:59Z",
-        status: "open",
-        eligibility: ["Victoria-based organizations", "Creative projects", "Community impact"],
-        requirements: ["Project proposal", "Budget breakdown", "Timeline"],
-        success_score: 85,
-        created_at: "2025-08-01T00:00:00Z",
-        updated_at: "2025-08-01T00:00:00Z",
-      },
-      {
-        id: 2,
-        name: "Community Impact Fund",
-        description: "Funding for community development projects",
-        amount: 25000,
-        category: "Community",
-        deadline: "2025-10-01T23:59:59Z",
-        status: "open",
-        eligibility: ["Community organizations", "Non-profit status", "Local impact"],
-        requirements: ["Community consultation", "Impact assessment", "Partnerships"],
-        success_score: 92,
-        created_at: "2025-08-01T00:00:00Z",
-        updated_at: "2025-08-01T00:00:00Z",
-      },
-      {
-        id: 3,
-        name: "Youth Innovation Grant",
-        description: "Supporting youth-led innovative projects",
-        amount: 15000,
-        category: "Youth",
-        deadline: "2025-11-15T23:59:59Z",
-        status: "open",
-        eligibility: ["Youth-led projects", "Innovation focus", "Ages 18-30"],
-        requirements: ["Innovation proposal", "Youth engagement", "Scalability plan"],
-        success_score: 78,
-        created_at: "2025-08-01T00:00:00Z",
-        updated_at: "2025-08-01T00:00:00Z",
-      },
-    ];
-  }
 
-  private getMockApplications(): GrantApplication[] {
-    return [
-      {
-        id: 1,
-        grant_id: 1,
-        user_id: 1,
-        status: "in_progress",
-        priority: "high",
-        assigned_to: 1,
-        answers: [
-          {
-            id: 1,
-            application_id: 1,
-            question: "Describe your project",
-            answer: "Youth employment initiative supporting young people in creative industries",
-            author_id: 1,
-            version: 1,
-            created_at: "2025-08-10T10:00:00Z",
-            updated_at: "2025-08-10T10:00:00Z",
-          },
-        ],
-        comments: [
-          {
-            id: 1,
-            application_id: 1,
-            author_id: 1,
-            content: "Great start! Let's add more detail about the creative industries focus.",
-            created_at: "2025-08-10T11:00:00Z",
-          },
-        ],
-        created_at: "2025-08-10T09:00:00Z",
-        updated_at: "2025-08-10T11:00:00Z",
-      },
-    ];
-  }
-
-  private getMockRecommendations(): GrantRecommendation[] {
-    return [
-      {
-        grant: this.getMockGrants()[0],
-        match_score: 95,
-        reasons: ["Perfect fit for creative industries", "Strong community impact", "Youth focus"],
-        success_probability: 85,
-      },
-      {
-        grant: this.getMockGrants()[1],
-        match_score: 88,
-        reasons: ["Community development focus", "Good funding amount", "Clear requirements"],
-        success_probability: 92,
-      },
-    ];
-  }
-
-  private getMockStats() {
-    return {
-      total_applications: 5,
-      submitted: 2,
-      approved: 1,
-      rejected: 0,
-      draft: 3,
-      success_rate: 50,
-    };
-  }
 }
 
 export const grantService = new GrantService();
