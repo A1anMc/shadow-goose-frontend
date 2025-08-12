@@ -2,7 +2,7 @@
 
 ## 📋 UAT Overview
 
-- **Environment:** Staging (https://shadow-goose-web-staging.onrender.com)
+- **Environment:** Staging (<https://shadow-goose-web-staging.onrender.com>)
 - **Timeline:** 15–22 September 2025
 - **Triage Channel:** Slack #dev-uat
 - **Primary Contact:** Alan McCarthy (Impact Director)
@@ -11,35 +11,35 @@
 
 ### **Admin User: Alan McCarthy**
 
-- **Email:** alanmccarthy00@gmail.com
+- **Email:** <alanmccarthy00@gmail.com>
 - **Role:** Impact Director
 - **Access Level:** Full admin privileges
 - **Testing Focus:** System administration, user management, analytics
 
 ### **Manager User: Ursula Searle**
 
-- **Email:** ursula@shadow-goose.com
+- **Email:** <ursula@shadow-goose.com>
 - **Role:** Managing Director
 - **Access Level:** Create/edit projects, manage team
 - **Testing Focus:** Project management, team coordination, production oversight
 
 ### **Manager User: Ash Dorman**
 
-- **Email:** ash@shadow-goose.com
+- **Email:** <ash@shadow-goose.com>
 - **Role:** Managing Director
 - **Access Level:** Create/edit projects, manage team
 - **Testing Focus:** Project management, content creation, stakeholder coordination
 
 ### **Creative User: Shamita Siva**
 
-- **Email:** shamita@shadow-goose.com
+- **Email:** <shamita@shadow-goose.com>
 - **Role:** Creative Director
 - **Access Level:** Create/edit projects, manage creative content
 - **Testing Focus:** Content management, creative workflows, project coordination
 
 ### **Operations User: Mish Rep**
 
-- **Email:** mish@shadow-goose.com
+- **Email:** <mish@shadow-goose.com>
 - **Role:** Operations Officer
 - **Access Level:** View/edit assigned items, operational tasks
 - **Testing Focus:** Operational workflows, data management, process efficiency
@@ -170,7 +170,7 @@
 
 **For Critical Issues:**
 
-1. **Immediate:** Contact Alan McCarthy (alanmccarthy00@gmail.com)
+1. **Immediate:** Contact Alan McCarthy (<alanmccarthy00@gmail.com>)
 2. **Slack:** Post in #dev-uat with @here
 3. **Response Time:** 1 business day SLA
 

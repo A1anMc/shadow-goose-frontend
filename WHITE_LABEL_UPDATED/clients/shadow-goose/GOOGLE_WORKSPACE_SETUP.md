@@ -4,29 +4,29 @@
 
 ### **Primary Admin Access:**
 
-- **Alan McCarthy** (Impact Director) - alanmccarthy00@gmail.com
+- **Alan McCarthy** (Impact Director) - <alanmccarthy00@gmail.com>
   - **Role:** Full admin access
   - **Permissions:** User management, system administration, analytics
 
 ### **Management Access:**
 
-- **Ursula Searle** (Managing Director) - ursula@shadow-goose.com
+- **Ursula Searle** (Managing Director) - <ursula@shadow-goose.com>
   - **Role:** Manager access
   - **Permissions:** Project management, team coordination, production oversight
 
-- **Ash Dorman** (Managing Director) - ash@shadow-goose.com
+- **Ash Dorman** (Managing Director) - <ash@shadow-goose.com>
   - **Role:** Manager access
   - **Permissions:** Project management, content creation, stakeholder coordination
 
 ### **Creative Access:**
 
-- **Shamita Siva** (Creative Director) - shamita@shadow-goose.com
+- **Shamita Siva** (Creative Director) - <shamita@shadow-goose.com>
   - **Role:** Manager access
   - **Permissions:** Content management, creative workflows, project coordination
 
 ### **Operations Access:**
 
-- **Mish Rep** (Operations Officer) - mish@shadow-goose.com
+- **Mish Rep** (Operations Officer) - <mish@shadow-goose.com>
   - **Role:** User access
   - **Permissions:** Operational workflows, data management, process efficiency
 
@@ -42,11 +42,11 @@
 
 - [ ] Create Google Workspace accounts for all team members
 - [ ] Set up email addresses:
-  - alanmccarthy00@gmail.com (Alan McCarthy - Admin)
-  - ursula@shadow-goose.com
-  - ash@shadow-goose.com
-  - shamita@shadow-goose.com
-  - mish@shadow-goose.com
+  - <alanmccarthy00@gmail.com> (Alan McCarthy - Admin)
+  - <ursula@shadow-goose.com>
+  - <ash@shadow-goose.com>
+  - <shamita@shadow-goose.com>
+  - <mish@shadow-goose.com>
 
 ### **Step 3: SSO Configuration**
 
@@ -81,8 +81,8 @@ USER_EMAILS=mish@shadow-goose.com
 
 ### **SSO Endpoints to Configure:**
 
-- **Staging:** https://shadow-goose-web-staging.onrender.com/auth/google
-- **Production:** https://shadow-goose-web.onrender.com/auth/google
+- **Staging:** <https://shadow-goose-web-staging.onrender.com/auth/google>
+- **Production:** <https://shadow-goose-web.onrender.com/auth/google>
 
 ## 📧 Email Templates for Team Invitations
 
@@ -179,12 +179,12 @@ Shadow Goose Entertainment Team
 
 **For Google Workspace Issues:**
 
-- **Primary:** Alan McCarthy (alanmccarthy00@gmail.com)
+- **Primary:** Alan McCarthy (<alanmccarthy00@gmail.com>)
 - **Backup:** Shadow Goose IT Support
 
 **For NavImpact Platform Issues:**
 
-- **Primary:** Alan McCarthy (alanmccarthy00@gmail.com)
+- **Primary:** Alan McCarthy (<alanmccarthy00@gmail.com>)
 - **Slack:** #dev-uat channel
 - **SLA:** 1 business day response
 

@@ -28,7 +28,7 @@ curl -s https://shadow-goose-web-staging.onrender.com/login | grep -o "Shadow Go
 
 ### **Step 3: Manual Testing**
 
-1. **Open Browser**: https://shadow-goose-web-staging.onrender.com
+1. **Open Browser**: <https://shadow-goose-web-staging.onrender.com>
 2. **Click "Sign In"**
 3. **Login**: username: `test`, password: `test`
 4. **Verify Dashboard**: Should show "Welcome, test (admin)"

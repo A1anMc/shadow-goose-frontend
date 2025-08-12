@@ -3,7 +3,7 @@
 ## 1) Client Overview
 
 - Client name: Shadow Goose
-- Primary contacts: Alan McCarthy • Impact Director • alan@shadow-goose.com
+- Primary contacts: Alan McCarthy • Impact Director • <alan@shadow-goose.com>
 - Target go‑live date: Production 2025-10-01 (Staging: 2025-09-15)
 - Domains (web, API):
   - Staging: web `staging.shadow-goose.org`, api `api.staging.shadowgoose.org`
@@ -19,8 +19,8 @@
 
 ## 3) Environment & DNS
 
-- Staging URLs (web/api): https://staging.shadow-goose.org / https://api.staging.shadowgoose.org
-- Production URLs (web/api): https://app.shadowgoose.org / https://api.shadowgoose.org
+- Staging URLs (web/api): <https://staging.shadow-goose.org> / <https://api.staging.shadowgoose.org>
+- Production URLs (web/api): <https://app.shadowgoose.org> / <https://api.shadowgoose.org>
 - DNS records (CNAMEs):
   - web.staging → staging.shadow-goose.org
   - api.staging → api.staging.shadowgoose.org
@@ -32,7 +32,7 @@
 ## 4) Roles & Access
 
 - Role matrix: Admin (full); Manager (create/edit projects); User (view/edit assigned)
-- Admin users: Alan McCarthy • alan@shadow-goose.com.au
+- Admin users: Alan McCarthy • <alan@shadow-goose.com.au>
 - SSO/IdP (optional): Google Workspace
 
 ## 5) Phased Plan
@@ -109,6 +109,7 @@
 - [ ] Stakeholder review and sign‑off
 
 Optional tracker
+
 | Item | Source/Link | Owner | Due | Status |
 |------|-------------|-------|-----|--------|
 | Mission/Vision | | | | |

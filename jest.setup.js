@@ -1,4 +1,5 @@
 // Jest setup file
+import '@testing-library/jest-dom';
 global.console = {
   ...console,
   // Uncomment to ignore a specific log level

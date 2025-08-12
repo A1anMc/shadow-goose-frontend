@@ -6,8 +6,8 @@ import {
   DataSource,
   PredictiveModel,
   RealTimeMetric,
+  analyticsService,
 } from "../src/lib/analytics";
-import { mockAnalyticsService } from "../src/lib/mockAnalytics";
 
 export default function Analytics() {
   const router = useRouter();
@@ -40,11 +40,11 @@ export default function Analytics() {
     try {
       setLoading(true);
 
-      // Load all analytics data in parallel (using mock service for now)
+      // Load all analytics data in parallel from live API
       const [sourcesData, modelsData, metricsData] = await Promise.all([
-        mockAnalyticsService.getDataSources(),
-        mockAnalyticsService.getPredictiveModels(),
-        mockAnalyticsService.getRealTimeMetrics(),
+        analyticsService.getDataSources(),
+        analyticsService.getPredictiveModels(),
+        analyticsService.getRealTimeMetrics(),
       ]);
 
       setDataSources(sourcesData);

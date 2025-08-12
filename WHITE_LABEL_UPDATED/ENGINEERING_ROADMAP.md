@@ -251,9 +251,9 @@ Environment Variables:
 
 ## 🔗 Quick Links
 
-- **Live Backend**: https://sge-dashboard-api.onrender.com/health
-- **API Documentation**: https://sge-dashboard-api.onrender.com/api/docs
-- **GitHub Repository**: https://github.com/A1anMc/SGEDashboardJuly
+- **Live Backend**: <https://sge-dashboard-api.onrender.com/health>
+- **API Documentation**: <https://sge-dashboard-api.onrender.com/api/docs>
+- **GitHub Repository**: <https://github.com/A1anMc/SGEDashboardJuly>
 - **Deployment Guide**: [docs/deployment/README.md](../docs/deployment/README.md)
 
 ---

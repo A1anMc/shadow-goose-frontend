@@ -147,14 +147,14 @@ curl -s -o /dev/null -w "Production Frontend: %{http_code}\n" https://app.shadow
 
 ### **Target Production URLs**
 
-- **Frontend**: https://app.shadowgoose.org
-- **API**: https://api.shadowgoose.org
+- **Frontend**: <https://app.shadowgoose.org>
+- **API**: <https://api.shadowgoose.org>
 - **Admin Login**: `test` / `test`
 
 ### **Fallback URLs (if custom domains not ready)**
 
-- **Frontend**: https://shadow-goose-web.onrender.com
-- **API**: https://shadow-goose-api.onrender.com
+- **Frontend**: <https://shadow-goose-web.onrender.com>
+- **API**: <https://shadow-goose-api.onrender.com>
 
 ---
 
@@ -163,7 +163,7 @@ curl -s -o /dev/null -w "Production Frontend: %{http_code}\n" https://app.shadow
 ### **Emergency Contacts**
 
 - **Technical Lead**: Alan McCarthy
-- **Email**: alan@shadow-goose.com
+- **Email**: <alan@shadow-goose.com>
 - **Response Time**: 4 hours for critical issues
 
 ### **Monitoring**

@@ -86,14 +86,14 @@
 
 ### **✅ Staging Environment**
 
-- **URL**: https://shadow-goose-api-staging.onrender.com
+- **URL**: <https://shadow-goose-api-staging.onrender.com>
 - **Status**: Ready for deployment (v4.5.0)
 - **Database**: PostgreSQL via Render Blueprint
 - **Monitoring**: Health checks and metrics ready
 
 ### **✅ Production Environment**
 
-- **URL**: https://shadow-goose-api.onrender.com
+- **URL**: <https://shadow-goose-api.onrender.com>
 - **Status**: Ready for deployment (v4.5.0)
 - **Database**: PostgreSQL via Render Blueprint
 - **Monitoring**: Production monitoring ready

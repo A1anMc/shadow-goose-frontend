@@ -339,7 +339,7 @@ curl https://shadow-goose-web-staging.onrender.com
 
 ### Team Contacts
 
-- **Project Manager:** Alan McCarthy (alanmccarthy00@gmail.com)
+- **Project Manager:** Alan McCarthy (<alanmccarthy00@gmail.com>)
 - **Technical Lead:** Alan McCarthy
 - **UAT Coordinator:** Alan McCarthy
 

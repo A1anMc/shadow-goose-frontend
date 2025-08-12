@@ -31,7 +31,7 @@
 
 ### **Step 1: Check Render Dashboard**
 
-1. **Go to**: https://dashboard.render.com
+1. **Go to**: <https://dashboard.render.com>
 2. **Find**: `shadow-goose-api-staging` service
 3. **Check Status**: Should be "Live" or "Deploying"
 4. **Check Auto-Deploy**: Should be enabled for `main` branch

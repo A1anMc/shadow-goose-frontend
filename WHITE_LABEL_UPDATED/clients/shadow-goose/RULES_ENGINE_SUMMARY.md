@@ -173,10 +173,10 @@
 
 ### **Access URLs:**
 
-- **Dashboard**: https://shadow-goose-web-staging.onrender.com/dashboard
-- **Rules Engine**: https://shadow-goose-web-staging.onrender.com/rules
-- **Deployments**: https://shadow-goose-web-staging.onrender.com/deployments
-- **User Management**: https://shadow-goose-web-staging.onrender.com/users
+- **Dashboard**: <https://shadow-goose-web-staging.onrender.com/dashboard>
+- **Rules Engine**: <https://shadow-goose-web-staging.onrender.com/rules>
+- **Deployments**: <https://shadow-goose-web-staging.onrender.com/deployments>
+- **User Management**: <https://shadow-goose-web-staging.onrender.com/users>
 
 ### **Authentication:**
 

@@ -2,7 +2,7 @@
 
 ## 1) Contacts & Timeline
 
-- Primary Points of Contact: Alan McCarthy • Impact Director • alan@shadow-goose.com
+- Primary Points of Contact: Alan McCarthy • Impact Director • <alan@shadow-goose.com>
 - Technical Owner(s): Alan McCarthy
 - Decision Maker(s) for Sign‑off: Alan McCarthy
 - Target Staging Date: 15 September 2025
@@ -26,7 +26,7 @@
 - Brand Colours (Hex): Primary #1A1A1A, Secondary #FFFFFF, Accent #FF6600, Background #F5F5F5
 - Typography: Heading - Poppins, Body - Open Sans
 - Favicon & Social Image: /assets/favicon.png, /assets/social.png
-- Email Branding Logo URL: https://shadow-goose.com
+- Email Branding Logo URL: <https://shadow-goose.com>
 - Tone/Aesthetic Notes: Bold, authentic, slightly quirky
 
 ## 4) Environment & Secrets
@@ -42,7 +42,7 @@
 ## 5) Roles, Access & Authentication
 
 - Role Matrix: Admin - Full access; Manager - Create/edit projects; User - View/edit assigned items
-- Admin Users: Alan McCarthy • alan@shadow-goose.com.au
+- Admin Users: Alan McCarthy • <alan@shadow-goose.com.au>
 - SSO/IdP: Google Workspace
 - Password Policy: Min 12 chars, MFA required, 90-day rotation
 
