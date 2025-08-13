@@ -8,7 +8,7 @@ import {
   GrantRecommendation,
   GrantSearchFilters,
 } from "../src/lib/grants";
-import { sgeMetricsTracker, SGEGrantCategory } from "../src/lib/sge-grants-data";
+import { successMetricsTracker } from "../src/lib/success-metrics";
 
 export default function Grants() {
   const router = useRouter();
@@ -23,9 +23,9 @@ export default function Grants() {
   );
   const [loading, setLoading] = useState(true);
   const [searchFilters, setSearchFilters] = useState<GrantSearchFilters>({});
-  const [categories, setCategories] = useState<SGEGrantCategory[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [dataSource, setDataSource] = useState<'api' | 'fallback' | 'mock'>('api');
-  const [successMetrics, setSuccessMetrics] = useState(sgeMetricsTracker.getMetrics());
+  const [successMetrics, setSuccessMetrics] = useState(successMetricsTracker.getMetrics());
 
   useEffect(() => {
     loadData();
@@ -50,15 +50,15 @@ export default function Grants() {
       setDataSource(grantsResponse.dataSource);
       setApplications(applicationsData);
       setRecommendations(recommendationsData);
-      setCategories(categoriesData as SGEGrantCategory[]);
+      setCategories(categoriesData as string[]);
 
       // Track grant discovery for metrics
       grantsResponse.grants.forEach(grant => {
-        sgeMetricsTracker.trackGrantDiscovery(grant.id.toString(), 85); // High relevance for SGE
+        successMetricsTracker.trackGrantDiscovery(grantsResponse.grants.length, 0.5, 85); // High relevance for SGE
       });
 
       // Update metrics display
-      setSuccessMetrics(sgeMetricsTracker.getMetrics());
+      setSuccessMetrics(successMetricsTracker.getMetrics());
     } catch (error) {
       console.error("Error loading grants data:", error);
     } finally {
