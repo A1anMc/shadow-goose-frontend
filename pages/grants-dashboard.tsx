@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { GrantService } from '../src/lib/grants';
 import { Grant } from '../src/lib/grants';
@@ -32,7 +32,7 @@ export default function GrantsDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<'overview' | 'high-priority' | 'closing-soon' | 'all-grants'>('overview');
 
-  const grantService = new GrantService();
+  const grantService = useMemo(() => new GrantService(), []);
 
   const loadDashboardData = useCallback(async () => {
     try {

@@ -19,6 +19,7 @@ export interface Grant {
   geographic_focus?: string[];
   application_url?: string;
   contact_info?: string;
+  organization?: string;
   created_at: string;
   updated_at: string;
   data_source?: 'api' | 'fallback' | 'mock' | 'real' | 'research' | 'creative_australia' | 'screen_australia';
@@ -100,6 +101,7 @@ export class GrantService {
         success_score: unifiedGrant.success_score,
         success_probability: unifiedGrant.success_score,
         time_to_apply: unifiedGrant.days_until_deadline,
+        organization: unifiedGrant.organization || 'Unknown Organization',
         created_at: unifiedGrant.created_at,
         updated_at: unifiedGrant.updated_at,
         data_source: unifiedGrant.data_source,
@@ -137,6 +139,7 @@ export class GrantService {
         success_score: unifiedGrant.success_score,
         success_probability: unifiedGrant.success_score,
         time_to_apply: unifiedGrant.days_until_deadline,
+        organization: unifiedGrant.organization || 'Unknown Organization',
         created_at: unifiedGrant.created_at,
         updated_at: unifiedGrant.updated_at,
         data_source: unifiedGrant.data_source,
@@ -168,6 +171,7 @@ export class GrantService {
         success_score: unifiedGrant.success_score,
         success_probability: unifiedGrant.success_score,
         time_to_apply: unifiedGrant.days_until_deadline,
+        organization: unifiedGrant.organization || 'Unknown Organization',
         created_at: unifiedGrant.created_at,
         updated_at: unifiedGrant.updated_at,
         data_source: unifiedGrant.data_source,
