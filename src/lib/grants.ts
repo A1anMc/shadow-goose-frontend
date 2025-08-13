@@ -77,7 +77,7 @@ export interface GrantRecommendation {
   success_probability: number;
 }
 
-class GrantService {
+export class GrantService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   // Get all available grants - UNIFIED DATA PIPELINE
@@ -85,7 +85,7 @@ class GrantService {
     try {
       // Use the unified data pipeline for real-time grant data
       const unifiedGrants = await grantsDataPipeline.getAllGrants();
-      
+
       // Transform UnifiedGrant to Grant format for frontend compatibility
       const grants: Grant[] = unifiedGrants.map(unifiedGrant => ({
         id: unifiedGrant.id,
@@ -123,7 +123,7 @@ class GrantService {
   async getHighPriorityGrants(limit: number = 10): Promise<Grant[]> {
     try {
       const unifiedGrants = await grantsDataPipeline.getHighPriorityGrants(limit);
-      
+
       return unifiedGrants.map(unifiedGrant => ({
         id: unifiedGrant.id,
         name: unifiedGrant.title,
@@ -154,7 +154,7 @@ class GrantService {
   async getClosingSoonGrants(): Promise<Grant[]> {
     try {
       const unifiedGrants = await grantsDataPipeline.getClosingSoonGrants();
-      
+
       return unifiedGrants.map(unifiedGrant => ({
         id: unifiedGrant.id,
         name: unifiedGrant.title,

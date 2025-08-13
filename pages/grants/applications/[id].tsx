@@ -174,7 +174,7 @@ export default function GrantApplicationDetail() {
       <div className="min-h-screen bg-sg-background flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-600 text-xl mb-4">⚠️ Application Not Found</div>
-          <p className="text-gray-600 mb-4">The application you're looking for doesn't exist.</p>
+          <p className="text-gray-600 mb-4">The application you&apos;re looking for doesn&apos;t exist.</p>
           <button
             onClick={() => router.push("/grants")}
             className="bg-sg-primary text-white px-4 py-2 rounded-md hover:bg-sg-primary/90"

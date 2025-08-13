@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { GrantService } from '../src/lib/grants';
 import { Grant } from '../src/lib/grants';
@@ -39,9 +39,9 @@ export default function GrantsDashboard() {
     // Refresh data every 5 minutes
     const interval = setInterval(loadDashboardData, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadDashboardData]);
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -177,7 +177,7 @@ export default function GrantsDashboard() {
                 Cache: {pipelineHealth.cache_status}
               </div>
             </div>
-            
+
             {/* Data Sources Status */}
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
               {Object.entries(pipelineHealth.data_sources).map(([source, info]) => (
@@ -297,7 +297,7 @@ export default function GrantsDashboard() {
           {selectedTab === 'overview' && (
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">System Overview</h3>
-              
+
               {/* Grants by Source */}
               <div className="mb-6">
                 <h4 className="text-md font-medium text-gray-700 mb-3">Grants by Source</h4>
