@@ -1,4 +1,6 @@
-// Real grants data - no fallbacks
+// Real grants data - unified data pipeline integration
+
+import { grantsDataPipeline, UnifiedGrant } from './grants-data-pipeline';
 
 export interface Grant {
   id: number | string;
@@ -19,7 +21,11 @@ export interface Grant {
   contact_info?: string;
   created_at: string;
   updated_at: string;
-  data_source?: 'api' | 'fallback' | 'mock' | 'real' | 'research';
+  data_source?: 'api' | 'fallback' | 'mock' | 'real' | 'research' | 'creative_australia' | 'screen_australia';
+  // New unified pipeline fields
+  priority_score?: number;
+  days_until_deadline?: number;
+  sge_alignment_score?: number;
 }
 
 export interface GrantApplication {
@@ -74,54 +80,126 @@ export interface GrantRecommendation {
 class GrantService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // Get all available grants - NO FALLBACK, ONLY REAL API
-  async getGrants(): Promise<{ grants: Grant[], dataSource: 'api' }> {
-    if (!this.baseUrl) {
-      throw new Error('API URL not configured - cannot fetch real grants data');
+  // Get all available grants - UNIFIED DATA PIPELINE
+  async getGrants(): Promise<{ grants: Grant[], dataSource: 'unified_pipeline' }> {
+    try {
+      // Use the unified data pipeline for real-time grant data
+      const unifiedGrants = await grantsDataPipeline.getAllGrants();
+      
+      // Transform UnifiedGrant to Grant format for frontend compatibility
+      const grants: Grant[] = unifiedGrants.map(unifiedGrant => ({
+        id: unifiedGrant.id,
+        name: unifiedGrant.title,
+        description: unifiedGrant.description,
+        amount: unifiedGrant.amount,
+        category: unifiedGrant.category,
+        deadline: unifiedGrant.deadline,
+        status: unifiedGrant.status,
+        eligibility: unifiedGrant.eligibility_criteria,
+        requirements: unifiedGrant.required_documents,
+        success_score: unifiedGrant.success_score,
+        success_probability: unifiedGrant.success_score,
+        time_to_apply: unifiedGrant.days_until_deadline,
+        created_at: unifiedGrant.created_at,
+        updated_at: unifiedGrant.updated_at,
+        data_source: unifiedGrant.data_source,
+        // New unified pipeline fields
+        priority_score: unifiedGrant.priority_score,
+        days_until_deadline: unifiedGrant.days_until_deadline,
+        sge_alignment_score: unifiedGrant.sge_alignment_score
+      }));
+
+      return {
+        grants: grants,
+        dataSource: 'unified_pipeline'
+      };
+    } catch (error) {
+      console.error('Failed to fetch grants from unified pipeline:', error);
+      throw new Error(`Unified grants pipeline failed: ${error}`);
     }
-
-    const token = localStorage.getItem('sge_auth_token');
-    if (!token) {
-      throw new Error('Authentication required - cannot fetch real grants data');
-    }
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
-
-    const response = await fetch(`${this.baseUrl}/api/grants`, {
-      method: 'GET',
-      headers,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Grants API failed: ${errorData.detail || `Status: ${response.status}`}`);
-    }
-
-    const data = await response.json();
-
-    // Validate data structure
-    if (!data || !Array.isArray(data.grants)) {
-      throw new Error('Invalid grants data structure from API');
-    }
-
-    const grants = data.grants || [];
-
-    // Add data_source if not present (for backward compatibility)
-    const grantsWithSource = grants.map(grant => ({
-      ...grant,
-      data_source: grant.data_source || 'api' as const
-    }));
-
-    return {
-      grants: grantsWithSource,
-      dataSource: 'api'
-    };
   }
 
-  // No fallback data - only real API data
+  // Get high priority grants from unified pipeline
+  async getHighPriorityGrants(limit: number = 10): Promise<Grant[]> {
+    try {
+      const unifiedGrants = await grantsDataPipeline.getHighPriorityGrants(limit);
+      
+      return unifiedGrants.map(unifiedGrant => ({
+        id: unifiedGrant.id,
+        name: unifiedGrant.title,
+        description: unifiedGrant.description,
+        amount: unifiedGrant.amount,
+        category: unifiedGrant.category,
+        deadline: unifiedGrant.deadline,
+        status: unifiedGrant.status,
+        eligibility: unifiedGrant.eligibility_criteria,
+        requirements: unifiedGrant.required_documents,
+        success_score: unifiedGrant.success_score,
+        success_probability: unifiedGrant.success_score,
+        time_to_apply: unifiedGrant.days_until_deadline,
+        created_at: unifiedGrant.created_at,
+        updated_at: unifiedGrant.updated_at,
+        data_source: unifiedGrant.data_source,
+        priority_score: unifiedGrant.priority_score,
+        days_until_deadline: unifiedGrant.days_until_deadline,
+        sge_alignment_score: unifiedGrant.sge_alignment_score
+      }));
+    } catch (error) {
+      console.error('Failed to fetch high priority grants:', error);
+      return [];
+    }
+  }
+
+  // Get closing soon grants
+  async getClosingSoonGrants(): Promise<Grant[]> {
+    try {
+      const unifiedGrants = await grantsDataPipeline.getClosingSoonGrants();
+      
+      return unifiedGrants.map(unifiedGrant => ({
+        id: unifiedGrant.id,
+        name: unifiedGrant.title,
+        description: unifiedGrant.description,
+        amount: unifiedGrant.amount,
+        category: unifiedGrant.category,
+        deadline: unifiedGrant.deadline,
+        status: unifiedGrant.status,
+        eligibility: unifiedGrant.eligibility_criteria,
+        requirements: unifiedGrant.required_documents,
+        success_score: unifiedGrant.success_score,
+        success_probability: unifiedGrant.success_score,
+        time_to_apply: unifiedGrant.days_until_deadline,
+        created_at: unifiedGrant.created_at,
+        updated_at: unifiedGrant.updated_at,
+        data_source: unifiedGrant.data_source,
+        priority_score: unifiedGrant.priority_score,
+        days_until_deadline: unifiedGrant.days_until_deadline,
+        sge_alignment_score: unifiedGrant.sge_alignment_score
+      }));
+    } catch (error) {
+      console.error('Failed to fetch closing soon grants:', error);
+      return [];
+    }
+  }
+
+  // Get pipeline statistics
+  async getPipelineStats(): Promise<any> {
+    try {
+      return await grantsDataPipeline.getPipelineStats();
+    } catch (error) {
+      console.error('Failed to fetch pipeline stats:', error);
+      return null;
+    }
+  }
+
+  // Get pipeline health status
+  async getPipelineHealth(): Promise<any> {
+    try {
+      return await grantsDataPipeline.getHealthStatus();
+    } catch (error) {
+      console.error('Failed to fetch pipeline health:', error);
+      return null;
+    }
+  }
 
   // Get specific grant details
   async getGrant(id: number): Promise<Grant | null> {
