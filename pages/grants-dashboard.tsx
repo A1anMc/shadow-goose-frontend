@@ -34,13 +34,6 @@ export default function GrantsDashboard() {
 
   const grantService = new GrantService();
 
-  useEffect(() => {
-    loadDashboardData();
-    // Refresh data every 5 minutes
-    const interval = setInterval(loadDashboardData, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [loadDashboardData]);
-
   const loadDashboardData = useCallback(async () => {
     try {
       setLoading(true);
@@ -86,7 +79,14 @@ export default function GrantsDashboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [grantService]);
+
+  useEffect(() => {
+    loadDashboardData();
+    // Refresh data every 5 minutes
+    const interval = setInterval(loadDashboardData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [loadDashboardData]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
