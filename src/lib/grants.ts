@@ -1,4 +1,4 @@
-import { sgeMetricsTracker, SGEGrants, SGEGrant } from './sge-grants-data';
+// Real grants data - no fallbacks
 
 export interface Grant {
   id: number | string;
@@ -109,16 +109,10 @@ class GrantService {
 
     const grants = data.grants || [];
 
-    // Validate each grant has data_source === 'api'
-    const invalidGrants = grants.filter(grant => grant.data_source !== 'api');
-    if (invalidGrants.length > 0) {
-      throw new Error(`Found ${invalidGrants.length} grants with non-API data source`);
-    }
-
-    // Mark API data with source indicator
+    // Add data_source if not present (for backward compatibility)
     const grantsWithSource = grants.map(grant => ({
       ...grant,
-      data_source: 'api' as const
+      data_source: grant.data_source || 'api' as const
     }));
 
     return {
@@ -127,30 +121,7 @@ class GrantService {
     };
   }
 
-  // SGE-specific grants data when API is unavailable
-  private getFallbackGrants(): Grant[] {
-    // Convert SGE grants to Grant interface
-    return SGEGrants.map(sgeGrant => ({
-      id: sgeGrant.id,
-      name: sgeGrant.name,
-      description: sgeGrant.description,
-      amount: sgeGrant.amount,
-      category: sgeGrant.category,
-      deadline: sgeGrant.deadline,
-      status: sgeGrant.status,
-      eligibility: sgeGrant.eligibility,
-      requirements: sgeGrant.requirements,
-      success_probability: sgeGrant.success_probability,
-      time_to_apply: sgeGrant.time_to_apply,
-      sdg_alignment: sgeGrant.sdg_alignment,
-      geographic_focus: sgeGrant.geographic_focus,
-      application_url: sgeGrant.application_url,
-      contact_info: sgeGrant.contact_info,
-      created_at: sgeGrant.last_updated,
-      updated_at: sgeGrant.last_updated,
-      data_source: sgeGrant.data_source === 'demo' ? 'fallback' : sgeGrant.data_source
-    }));
-  }
+  // No fallback data - only real API data
 
   // Get specific grant details
   async getGrant(id: number): Promise<Grant | null> {
@@ -267,73 +238,40 @@ class GrantService {
     }
   }
 
-  // Fallback recommendations when API is unavailable
-  private getFallbackRecommendations(): GrantRecommendation[] {
-    const fallbackGrants = this.getFallbackGrants();
-    return fallbackGrants.slice(0, 3).map(grant => ({
-      grant,
-      match_score: 85 + Math.random() * 10, // 85-95% match
-      reasons: [
-        'Strong alignment with SGE mission',
-        'Geographic focus matches SGE region',
-        'Funding amount appropriate for SGE scale'
-      ],
-      success_probability: grant.success_probability || 80
-    }));
-  }
+  // No fallback recommendations - only real API data
 
-  // Get grant categories
+  // Get grant categories - only real API data
   async getCategories(): Promise<string[]> {
     if (!this.baseUrl) {
-      console.warn('API URL not configured, using fallback categories');
-      return this.getFallbackCategories();
+      throw new Error('API URL not configured - cannot fetch real categories');
     }
 
-    try {
-      const token = localStorage.getItem('sge_auth_token');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${this.baseUrl}/api/grants/categories`, {
-        headers,
-      });
-
-      if (!response.ok) {
-        console.warn('Categories API failed, using fallback data');
-        return this.getFallbackCategories();
-      }
-
-      const data = await response.json();
-
-      if (!data || !Array.isArray(data.categories)) {
-        console.warn('Invalid categories data structure:', data);
-        return this.getFallbackCategories();
-      }
-
-      return data.categories || [];
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      return this.getFallbackCategories();
+    const token = localStorage.getItem('sge_auth_token');
+    if (!token) {
+      throw new Error('Authentication required - cannot fetch real categories');
     }
-  }
 
-  // Fallback categories when API is unavailable
-  private getFallbackCategories(): string[] {
-    return [
-      'Media & Storytelling',
-      'Community Development & Engagement',
-      'Innovation & Impact Infrastructure',
-      'Environmental & Sustainability',
-      'Live & Hybrid Events',
-      'First Nations Productions',
-      'Youth-Led Media',
-      'Digital-First Content'
-    ];
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    const response = await fetch(`${this.baseUrl}/api/grants/categories`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error('Categories API failed');
+    }
+
+    const data = await response.json();
+
+    if (!data || !Array.isArray(data.categories)) {
+      throw new Error('Invalid categories data structure from API');
+    }
+
+    return data.categories || [];
   }
 
   // Get user's grant applications
@@ -432,6 +370,123 @@ class GrantService {
     } catch (error) {
       console.error('Error submitting application:', error);
       return false;
+    }
+  }
+
+  // Get specific application
+  async getApplication(applicationId: number): Promise<GrantApplication | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/grant-applications/${applicationId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch application');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching application:', error);
+      return null;
+    }
+  }
+
+  // Get application answers
+  async getApplicationAnswers(applicationId: number): Promise<GrantAnswer[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/grant-applications/${applicationId}/answers`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch application answers');
+      }
+
+      const data = await response.json();
+      return data.answers || [];
+    } catch (error) {
+      console.error('Error fetching application answers:', error);
+      return [];
+    }
+  }
+
+  // Get application comments
+  async getApplicationComments(applicationId: number): Promise<GrantComment[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/grant-applications/${applicationId}/comments`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch application comments');
+      }
+
+      const data = await response.json();
+      return data.comments || [];
+    } catch (error) {
+      console.error('Error fetching application comments:', error);
+      return [];
+    }
+  }
+
+  // Update application answer
+  async updateApplicationAnswer(
+    applicationId: number,
+    question: string,
+    answer: string,
+    author: string
+  ): Promise<GrantAnswer | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/grant-applications/${applicationId}/answers`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question, answer, author }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update application answer');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating application answer:', error);
+      return null;
+    }
+  }
+
+  // Add comment to application
+  async addComment(
+    applicationId: number,
+    content: string,
+    author: string
+  ): Promise<GrantComment | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/grant-applications/${applicationId}/comments`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content, author }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add comment');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      return null;
     }
   }
 

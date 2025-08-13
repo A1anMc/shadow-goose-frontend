@@ -1,8 +1,8 @@
 # 🔧 **BACKEND INDENTATION ERROR FIX GUIDE**
 
-**Date**: August 12, 2025  
-**Priority**: P0 - Critical  
-**Error**: `IndentationError: unexpected unindent` at line 1196 in `app/grants.py`  
+**Date**: August 12, 2025
+**Priority**: P0 - Critical
+**Error**: `IndentationError: unexpected unindent` at line 1196 in `app/grants.py`
 **Service**: `shadow-goose-api.onrender.com`
 
 ---

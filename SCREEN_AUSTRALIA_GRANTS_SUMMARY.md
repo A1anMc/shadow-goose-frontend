@@ -1,7 +1,7 @@
 # 🎬 **Screen Australia Documentary Production Funding**
 
-**Source**: [Screen Australia Documentary Production](https://www.screenaustralia.gov.au/funding-and-support/documentary/production/documentary-production)  
-**Date Added**: August 13, 2025  
+**Source**: [Screen Australia Documentary Production](https://www.screenaustralia.gov.au/funding-and-support/documentary/production/documentary-production)
+**Date Added**: August 13, 2025
 **Status**: Ready for integration into grants system
 
 ---
