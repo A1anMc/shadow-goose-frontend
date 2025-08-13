@@ -1,25 +1,25 @@
 services:
   - type: web
-    name: sge-enhanced-dashboard
+    name: sge-grants-system
     env: node
     plan: starter
     repo: https://github.com/A1anMc/shadow-goose-frontend.git
-    branch: main # DEPLOY FROM MAIN BRANCH - ENHANCED DASHBOARD
+    branch: main
     rootDir: .
     buildCommand: npm ci && npm run build
-    startCommand: PORT=$PORT node .next/standalone/server.js
+    startCommand: npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://shadow-goose-api.onrender.com
       - key: NEXT_PUBLIC_CLIENT
-        value: shadow-goose
+        value: sge
       - key: NEXT_PUBLIC_APP_NAME
-        value: "Shadow Goose Entertainment"
+        value: "SGE Grants System"
       - key: NEXT_PUBLIC_APP_VERSION
-        value: 1.0.3
+        value: 2.0.0
       - key: NEXT_PUBLIC_ENV
         value: production
       - key: NEXT_PUBLIC_ENABLE_ANALYTICS
         value: "true"
-    healthCheckPath: /api/health
+    healthCheckPath: /
     autoDeploy: true
