@@ -11,7 +11,7 @@ echo ""
 # Configuration
 API_URL="https://shadow-goose-api.onrender.com"
 FRONTEND_URL="https://sge-enhanced-dashboard.onrender.com"
-TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzU1MDU0NDA3fQ.BG-bdF1gkG9i3xZGXdu6SCqsen3D69cQUfVfWSyKAj4"
+TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzU1MDU2ODg5fQ.-E9edxbXl6de68Hb524OEsx0vGV628uUfC08XiYDHIE"
 
 # Colors for output
 RED='\033[0;31m'
