@@ -86,7 +86,7 @@ export default function GrantsDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
