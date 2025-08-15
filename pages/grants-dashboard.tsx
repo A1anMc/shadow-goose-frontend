@@ -156,7 +156,7 @@ export default function GrantsDashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Real-time Grants Dashboard
+            Real-time Grants Dashboard - Updated
           </h1>
           <p className="text-gray-600">
             Live data from Creative Australia, Screen Australia, and other grant sources
