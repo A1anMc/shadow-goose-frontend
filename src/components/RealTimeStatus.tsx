@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { websocketService } from "../lib/websocket";
-import { notificationService } from "../lib/notifications";
+import { notificationService, Notification } from "../lib/notifications";
 import {
   ProjectUpdateData,
   OKRUpdateData,
@@ -25,7 +25,7 @@ export default function RealTimeStatus({
   );
   const [notificationCount, setNotificationCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationData[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     // Connect to WebSocket
@@ -45,38 +45,47 @@ export default function RealTimeStatus({
 
     // Set up WebSocket message handlers
     const handleProjectUpdate = (data: ProjectUpdateData) => {
-      notificationService.addNotification({
+      notificationService.createNotification({
         type: "info",
         title: "Project Update",
         message: `Project ${data.projectId} status updated to ${data.status}`,
-        read: false,
+        priority: "medium",
       });
       onDataRefresh?.();
     };
 
     const handleOKRUpdate = (data: OKRUpdateData) => {
-      notificationService.addNotification({
+      notificationService.createNotification({
         type: "info",
         title: "OKR Update",
         message: `OKR ${data.okrId} progress updated to ${data.progress}%`,
-        read: false,
+        priority: "medium",
       });
       onDataRefresh?.();
     };
 
     const handleNotification = (data: NotificationData) => {
-      notificationService.addNotification(data);
+      notificationService.createNotification({
+        type: data.type as any,
+        title: data.title,
+        message: data.message,
+        priority: "medium",
+      });
     };
 
     websocketService.on("project_update", handleProjectUpdate);
     websocketService.on("okr_update", handleOKRUpdate);
     websocketService.on("notification", handleNotification);
 
-    // Subscribe to notification changes
-    const unsubscribe = notificationService.subscribe((notifications) => {
+    // Update notification count
+    const updateNotificationCount = () => {
+      const notifications = notificationService.getNotifications();
       setNotifications(notifications);
-      setNotificationCount(notificationService.getUnreadCount());
-    });
+      setNotificationCount(notificationService.getUnreadNotifications().length);
+    };
+
+    // Initial update
+    updateNotificationCount();
 
     // Request notification permission
     notificationService.requestPermission();
@@ -87,7 +96,6 @@ export default function RealTimeStatus({
       websocketService.off("project_update", handleProjectUpdate);
       websocketService.off("okr_update", handleOKRUpdate);
       websocketService.off("notification", handleNotification);
-      unsubscribe();
     };
   }, [onDataRefresh, refreshInterval]);
 
@@ -248,12 +256,12 @@ export default function RealTimeStatus({
                             <div className="flex items-center space-x-2">
                               <span
                                 className={`inline-block w-2 h-2 rounded-full ${
-                                  notification.type === "error"
-                                    ? "bg-red-500"
-                                    : notification.type === "warning"
-                                      ? "bg-yellow-500"
-                                      : notification.type === "success"
-                                        ? "bg-green-500"
+                                  notification.type === "warning"
+                                    ? "bg-yellow-500"
+                                    : notification.type === "success"
+                                      ? "bg-green-500"
+                                      : notification.type === "deadline"
+                                        ? "bg-red-500"
                                         : "bg-blue-500"
                                 }`}
                               ></span>
@@ -265,11 +273,7 @@ export default function RealTimeStatus({
                               {notification.message}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                              {notification.timestamp
-                                ? new Date(
-                                    notification.timestamp,
-                                  ).toLocaleString()
-                                : "Just now"}
+                              {new Date(notification.created_at).toLocaleString()}
                             </p>
                           </div>
                           <button
