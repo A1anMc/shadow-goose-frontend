@@ -233,6 +233,36 @@ class CreativeAustraliaAPIService {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         data_source: 'creative_australia'
+      },
+      {
+        id: 'creative-australia-doc-prod-2024',
+        title: 'Creative Australia Documentary Production Grant',
+        description: 'Funding for documentary production including filming, editing, and post-production work.',
+        amount: 50000.00,
+        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days - urgent
+        category: 'documentary',
+        organization: 'Creative Australia',
+        eligibility_criteria: ['Australian organizations', 'Documentary filmmakers', 'Production experience'],
+        required_documents: ['Production plan', 'Budget breakdown', 'Distribution strategy'],
+        success_score: 0.75,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        data_source: 'creative_australia'
+      },
+      {
+        id: 'creative-australia-doc-research-2024',
+        title: 'Creative Australia Documentary Research Grant',
+        description: 'Support for documentary research and development, including archival research and interviews.',
+        amount: 15000.00,
+        deadline: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(), // 21 days - soon
+        category: 'documentary',
+        organization: 'Creative Australia',
+        eligibility_criteria: ['Australian organizations', 'Researchers', 'Documentary projects'],
+        required_documents: ['Research proposal', 'Timeline', 'Expected outcomes'],
+        success_score: 0.90,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        data_source: 'creative_australia'
       }
     ];
   }
@@ -244,12 +274,27 @@ class CreativeAustraliaAPIService {
         title: 'Creative Australia Arts Project Grant',
         description: 'Funding for innovative arts projects that engage communities and tell important Australian stories.',
         amount: 15000.00,
-        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(), // 60 days - normal
         category: 'arts_culture',
         organization: 'Creative Australia',
         eligibility_criteria: ['Arts organizations', 'Community engagement focus', 'Innovative approach'],
         required_documents: ['Project proposal', 'Community engagement plan', 'Budget breakdown'],
         success_score: 0.75,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        data_source: 'creative_australia'
+      },
+      {
+        id: 'creative-australia-arts-urgent-2024',
+        title: 'Creative Australia Community Arts Initiative',
+        description: 'Urgent funding for community arts projects that address social issues and build community resilience.',
+        amount: 12000.00,
+        deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days - very urgent
+        category: 'arts_culture',
+        organization: 'Creative Australia',
+        eligibility_criteria: ['Community organizations', 'Social impact focus', 'Quick implementation'],
+        required_documents: ['Urgent project proposal', 'Community support letters', 'Quick start plan'],
+        success_score: 0.70,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         data_source: 'creative_australia'
@@ -264,12 +309,27 @@ class CreativeAustraliaAPIService {
         title: 'Creative Australia Youth Arts Initiative',
         description: 'Supporting youth-focused arts projects that empower young people and build community connections.',
         amount: 20000.00,
-        deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days - soon
         category: 'youth',
         organization: 'Creative Australia',
         eligibility_criteria: ['Youth-focused organizations', 'Community impact', 'Young artist involvement'],
         required_documents: ['Youth engagement plan', 'Project timeline', 'Impact measurement strategy'],
         success_score: 0.80,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        data_source: 'creative_australia'
+      },
+      {
+        id: 'creative-australia-youth-urgent-2024',
+        title: 'Creative Australia Youth Emergency Grant',
+        description: 'Emergency funding for youth programs that need immediate support to continue operations.',
+        amount: 8000.00,
+        deadline: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day - today
+        category: 'youth',
+        organization: 'Creative Australia',
+        eligibility_criteria: ['Youth organizations', 'Emergency situation', 'Immediate need'],
+        required_documents: ['Emergency request', 'Impact statement', 'Immediate action plan'],
+        success_score: 0.65,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         data_source: 'creative_australia'
