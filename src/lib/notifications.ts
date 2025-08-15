@@ -240,7 +240,9 @@ class NotificationService {
   // Save notifications to localStorage
   private saveNotifications(): void {
     try {
-      localStorage.setItem('grant_notifications', JSON.stringify(this.notifications));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('grant_notifications', JSON.stringify(this.notifications));
+      }
     } catch (error) {
       console.error('Error saving notifications:', error);
     }
@@ -249,9 +251,11 @@ class NotificationService {
   // Load notifications from localStorage
   private loadNotifications(): void {
     try {
-      const saved = localStorage.getItem('grant_notifications');
-      if (saved) {
-        this.notifications = JSON.parse(saved);
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('grant_notifications');
+        if (saved) {
+          this.notifications = JSON.parse(saved);
+        }
       }
     } catch (error) {
       console.error('Error loading notifications:', error);
@@ -261,7 +265,9 @@ class NotificationService {
   // Save preferences to localStorage
   private savePreferences(): void {
     try {
-      localStorage.setItem('notification_preferences', JSON.stringify(this.preferences));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('notification_preferences', JSON.stringify(this.preferences));
+      }
     } catch (error) {
       console.error('Error saving preferences:', error);
     }
@@ -270,9 +276,11 @@ class NotificationService {
   // Load preferences from localStorage
   private loadPreferences(): void {
     try {
-      const saved = localStorage.getItem('notification_preferences');
-      if (saved) {
-        this.preferences = JSON.parse(saved);
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('notification_preferences');
+        if (saved) {
+          this.preferences = JSON.parse(saved);
+        }
       }
     } catch (error) {
       console.error('Error loading preferences:', error);

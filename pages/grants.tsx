@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import NotificationBell from "../src/components/NotificationBell";
 import { getBranding } from "../src/lib/branding";
 import {
     Grant,
@@ -313,14 +314,27 @@ export default function Grants() {
                   Dashboard
                 </button>
                 <button
-                  onClick={() => router.push("/analytics")}
+                  onClick={() => router.push("/grants/applications/dashboard")}
+                  className="text-gray-600 hover:text-sg-primary transition-colors"
+                >
+                  Applications
+                </button>
+                <button
+                  onClick={() => router.push("/grants/analytics")}
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
                   Analytics
                 </button>
+                <button
+                  onClick={() => router.push("/grants/success-metrics")}
+                  className="text-gray-600 hover:text-sg-primary transition-colors"
+                >
+                  Success Metrics
+                </button>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
+              <NotificationBell />
               <span className="text-sm text-gray-600">Welcome, SGE Team</span>
               <button
                 onClick={() => router.push("/")}
