@@ -24,7 +24,7 @@ export default function Grants() {
   const [loading, setLoading] = useState(true);
   const [searchFilters, setSearchFilters] = useState<GrantSearchFilters>({});
   const [categories, setCategories] = useState<string[]>([]);
-  const [dataSource, setDataSource] = useState<'api' | 'fallback' | 'mock'>('api');
+  const [dataSource, setDataSource] = useState<'api' | 'fallback' | 'mock' | 'unified_pipeline'>('api');
   const [successMetrics, setSuccessMetrics] = useState(successMetricsTracker.getMetrics());
 
   useEffect(() => {
