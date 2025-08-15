@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sge-grants-system
+    name: sge-enhanced-dashboard
     env: node
     plan: starter
     repo: https://github.com/A1anMc/shadow-goose-frontend.git
