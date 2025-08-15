@@ -377,10 +377,10 @@ export default function GrantsDashboard() {
                           {grant.status.replace('_', ' ')}
                         </span>
                         <div className="text-sm text-gray-500 mt-1">
-                          Priority: {grant.priority_score}
+                          Priority: {grant.priority_score || 'N/A'}
                         </div>
                         <div className="text-sm text-gray-500">
-                          Success: {(grant.success_score * 100).toFixed(1)}%
+                          Success: {grant.success_score ? (grant.success_score * 100).toFixed(1) : 'N/A'}%
                         </div>
                       </div>
                     </div>
@@ -411,10 +411,10 @@ export default function GrantsDashboard() {
                           {grant.status.replace('_', ' ')}
                         </span>
                         <div className="text-sm text-gray-500 mt-1">
-                          {grant.days_until_deadline} days left
+                          {grant.days_until_deadline || 'N/A'} days left
                         </div>
                         <div className="text-sm text-gray-500">
-                          Success: {(grant.success_score * 100).toFixed(1)}%
+                          Success: {grant.success_score ? (grant.success_score * 100).toFixed(1) : 'N/A'}%
                         </div>
                       </div>
                     </div>
@@ -445,10 +445,10 @@ export default function GrantsDashboard() {
                           {grant.status.replace('_', ' ')}
                         </span>
                         <div className="text-sm text-gray-500 mt-1">
-                          Priority: {grant.priority_score}
+                          Priority: {grant.priority_score || 'N/A'}
                         </div>
                         <div className="text-sm text-gray-500">
-                          Success: {(grant.success_score * 100).toFixed(1)}%
+                          Success: {grant.success_score ? (grant.success_score * 100).toFixed(1) : 'N/A'}%
                         </div>
                       </div>
                     </div>
