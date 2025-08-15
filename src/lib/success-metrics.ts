@@ -6,25 +6,25 @@ export interface GrantSuccessMetrics {
   grants_discovered: number;
   search_accuracy: number;
   time_to_find_grant: number;
-  
+
   // Application Metrics
   applications_started: number;
   applications_completed: number;
   applications_submitted: number;
   applications_approved: number;
-  
+
   // Business Metrics
   total_funding_secured: number;
   funding_secured?: number;
   time_saved_hours?: number;
   success_rate: number;
   roi_per_application: number;
-  
+
   // System Metrics
   api_response_time: number;
   system_uptime: number;
   user_satisfaction: number;
-  
+
   // Pipeline Metrics
   data_freshness: 'excellent' | 'good' | 'acceptable' | 'stale';
   cache_hit_rate: number;
@@ -99,20 +99,20 @@ class SuccessMetricsTracker {
   // Application Metrics
   trackApplicationStarted(applicationId: string, grantId: string) {
     this.metrics.applications_started++;
-    
+
     const applicationMetric: GrantApplicationMetrics = {
       application_id: applicationId,
       grant_id: grantId,
       start_time: new Date().toISOString()
     };
-    
+
     this.applicationMetrics.push(applicationMetric);
     this.saveMetrics();
   }
 
   trackApplicationCompleted(applicationId: string, qualityScore: number, successProbability: number) {
     this.metrics.applications_completed++;
-    
+
     const application = this.applicationMetrics.find(app => app.application_id === applicationId);
     if (application) {
       application.completion_time = new Date().toISOString();
@@ -120,19 +120,19 @@ class SuccessMetricsTracker {
       application.quality_score = qualityScore;
       application.success_probability = successProbability;
     }
-    
+
     this.saveMetrics();
   }
 
   trackApplicationSubmitted(applicationId: string) {
     this.metrics.applications_submitted++;
-    
+
     const application = this.applicationMetrics.find(app => app.application_id === applicationId);
     if (application) {
       application.submission_time = new Date().toISOString();
       application.time_to_submit = this.calculateTimeDifference(application.start_time, application.submission_time);
     }
-    
+
     this.saveMetrics();
   }
 
@@ -141,12 +141,12 @@ class SuccessMetricsTracker {
     if (application) {
       application.actual_outcome = outcome;
       application.funding_amount = fundingAmount;
-      
+
       if (outcome === 'approved') {
         this.metrics.applications_approved++;
         application.approval_time = new Date().toISOString();
         application.time_to_approval = this.calculateTimeDifference(application.start_time, application.approval_time);
-        
+
         if (fundingAmount) {
           this.metrics.total_funding_secured += fundingAmount;
         }
@@ -154,7 +154,7 @@ class SuccessMetricsTracker {
         application.rejection_time = new Date().toISOString();
       }
     }
-    
+
     this.updateSuccessRate();
     this.updateROI();
     this.saveMetrics();
@@ -173,17 +173,17 @@ class SuccessMetricsTracker {
       error_count: performanceData.error_count || 0,
       success_count: performanceData.success_count || 0
     };
-    
+
     this.performanceMetrics.push(performanceMetric);
-    
+
     // Update system metrics
     this.metrics.api_response_time = performanceMetric.api_response_time;
     this.metrics.system_uptime = performanceMetric.system_uptime;
-    
+
     // Calculate error rate
     const totalRequests = performanceMetric.error_count + performanceMetric.success_count;
     this.metrics.error_rate = totalRequests > 0 ? performanceMetric.error_count / totalRequests : 0;
-    
+
     this.saveMetrics();
   }
 
@@ -213,7 +213,7 @@ class SuccessMetricsTracker {
       quality_score: qualityScore,
       timestamp: new Date().toISOString()
     };
-    
+
     // Store in localStorage for analysis
     try {
       const existingUsage = JSON.parse(localStorage.getItem('sge_ai_writing_usage') || '[]');
@@ -234,7 +234,7 @@ class SuccessMetricsTracker {
       percentage_improvement: ((afterScore - beforeScore) / beforeScore) * 100,
       timestamp: new Date().toISOString()
     };
-    
+
     try {
       const existingImprovements = JSON.parse(localStorage.getItem('sge_quality_improvements') || '[]');
       existingImprovements.push(improvement);
@@ -255,18 +255,18 @@ class SuccessMetricsTracker {
     try {
       const aiUsage = JSON.parse(localStorage.getItem('sge_ai_writing_usage') || '[]');
       const qualityImprovements = JSON.parse(localStorage.getItem('sge_quality_improvements') || '[]');
-      
+
       const totalAIUsage = aiUsage.length;
-      const averageQualityScore = aiUsage.length > 0 ? 
+      const averageQualityScore = aiUsage.length > 0 ?
         aiUsage.reduce((sum: number, usage: any) => sum + usage.quality_score, 0) / aiUsage.length : 0;
-      
+
       const qualityImprovementAverage = qualityImprovements.length > 0 ?
         qualityImprovements.reduce((sum: number, improvement: any) => sum + improvement.percentage_improvement, 0) / qualityImprovements.length : 0;
-      
+
       // Calculate success rates (simplified - would need more data in production)
       const successRateWithAI = 85; // Estimated based on AI assistance
       const successRateWithoutAI = 65; // Estimated baseline
-      
+
       return {
         total_ai_usage: totalAIUsage,
         average_quality_score: averageQualityScore,
@@ -357,26 +357,26 @@ class SuccessMetricsTracker {
     };
 
     return {
-      discovery: 
+      discovery:
         this.metrics.grants_discovered >= thresholds.discovery.grants_discovered &&
         this.metrics.search_accuracy >= thresholds.discovery.search_accuracy &&
         this.metrics.time_to_find_grant <= thresholds.discovery.time_to_find_grant,
-      
+
       applications:
         this.metrics.success_rate >= thresholds.applications.success_rate &&
         this.metrics.applications_submitted >= thresholds.applications.applications_submitted,
-      
+
       business:
         this.metrics.total_funding_secured >= thresholds.business.total_funding_secured &&
         this.metrics.roi_per_application >= thresholds.business.roi_per_application &&
         this.metrics.applications_approved >= thresholds.business.applications_approved,
-      
+
       system:
         this.metrics.api_response_time <= thresholds.system.api_response_time &&
         this.metrics.system_uptime >= thresholds.system.system_uptime &&
         this.metrics.error_rate <= thresholds.system.error_rate &&
         ['excellent', 'good'].includes(this.metrics.data_freshness),
-      
+
       ai_writing:
         this.getAIWritingSuccessMetrics().success_rate_with_ai >= 80 &&
         this.getAIWritingSuccessMetrics().quality_improvement_average >= 15
@@ -509,7 +509,7 @@ class SuccessMetricsTracker {
     this.performanceMetrics = [];
     this.startTime = Date.now();
     this.saveMetrics();
-    
+
     // Clear AI writing metrics
     try {
       localStorage.removeItem('sge_ai_writing_usage');
