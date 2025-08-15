@@ -26,6 +26,20 @@ export interface AIWritingPrompt {
   tone: 'professional' | 'compelling' | 'technical' | 'storytelling';
 }
 
+export interface GrantContentRequest {
+  section: string;
+  grant_context: {
+    name: string;
+    description: string;
+    category: string;
+    amount: number;
+    requirements: string[];
+    eligibility: string[];
+  };
+  existing_content: string;
+  user_context: string;
+}
+
 export interface AIWritingResponse {
   content: string;
   word_count: number;
@@ -69,7 +83,6 @@ class AIWritingAssistant {
 
   // Generate grant application content
   async generateApplicationContent(prompt: AIWritingPrompt): Promise<AIWritingResponse> {
-    // Import success metrics tracker
     const { successMetricsTracker } = await import('./success-metrics');
     
     const startTime = Date.now();
@@ -102,77 +115,25 @@ class AIWritingAssistant {
       const data = await response.json();
       const content = data.choices[0].message.content;
 
-      // Analyze and enhance the response
-      const enhancedResponse = await this.analyzeAndEnhance(content, prompt);
-      
-      // Store in history
-      this.storeWritingHistory(prompt, enhancedResponse);
+      // Track AI writing usage
+      successMetricsTracker.trackAIWritingUsage('grant_application', prompt.writing_section, 85);
 
-      // Track AI writing usage for success metrics
-      const applicationId = `${prompt.grant_title}-${prompt.writing_section}`;
-      successMetricsTracker.trackAIWritingUsage(applicationId, prompt.writing_section, enhancedResponse.quality_score);
+      const enhancedResponse = await this.analyzeAndEnhance(content, prompt);
+      this.storeWritingHistory(prompt, enhancedResponse);
 
       return enhancedResponse;
     } catch (error) {
-      console.error('AI writing generation failed:', error);
+      console.error('Error generating application content:', error);
       return this.getFallbackResponse(prompt);
     }
   }
 
-  // Generate multiple versions for comparison
-  async generateMultipleVersions(prompt: AIWritingPrompt, count: number = 3): Promise<AIWritingResponse[]> {
-    const versions: AIWritingResponse[] = [];
-    
-    for (let i = 0; i < count; i++) {
-      const modifiedPrompt = {
-        ...prompt,
-        tone: this.getRandomTone(),
-        word_limit: prompt.word_limit + Math.floor(Math.random() * 100)
-      };
-      
-      const version = await this.generateApplicationContent(modifiedPrompt);
-      versions.push(version);
-    }
-    
-    return versions;
-  }
-
-  // Enhance existing content
-  async enhanceContent(content: string, prompt: AIWritingPrompt): Promise<AIWritingResponse> {
-    // Import success metrics tracker
-    const { successMetricsTracker } = await import('./success-metrics');
-    
-    // Analyze original content quality
-    const originalAnalysis = await this.analyzeContent(content, {
-      grant_title: prompt.grant_title,
-      grant_category: prompt.grant_category,
-      grant_amount: prompt.grant_amount
-    });
-    const originalScore = originalAnalysis.overall_score;
-    const enhancementPrompt = `
-      Please enhance the following grant application content to make it more compelling, professional, and aligned with the grant requirements:
-      
-      Original Content:
-      ${content}
-      
-      Grant Requirements:
-      - Title: ${prompt.grant_title}
-      - Description: ${prompt.grant_description}
-      - Amount: $${prompt.grant_amount}
-      - Category: ${prompt.grant_category}
-      
-      Target Word Count: ${prompt.word_limit}
-      Tone: ${prompt.tone}
-      
-      Please provide an enhanced version that:
-      1. Is more compelling and persuasive
-      2. Better aligns with the grant requirements
-      3. Includes specific details and examples
-      4. Maintains professional tone
-      5. Addresses potential concerns
-    `;
-
+  // Generate grant content for specific sections
+  async generateGrantContent(request: GrantContentRequest): Promise<string> {
     try {
+      const systemPrompt = this.buildGrantSystemPrompt(request);
+      const userPrompt = this.buildGrantUserPrompt(request);
+
       const response = await fetch(this.baseUrl, {
         method: 'POST',
         headers: {
@@ -182,11 +143,12 @@ class AIWritingAssistant {
         body: JSON.stringify({
           model: 'gpt-4',
           messages: [
-            { role: 'system', content: 'You are an expert grant writing assistant with 20+ years of experience in securing funding for arts, culture, and community projects.' },
-            { role: 'user', content: enhancementPrompt }
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
           ],
-          max_tokens: prompt.word_limit * 2,
-          temperature: 0.6
+          max_tokens: 1000,
+          temperature: 0.7,
+          top_p: 0.9
         })
       });
 
@@ -195,57 +157,190 @@ class AIWritingAssistant {
       }
 
       const data = await response.json();
-      const enhancedContent = data.choices[0].message.content;
+      const content = data.choices[0]?.message?.content || '';
 
-      const enhancedResponse = await this.analyzeAndEnhance(enhancedContent, prompt);
-      
-      // Track quality improvement
-      const applicationId = `${prompt.grant_title}-${prompt.writing_section}`;
-      successMetricsTracker.trackQualityImprovement(applicationId, originalScore, enhancedResponse.quality_score);
+      // Track AI writing usage
+      const { successMetricsTracker } = await import('./success-metrics');
+      successMetricsTracker.trackAIWritingUsage('grant_application', request.section, 85);
 
-      return enhancedResponse;
+      return content;
     } catch (error) {
-      console.error('Content enhancement failed:', error);
+      console.error('Error generating grant content:', error);
+      return 'Unable to generate content at this time. Please try again later.';
+    }
+  }
+
+  private buildGrantSystemPrompt(request: GrantContentRequest): string {
+    const sectionPrompts = {
+      project_title: 'You are an expert grant writer helping to create a compelling project title.',
+      project_description: 'You are an expert grant writer helping to write a compelling project description that aligns with the grant requirements.',
+      objectives: 'You are an expert grant writer helping to write clear, measurable project objectives.',
+      methodology: 'You are an expert grant writer helping to write a detailed methodology section.',
+      outcomes: 'You are an expert grant writer helping to write expected project outcomes.',
+      timeline: 'You are an expert grant writer helping to write a project timeline with milestones.',
+      budget: 'You are an expert grant writer helping to write a detailed budget breakdown.',
+      team_qualifications: 'You are an expert grant writer helping to write team qualifications and experience.',
+      risk_management: 'You are an expert grant writer helping to write risk management strategies.',
+      sustainability: 'You are an expert grant writer helping to write a sustainability plan.'
+    };
+
+    return `${sectionPrompts[request.section as keyof typeof sectionPrompts] || 'You are an expert grant writer.'}
+
+Key Guidelines:
+- Write in a professional, compelling tone
+- Align with the grant's requirements and eligibility criteria
+- Be specific and measurable where possible
+- Use clear, concise language
+- Focus on impact and outcomes
+- Ensure compliance with grant guidelines
+
+Grant Context:
+- Grant Name: ${request.grant_context.name}
+- Grant Description: ${request.grant_context.description}
+- Category: ${request.grant_context.category}
+- Amount: $${request.grant_context.amount.toLocaleString()}
+- Requirements: ${request.grant_context.requirements.join(', ')}
+- Eligibility: ${request.grant_context.eligibility.join(', ')}
+
+Write content that is tailored to this specific grant and section.`;
+  }
+
+  private buildGrantUserPrompt(request: GrantContentRequest): string {
+    return `Please write content for the "${request.section}" section of a grant application.
+
+User Context: ${request.user_context}
+
+Existing Content: ${request.existing_content || 'None provided'}
+
+Please provide a well-written, grant-specific response that:
+1. Addresses the user's context
+2. Builds upon existing content if provided
+3. Aligns with the grant requirements
+4. Is professional and compelling
+5. Is appropriate for the section type`;
+  }
+
+  async generateMultipleVersions(prompt: AIWritingPrompt, count: number = 3): Promise<AIWritingResponse[]> {
+    const versions: AIWritingResponse[] = [];
+
+    for (let i = 0; i < count; i++) {
+      try {
+        const version = await this.generateApplicationContent(prompt);
+        versions.push(version);
+      } catch (error) {
+        console.error(`Error generating version ${i + 1}:`, error);
+      }
+    }
+
+    return versions;
+  }
+
+  async enhanceContent(content: string, prompt: AIWritingPrompt): Promise<AIWritingResponse> {
+    const { successMetricsTracker } = await import('./success-metrics');
+    
+    try {
+      const originalAnalysis = await this.analyzeContent(content, {
+        grant_title: prompt.grant_title,
+        grant_description: prompt.grant_description,
+        grant_amount: prompt.grant_amount,
+        grant_category: prompt.grant_category
+      });
+
+      const originalScore = originalAnalysis.overall_score;
+      const enhancementPrompt = `
+        Please enhance the following grant application content to make it more compelling and aligned with the grant requirements.
+        
+        Original Content:
+        ${content}
+        
+        Grant Details:
+        - Title: ${prompt.grant_title}
+        - Description: ${prompt.grant_description}
+        - Amount: $${prompt.grant_amount.toLocaleString()}
+        - Category: ${prompt.grant_category}
+        
+        Current Quality Score: ${originalScore}/100
+        
+        Please improve the content to achieve a higher quality score by:
+        1. Making it more specific and measurable
+        2. Better aligning with grant requirements
+        3. Improving clarity and persuasiveness
+        4. Adding relevant details and examples
+        5. Ensuring professional tone and structure
+      `;
+
+      try {
+        const response = await fetch(this.baseUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4',
+            messages: [
+              { role: 'system', content: 'You are an expert grant writer specializing in content enhancement.' },
+              { role: 'user', content: enhancementPrompt }
+            ],
+            max_tokens: prompt.word_limit * 2,
+            temperature: 0.7,
+            top_p: 0.9
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`AI API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const enhancedContent = data.choices[0].message.content;
+
+        return await this.analyzeAndEnhance(enhancedContent, prompt);
+      } catch (error) {
+        console.error('Error enhancing content:', error);
+        return await this.analyzeAndEnhance(content, prompt);
+      }
+    } catch (error) {
+      console.error('Error in enhanceContent:', error);
       return this.getFallbackResponse(prompt);
     }
   }
 
-  // Smart template suggestions
   async suggestTemplates(grantCategory: string, organizationType: string): Promise<AITemplate[]> {
-    const relevantTemplates = this.templates.filter(template => 
-      template.category === grantCategory || 
-      template.category === 'general'
+    const relevantTemplates = this.templates.filter(template =>
+      template.category.toLowerCase().includes(grantCategory.toLowerCase()) ||
+      template.name.toLowerCase().includes(organizationType.toLowerCase())
     );
 
-    // Sort by success rate and usage
     return relevantTemplates
-      .sort((a, b) => (b.success_rate * 0.7 + b.usage_count * 0.3) - (a.success_rate * 0.7 + a.usage_count * 0.3))
+      .sort((a, b) => b.success_rate - a.success_rate)
       .slice(0, 5);
   }
 
-  // Real-time writing assistance
   async provideWritingAssistance(currentContent: string, context: AIWritingPrompt): Promise<{
     suggestions: string[];
     improvements: string[];
     next_section_hint: string;
   }> {
     const assistancePrompt = `
-      Analyze this grant application content and provide real-time writing assistance:
+      You are an expert grant writing assistant. Please analyze the following content and provide helpful suggestions.
       
       Current Content:
       ${currentContent}
       
       Grant Context:
       - Title: ${context.grant_title}
+      - Description: ${context.grant_description}
+      - Amount: $${context.grant_amount.toLocaleString()}
       - Category: ${context.grant_category}
-      - Amount: $${context.grant_amount}
       - Section: ${context.writing_section}
       
       Please provide:
-      1. Specific suggestions for improvement
-      2. Areas that need more detail
-      3. Hints for the next section to write
-      4. Common mistakes to avoid
+      1. 3-5 specific suggestions for improvement
+      2. 2-3 areas that need enhancement
+      3. A hint for what to focus on in the next section
+      
+      Format your response as JSON with keys: suggestions, improvements, next_section_hint
     `;
 
     try {
@@ -258,11 +353,12 @@ class AIWritingAssistant {
         body: JSON.stringify({
           model: 'gpt-4',
           messages: [
-            { role: 'system', content: 'You are a real-time grant writing coach providing immediate feedback and suggestions.' },
+            { role: 'system', content: 'You are a helpful grant writing assistant.' },
             { role: 'user', content: assistancePrompt }
           ],
           max_tokens: 500,
-          temperature: 0.5
+          temperature: 0.7,
+          top_p: 0.9
         })
       });
 
@@ -271,20 +367,19 @@ class AIWritingAssistant {
       }
 
       const data = await response.json();
-      const assistance = data.choices[0].message.content;
-
-      return this.parseAssistanceResponse(assistance);
+      const assistanceText = data.choices[0].message.content;
+      
+      return this.parseAssistanceResponse(assistanceText);
     } catch (error) {
-      console.error('Writing assistance failed:', error);
+      console.error('Error providing writing assistance:', error);
       return {
-        suggestions: ['Continue writing with more specific details'],
+        suggestions: ['Focus on being specific and measurable'],
         improvements: ['Add more concrete examples'],
-        next_section_hint: 'Focus on measurable outcomes'
+        next_section_hint: 'Consider the logical flow to the next section'
       };
     }
   }
 
-  // Content analysis and scoring
   async analyzeContent(content: string, grantRequirements: any): Promise<{
     grant_alignment: number;
     completeness: number;
@@ -294,21 +389,26 @@ class AIWritingAssistant {
     feedback: string[];
   }> {
     const analysisPrompt = `
-      Analyze this grant application content and provide detailed scoring:
+      Please analyze the following grant application content and provide a comprehensive assessment.
       
       Content:
       ${content}
       
       Grant Requirements:
-      ${JSON.stringify(grantRequirements, null, 2)}
+      - Title: ${grantRequirements.grant_title}
+      - Description: ${grantRequirements.grant_description}
+      - Amount: $${grantRequirements.grant_amount?.toLocaleString() || 'N/A'}
+      - Category: ${grantRequirements.grant_category}
       
-      Please score on a scale of 0-100 for:
-      1. Grant Alignment: How well it matches the grant requirements
-      2. Completeness: How comprehensive and detailed it is
-      3. Clarity: How clear and easy to understand
-      4. Persuasiveness: How compelling and convincing
+      Please evaluate on a scale of 0-100 for each criterion:
+      1. Grant Alignment: How well does the content align with the grant's purpose and requirements?
+      2. Completeness: How complete and comprehensive is the content?
+      3. Clarity: How clear and understandable is the writing?
+      4. Persuasiveness: How compelling and convincing is the argument?
       
-      Provide specific feedback for each category.
+      Also provide 3-5 specific feedback points for improvement.
+      
+      Format your response as JSON with keys: grant_alignment, completeness, clarity, persuasiveness, overall_score, feedback
     `;
 
     try {
@@ -321,11 +421,12 @@ class AIWritingAssistant {
         body: JSON.stringify({
           model: 'gpt-4',
           messages: [
-            { role: 'system', content: 'You are an expert grant reviewer with extensive experience evaluating applications.' },
+            { role: 'system', content: 'You are an expert grant application evaluator.' },
             { role: 'user', content: analysisPrompt }
           ],
-          max_tokens: 800,
-          temperature: 0.3
+          max_tokens: 500,
+          temperature: 0.3,
+          top_p: 0.9
         })
       });
 
@@ -334,50 +435,36 @@ class AIWritingAssistant {
       }
 
       const data = await response.json();
-      const analysis = data.choices[0].message.content;
-
-      return this.parseAnalysisResponse(analysis);
+      const analysisText = data.choices[0].message.content;
+      
+      return this.parseAnalysisResponse(analysisText);
     } catch (error) {
-      console.error('Content analysis failed:', error);
+      console.error('Error analyzing content:', error);
       return {
         grant_alignment: 70,
         completeness: 70,
         clarity: 70,
         persuasiveness: 70,
         overall_score: 70,
-        feedback: ['Analysis unavailable - using default scores']
+        feedback: ['Unable to analyze content at this time']
       };
     }
   }
 
-  // Private helper methods
   private buildSystemPrompt(prompt: AIWritingPrompt): string {
-    return `You are an expert grant writing assistant with 20+ years of experience securing funding for arts, culture, and community projects. You specialize in writing compelling, professional grant applications that maximize success rates.
+    return `You are an expert grant writer with over 15 years of experience in writing successful grant applications.
 
-Key Guidelines:
-- Write in a ${prompt.tone} tone
-- Target ${prompt.word_limit} words
-- Focus on measurable outcomes and impact
-- Include specific details and examples
-- Address the grant requirements directly
-- Use clear, professional language
-- Structure content logically
-- Include relevant statistics when possible
-- Demonstrate organizational capacity
-- Show clear project feasibility
+Your expertise includes:
+- Writing compelling project descriptions
+- Creating measurable objectives and outcomes
+- Developing detailed implementation plans
+- Crafting comprehensive budget breakdowns
+- Addressing risk management and sustainability
 
-Grant Category: ${prompt.grant_category}
-Grant Amount: $${prompt.grant_amount}
-Writing Section: ${prompt.writing_section}`;
-  }
-
-  private buildUserPrompt(prompt: AIWritingPrompt): string {
-    return `Please write a ${prompt.writing_section} section for a grant application with the following details:
-
-Grant Information:
+Grant Details:
 - Title: ${prompt.grant_title}
 - Description: ${prompt.grant_description}
-- Amount: $${prompt.grant_amount}
+- Amount: $${prompt.grant_amount.toLocaleString()}
 - Category: ${prompt.grant_category}
 
 Organization Profile:
@@ -385,24 +472,41 @@ Organization Profile:
 - Type: ${prompt.organization_profile.type}
 - Mission: ${prompt.organization_profile.mission}
 - Years Operating: ${prompt.organization_profile.years_operating}
-- Previous Projects: ${prompt.organization_profile.previous_projects.join(', ')}
-- Team Expertise: ${prompt.organization_profile.team_expertise.join(', ')}
 
 Project Details:
 - Title: ${prompt.project_details.title}
 - Objectives: ${prompt.project_details.objectives.join(', ')}
 - Target Audience: ${prompt.project_details.target_audience}
 - Timeline: ${prompt.project_details.timeline} months
-- Budget: $${prompt.project_details.budget}
+- Budget: $${prompt.project_details.budget.toLocaleString()}
 
-Please write a compelling ${prompt.writing_section} section that is approximately ${prompt.word_limit} words in a ${prompt.tone} tone.`;
+Writing Section: ${prompt.writing_section}
+Word Limit: ${prompt.word_limit}
+Tone: ${prompt.tone}
+
+Write content that is professional, compelling, and specifically tailored to this grant opportunity.`;
+  }
+
+  private buildUserPrompt(prompt: AIWritingPrompt): string {
+    return `Please write the ${prompt.writing_section} section for a grant application.
+
+Requirements:
+- Word limit: ${prompt.word_limit} words
+- Tone: ${prompt.tone}
+- Focus on impact and outcomes
+- Be specific and measurable
+- Align with grant requirements
+- Use clear, professional language
+
+Please provide high-quality content that will help secure this grant funding.`;
   }
 
   private async analyzeAndEnhance(content: string, prompt: AIWritingPrompt): Promise<AIWritingResponse> {
     const analysis = await this.analyzeContent(content, {
       grant_title: prompt.grant_title,
-      grant_category: prompt.grant_category,
-      grant_amount: prompt.grant_amount
+      grant_description: prompt.grant_description,
+      grant_amount: prompt.grant_amount,
+      grant_category: prompt.grant_category
     });
 
     const wordCount = content.split(' ').length;
@@ -425,32 +529,38 @@ Please write a compelling ${prompt.writing_section} section that is approximatel
 
   private getFallbackResponse(prompt: AIWritingPrompt): AIWritingResponse {
     const fallbackContent = this.generateFallbackContent(prompt);
-    
+    const wordCount = fallbackContent.split(' ').length;
+
     return {
       content: fallbackContent,
-      word_count: fallbackContent.split(' ').length,
-      quality_score: 70,
-      suggestions: ['AI assistance unavailable - using template content'],
+      word_count: wordCount,
+      quality_score: 60,
+      suggestions: ['This is a fallback response. Please review and enhance manually.'],
       alternative_versions: [],
       compliance_check: {
-        grant_alignment: 70,
-        completeness: 70,
-        clarity: 70,
-        persuasiveness: 70
+        grant_alignment: 60,
+        completeness: 60,
+        clarity: 60,
+        persuasiveness: 60
       }
     };
   }
 
   private generateFallbackContent(prompt: AIWritingPrompt): string {
-    const templates = {
-      project_overview: `Our project "${prompt.project_details.title}" aims to ${prompt.project_details.objectives[0] || 'create positive community impact'}. With ${prompt.organization_profile.years_operating} years of experience in ${prompt.grant_category}, our organization is well-positioned to deliver this initiative successfully.`,
-      objectives_outcomes: `The primary objectives of this project include ${prompt.project_details.objectives.join(', ')}. We expect to achieve measurable outcomes including increased community engagement, enhanced cultural awareness, and sustainable impact.`,
-      implementation_plan: `Our implementation plan spans ${prompt.project_details.timeline} months and includes detailed phases for planning, execution, monitoring, and evaluation. Our experienced team will ensure successful delivery.`,
-      budget_breakdown: `The total project budget of $${prompt.project_details.budget} will be allocated across key areas including personnel, materials, outreach, and evaluation. We have secured additional funding sources to ensure project sustainability.`,
-      risk_management: `We have identified potential risks including timeline delays, budget constraints, and community engagement challenges. Our mitigation strategies include flexible planning, contingency budgets, and stakeholder communication plans.`
-    };
+    const tone = this.getRandomTone();
+    
+    return `[${prompt.writing_section.toUpperCase()} SECTION - ${tone.toUpperCase()} TONE]
 
-    return templates[prompt.writing_section] || 'Content template not available.';
+This is a placeholder for the ${prompt.writing_section} section of your grant application for ${prompt.grant_title}.
+
+Key points to address:
+- Align with the grant's purpose: ${prompt.grant_description}
+- Focus on your organization's expertise: ${prompt.organization_profile.mission}
+- Emphasize measurable outcomes and impact
+- Demonstrate clear methodology and timeline
+- Show strong alignment with grant requirements
+
+Please replace this placeholder with your specific content tailored to this grant opportunity.`;
   }
 
   private getRandomTone(): 'professional' | 'compelling' | 'technical' | 'storytelling' {
@@ -463,14 +573,20 @@ Please write a compelling ${prompt.writing_section} section that is approximatel
     improvements: string[];
     next_section_hint: string;
   } {
-    // Simple parsing - in production, use more sophisticated parsing
-    const lines = response.split('\n').filter(line => line.trim());
-    
-    return {
-      suggestions: lines.slice(0, 3),
-      improvements: lines.slice(3, 6),
-      next_section_hint: lines[lines.length - 1] || 'Continue with next section'
-    };
+    try {
+      const parsed = JSON.parse(response);
+      return {
+        suggestions: parsed.suggestions || [],
+        improvements: parsed.improvements || [],
+        next_section_hint: parsed.next_section_hint || 'Focus on the next logical section'
+      };
+    } catch (error) {
+      return {
+        suggestions: ['Focus on being specific and measurable'],
+        improvements: ['Add more concrete examples'],
+        next_section_hint: 'Consider the logical flow to the next section'
+      };
+    }
   }
 
   private parseAnalysisResponse(response: string): {
@@ -481,21 +597,32 @@ Please write a compelling ${prompt.writing_section} section that is approximatel
     overall_score: number;
     feedback: string[];
   } {
-    // Simple parsing - in production, use more sophisticated parsing
-    const lines = response.split('\n').filter(line => line.trim());
-    
-    return {
-      grant_alignment: 75,
-      completeness: 75,
-      clarity: 75,
-      persuasiveness: 75,
-      overall_score: 75,
-      feedback: lines.slice(0, 5)
-    };
+    try {
+      const parsed = JSON.parse(response);
+      const overall = Math.round((parsed.grant_alignment + parsed.completeness + parsed.clarity + parsed.persuasiveness) / 4);
+      
+      return {
+        grant_alignment: parsed.grant_alignment || 70,
+        completeness: parsed.completeness || 70,
+        clarity: parsed.clarity || 70,
+        persuasiveness: parsed.persuasiveness || 70,
+        overall_score: parsed.overall_score || overall,
+        feedback: parsed.feedback || ['Content analysis completed']
+      };
+    } catch (error) {
+      return {
+        grant_alignment: 70,
+        completeness: 70,
+        clarity: 70,
+        persuasiveness: 70,
+        overall_score: 70,
+        feedback: ['Unable to parse analysis response']
+      };
+    }
   }
 
   private storeWritingHistory(prompt: AIWritingPrompt, response: AIWritingResponse) {
-    const key = `${prompt.grant_title}-${prompt.writing_section}`;
+    const key = `${prompt.grant_title}_${prompt.writing_section}`;
     if (!this.writingHistory.has(key)) {
       this.writingHistory.set(key, []);
     }
@@ -503,34 +630,34 @@ Please write a compelling ${prompt.writing_section} section that is approximatel
   }
 
   private loadTemplates() {
-    // Load predefined templates
+    // Load predefined templates for different grant types
     this.templates = [
       {
-        id: 'doc-001',
-        name: 'Documentary Production Template',
-        category: 'documentary',
+        id: 'arts-culture-1',
+        name: 'Arts & Culture Grant Template',
+        category: 'Arts & Culture',
         sections: {
-          project_overview: 'Template for documentary project overview...',
-          objectives_outcomes: 'Template for documentary objectives...',
-          implementation_plan: 'Template for documentary implementation...',
-          budget_breakdown: 'Template for documentary budget...',
-          risk_management: 'Template for documentary risks...'
+          project_overview: 'Comprehensive arts project overview template',
+          objectives_outcomes: 'Measurable arts outcomes template',
+          implementation_plan: 'Arts project implementation template',
+          budget_breakdown: 'Arts project budget template',
+          risk_management: 'Arts project risk management template'
         },
         success_rate: 85,
         usage_count: 150
       },
       {
-        id: 'arts-001',
-        name: 'Arts & Culture Template',
-        category: 'arts_culture',
+        id: 'community-development-1',
+        name: 'Community Development Grant Template',
+        category: 'Community Development',
         sections: {
-          project_overview: 'Template for arts project overview...',
-          objectives_outcomes: 'Template for arts objectives...',
-          implementation_plan: 'Template for arts implementation...',
-          budget_breakdown: 'Template for arts budget...',
-          risk_management: 'Template for arts risks...'
+          project_overview: 'Community development project overview template',
+          objectives_outcomes: 'Community impact outcomes template',
+          implementation_plan: 'Community project implementation template',
+          budget_breakdown: 'Community project budget template',
+          risk_management: 'Community project risk management template'
         },
-        success_rate: 80,
+        success_rate: 82,
         usage_count: 120
       }
     ];

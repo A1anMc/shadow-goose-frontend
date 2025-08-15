@@ -464,6 +464,27 @@ export class GrantService {
     }
   }
 
+
+
+  // Update application content
+  async updateApplicationContent(applicationId: number, content: any): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/grant-applications/${applicationId}/content`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(content),
+      });
+
+      return response.ok;
+    } catch (error) {
+      console.error('Error updating application content:', error);
+      return false;
+    }
+  }
+
   // Get application answers
   async getApplicationAnswers(applicationId: number): Promise<GrantAnswer[]> {
     try {

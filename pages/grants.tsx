@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getBranding } from "../src/lib/branding";
 import {
     Grant,
@@ -725,7 +725,7 @@ export default function Grants() {
                         {/* Action Buttons */}
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => handleApply(typeof grant.id === 'string' ? parseInt(grant.id) : grant.id)}
+                            onClick={() => router.push(`/grants/applications/new?grantId=${typeof grant.id === 'string' ? grant.id : grant.id}`)}
                             className="flex-1 bg-sg-accent text-white px-4 py-2 rounded-md hover:bg-sg-accent/90 transition-colors font-medium"
                           >
                             Apply Now
@@ -840,7 +840,7 @@ export default function Grants() {
                             </svg>
                           </button>
                           <button
-                            onClick={() => handleApply(typeof grant.id === 'string' ? parseInt(grant.id) : grant.id)}
+                            onClick={() => router.push(`/grants/applications/new?grantId=${typeof grant.id === 'string' ? grant.id : grant.id}`)}
                             className="bg-sg-accent text-white px-4 py-2 rounded-md hover:bg-sg-accent/90 transition-colors"
                           >
                             Apply Now
@@ -1014,7 +1014,7 @@ export default function Grants() {
                           </span>
                         </div>
                         <button
-                          onClick={() => handleApply(typeof rec.grant.id === 'string' ? parseInt(rec.grant.id) : rec.grant.id)}
+                          onClick={() => router.push(`/grants/applications/new?grantId=${typeof rec.grant.id === 'string' ? rec.grant.id : rec.grant.id}`)}
                           className="bg-sg-accent text-white px-4 py-2 rounded-md hover:bg-sg-accent/90 transition-colors"
                         >
                           Apply Now
