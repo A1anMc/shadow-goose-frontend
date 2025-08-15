@@ -9,7 +9,7 @@ export interface Grant {
   amount: number;
   category: string;
   deadline: string;
-  status: 'open' | 'closed' | 'expired' | 'closing_soon' | 'planning';
+  status: 'open' | 'closed' | 'expired' | 'closing_soon' | 'closing_today' | 'planning';
   eligibility: string[];
   requirements: string[];
   success_score?: number;
@@ -22,7 +22,7 @@ export interface Grant {
   organization?: string;
   created_at: string;
   updated_at: string;
-  data_source?: 'api' | 'fallback' | 'mock' | 'real' | 'research' | 'creative_australia' | 'screen_australia';
+  data_source?: 'api' | 'fallback' | 'mock' | 'real' | 'research' | 'creative_australia' | 'screen_australia' | 'vic_screen' | 'regional_arts';
   // New unified pipeline fields
   priority_score?: number;
   days_until_deadline?: number;
@@ -33,6 +33,7 @@ export interface GrantApplication {
   id: number;
   grant_id: number;
   user_id: number;
+  title?: string;
   status: 'draft' | 'in_progress' | 'submitted' | 'approved' | 'rejected';
   priority: 'low' | 'medium' | 'high' | 'critical';
   assigned_to?: number;
@@ -49,6 +50,7 @@ export interface GrantAnswer {
   question: string;
   answer: string;
   author_id: number;
+  author?: string;
   version: number;
   created_at: string;
   updated_at: string;
@@ -58,6 +60,7 @@ export interface GrantComment {
   id: number;
   application_id: number;
   author_id: number;
+  author?: string;
   content: string;
   created_at: string;
 }
@@ -320,7 +323,10 @@ export class GrantService {
     }
   }
 
-  // No fallback recommendations - only real API data
+  // Fallback recommendations for when API is unavailable
+  private getFallbackRecommendations(): GrantRecommendation[] {
+    return [];
+  }
 
   // Get grant categories - only real API data
   async getCategories(): Promise<string[]> {
@@ -419,24 +425,7 @@ export class GrantService {
     }
   }
 
-  // Add comment to application
-  async addComment(applicationId: number, content: string): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/grant-applications/${applicationId}/comments`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('sge_auth_token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content }),
-      });
 
-      return response.ok;
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      return false;
-    }
-  }
 
   // Submit application
   async submitApplication(applicationId: number): Promise<boolean> {

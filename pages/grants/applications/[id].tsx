@@ -468,7 +468,7 @@ export default function GrantApplicationDetail() {
 
                   <button
                     onClick={handleSubmitApplication}
-                    disabled={submitting || application.status === "submitted"}
+                    disabled={submitting || (application.status as string) === "submitted" || application.status === "approved" || application.status === "rejected"}
                     className="w-full bg-green-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-green-700 disabled:opacity-50"
                   >
                     {submitting ? "Submitting..." : "Submit Application"}

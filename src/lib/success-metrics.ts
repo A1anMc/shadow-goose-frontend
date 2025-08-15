@@ -15,6 +15,8 @@ export interface GrantSuccessMetrics {
   
   // Business Metrics
   total_funding_secured: number;
+  funding_secured?: number;
+  time_saved_hours?: number;
   success_rate: number;
   roi_per_application: number;
   

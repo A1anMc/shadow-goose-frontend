@@ -248,11 +248,11 @@ export default function Grants() {
               <div className="text-green-700">Applications Started</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">${successMetrics.funding_secured.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-purple-600">${(successMetrics.funding_secured || successMetrics.total_funding_secured || 0).toLocaleString()}</div>
               <div className="text-purple-700">Funding Secured</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">{successMetrics.time_saved_hours}h</div>
+              <div className="text-2xl font-bold text-orange-600">{(successMetrics.time_saved_hours || 0)}h</div>
               <div className="text-orange-700">Time Saved</div>
             </div>
           </div>
