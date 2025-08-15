@@ -331,6 +331,12 @@ export default function Grants() {
                 >
                   Success Metrics
                 </button>
+                <button
+                  onClick={() => router.push("/grants/ai-analytics")}
+                  className="text-gray-600 hover:text-sg-primary transition-colors"
+                >
+                  🤖 AI Analytics
+                </button>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
