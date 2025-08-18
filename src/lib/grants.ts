@@ -238,7 +238,8 @@ export class GrantService {
     try {
       // Validate we have live data before proceeding
       const systemHealth = liveDataValidator.getSystemHealth();
-      if (!systemHealth.liveDataAvailable) {
+      // Temporarily allow grants to load even if live data validation hasn't run yet
+      if (!systemHealth.liveDataAvailable && systemHealth.lastValidation !== null) {
         throw new Error('CRITICAL: No live data available. System requires live data sources.');
       }
 
