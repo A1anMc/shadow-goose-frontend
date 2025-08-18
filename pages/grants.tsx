@@ -44,7 +44,7 @@ export default function Grants() {
       const grantsResponse = await grantService.getGrantsWithSource();
       setGrants(grantsResponse.grants);
       setDataSource(grantsResponse.dataSource as 'api' | 'fallback' | 'mock' | 'unified_pipeline');
-      
+
       // Track grant discovery for analytics
       if (grantsResponse.grants.length > 0) {
         grantsResponse.grants.forEach(grant => {
@@ -80,7 +80,7 @@ export default function Grants() {
       if (searchFilters.category && grant.category !== searchFilters.category) {
         return false;
       }
-      
+
       // Amount filter
       if (searchFilters.min_amount && grant.amount < searchFilters.min_amount) {
         return false;
@@ -88,7 +88,7 @@ export default function Grants() {
       if (searchFilters.max_amount && grant.amount > searchFilters.max_amount) {
         return false;
       }
-      
+
       // Keywords filter
       if (searchFilters.keywords) {
         const keywords = searchFilters.keywords.toLowerCase();
@@ -97,7 +97,7 @@ export default function Grants() {
           return false;
         }
       }
-      
+
       // Deadline filter
       if (searchFilters.deadline_before) {
         const deadline = new Date(grant.deadline);
@@ -106,14 +106,14 @@ export default function Grants() {
           return false;
         }
       }
-      
+
       return true;
     });
 
     // Sort grants
     filtered.sort((a, b) => {
       let aValue: any, bValue: any;
-      
+
       switch (sortBy) {
         case 'deadline':
           aValue = new Date(a.deadline).getTime();
@@ -133,7 +133,7 @@ export default function Grants() {
           bValue = b.sge_alignment_score || 0;
           break;
       }
-      
+
       if (sortOrder === 'asc') {
         return aValue - bValue;
       } else {
@@ -247,7 +247,7 @@ export default function Grants() {
   const shareGrant = (grant: Grant) => {
     const shareText = `Check out this grant opportunity: ${grant.name} - ${formatCurrency(grant.amount)}`;
     const shareUrl = `${window.location.origin}/grants`;
-    
+
     if (navigator.share) {
       navigator.share({
         title: grant.name,

@@ -61,7 +61,7 @@ export default function GrantSuccessMetrics() {
   const getFilteredData = () => {
     const now = new Date();
     const filterDate = new Date();
-    
+
     switch (timeRange) {
       case '30d':
         filterDate.setDate(now.getDate() - 30);
@@ -76,7 +76,7 @@ export default function GrantSuccessMetrics() {
         return { applications, grants };
     }
 
-    const filteredApplications = applications.filter(app => 
+    const filteredApplications = applications.filter(app =>
       new Date(app.created_at) >= filterDate
     );
 
@@ -93,7 +93,7 @@ export default function GrantSuccessMetrics() {
     const submittedApplications = filteredApplications.filter(app => app.status === 'submitted').length;
     const approvedApplications = filteredApplications.filter(app => app.status === 'approved').length;
     const rejectedApplications = filteredApplications.filter(app => app.status === 'rejected').length;
-    
+
     const totalFunding = filteredApplications
       .filter(app => app.status === 'approved')
       .reduce((total, app) => {
@@ -105,7 +105,7 @@ export default function GrantSuccessMetrics() {
     const conversionRate = totalApplications > 0 ? (submittedApplications / totalApplications) * 100 : 0;
 
     // Calculate average application time
-    const completedApplications = filteredApplications.filter(app => 
+    const completedApplications = filteredApplications.filter(app =>
       app.status === 'submitted' || app.status === 'approved' || app.status === 'rejected'
     );
 
@@ -122,7 +122,7 @@ export default function GrantSuccessMetrics() {
 
     // Category performance
     const categoryPerformance = new Map<string, { count: number; approved: number; funding: number }>();
-    
+
     filteredApplications.forEach(app => {
       const grant = filteredGrants.find(g => g.id === app.grant_id);
       if (grant) {
@@ -259,7 +259,7 @@ export default function GrantSuccessMetrics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -271,7 +271,7 @@ export default function GrantSuccessMetrics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
@@ -283,7 +283,7 @@ export default function GrantSuccessMetrics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-orange-100 rounded-lg">
@@ -313,13 +313,13 @@ export default function GrantSuccessMetrics() {
                   </span>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Applications Submitted</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-32 bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-yellow-500 h-2 rounded-full" 
+                    <div
+                      className="bg-yellow-500 h-2 rounded-full"
                       style={{ width: `${successMetrics.totalApplications > 0 ? (successMetrics.submittedApplications / successMetrics.totalApplications) * 100 : 0}%` }}
                     ></div>
                   </div>
@@ -328,13 +328,13 @@ export default function GrantSuccessMetrics() {
                   </span>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Applications Approved</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-32 bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-500 h-2 rounded-full" 
+                    <div
+                      className="bg-green-500 h-2 rounded-full"
                       style={{ width: `${successMetrics.submittedApplications > 0 ? (successMetrics.approvedApplications / successMetrics.submittedApplications) * 100 : 0}%` }}
                     ></div>
                   </div>

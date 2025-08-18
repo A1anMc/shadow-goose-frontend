@@ -8,11 +8,11 @@ interface GrantWritingAssistantProps {
   currentField: string;
 }
 
-export default function GrantWritingAssistant({ 
-  grant, 
-  application, 
-  onContentUpdate, 
-  currentField 
+export default function GrantWritingAssistant({
+  grant,
+  application,
+  onContentUpdate,
+  currentField
 }: GrantWritingAssistantProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);

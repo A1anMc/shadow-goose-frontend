@@ -115,11 +115,11 @@ export default function AIGrantWriter({
               </svg>
             </button>
           </div>
-          
+
           <div className="text-sm text-blue-800 mb-4 whitespace-pre-wrap">
             {suggestion}
           </div>
-          
+
           <div className="flex space-x-2">
             <button
               onClick={applySuggestion}

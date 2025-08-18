@@ -201,7 +201,7 @@ export default function AIAnalytics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
@@ -214,7 +214,7 @@ export default function AIAnalytics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
@@ -227,7 +227,7 @@ export default function AIAnalytics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-500">
             <div className="flex items-center">
               <div className="p-2 bg-orange-100 rounded-lg">
@@ -267,7 +267,7 @@ export default function AIAnalytics() {
                   <h4 className="font-medium text-gray-900">{selectedGrant.name}</h4>
                   <p className="text-sm text-gray-600">{formatCurrency(selectedGrant.amount)}</p>
                 </div>
-                
+
                 {analysis && (
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -284,7 +284,7 @@ export default function AIAnalytics() {
                         <div className="text-sm text-gray-600">Estimated Competitors</div>
                       </div>
                     </div>
-                    
+
                     <div className="bg-yellow-50 p-3 rounded-lg">
                       <h5 className="font-medium text-yellow-800 mb-2">Risk Factors</h5>
                       <ul className="text-sm text-yellow-700 space-y-1">
@@ -293,7 +293,7 @@ export default function AIAnalytics() {
                         ))}
                       </ul>
                     </div>
-                    
+
                     <div className="bg-green-50 p-3 rounded-lg">
                       <h5 className="font-medium text-green-800 mb-2">AI Suggestions</h5>
                       <ul className="text-sm text-green-700 space-y-1">

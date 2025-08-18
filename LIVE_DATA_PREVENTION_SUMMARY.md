@@ -54,15 +54,15 @@ async getGrants(): Promise<Grant[]> {
 // Detects and blocks fallback data
 private isFallbackData(data: any): boolean {
   // Check data source field
-  if (data.data_source === 'fallback' || 
-      data.data_source === 'curated' || 
+  if (data.data_source === 'fallback' ||
+      data.data_source === 'curated' ||
       data.data_source === 'mock') {
     return true;
   }
 
   // Check for test data patterns
   const testPatterns = ['Test Grant', 'Sample Grant', 'Demo Grant'];
-  return data.grants.some(grant => 
+  return data.grants.some(grant =>
     testPatterns.some(pattern => grant.title.includes(pattern))
   );
 }

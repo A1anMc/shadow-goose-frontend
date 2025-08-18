@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Grant, GrantService } from '../src/lib/grants';
+import SuccessRateDashboard from '../src/components/SuccessRateDashboard';
 
 interface PipelineStats {
   total_grants: number;
@@ -49,10 +50,10 @@ export default function GrantsDashboard() {
   const loadDashboardData = useCallback(async () => {
     try {
       setLoading(true);
-      
+
       // Load grants data using the new method
       await loadGrantsData();
-      
+
       // Load other data
       const [highPriorityData, closingSoonData, statsData, healthData] = await Promise.allSettled([
         grantService.getHighPriorityGrants(),
@@ -265,6 +266,16 @@ export default function GrantsDashboard() {
             </div>
           </div>
         )}
+
+        {/* Success Rate Dashboard */}
+        <div className="mb-8">
+          <SuccessRateDashboard 
+            showDetails={true}
+            showAlerts={true}
+            autoRefresh={true}
+            compact={false}
+          />
+        </div>
 
         {/* Tabs */}
         <div className="mb-6">

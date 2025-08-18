@@ -130,13 +130,13 @@ export class LiveDataMonitor {
    * Perform comprehensive health check on all data sources
    */
   private async performHealthCheck(): Promise<void> {
-    const healthChecks = Array.from(this.healthStatus.keys()).map(source => 
+    const healthChecks = Array.from(this.healthStatus.keys()).map(source =>
       this.checkDataSourceHealth(source)
     );
 
     await Promise.allSettled(healthChecks);
     this.analyzeSystemHealth();
-    this.emit('health-check-complete', { 
+    this.emit('health-check-complete', {
       timestamp: new Date(),
       healthStatus: this.getHealthSummary()
     });
@@ -171,7 +171,7 @@ export class LiveDataMonitor {
 
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
+
       health.status = 'unhealthy';
       health.lastCheck = new Date();
       health.responseTime = responseTime;
@@ -226,7 +226,7 @@ export class LiveDataMonitor {
 
     } catch (error) {
       clearTimeout(timeoutId);
-      
+
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
           return {
@@ -265,7 +265,7 @@ export class LiveDataMonitor {
     if (data.grants && Array.isArray(data.grants)) {
       if (data.grants.length === 0) quality -= 20;
       if (data.grants.length < 5) quality -= 10;
-      
+
       // Check individual grant quality
       data.grants.forEach((grant: any) => {
         if (!grant.title || !grant.amount || !grant.deadline) {
@@ -294,9 +294,9 @@ export class LiveDataMonitor {
     // Simple moving average over last 10 checks
     const recentChecks = health.errorCount;
     const totalChecks = recentChecks + (success ? 1 : 0);
-    
+
     if (totalChecks === 0) return 100;
-    
+
     const successCount = success ? totalChecks - recentChecks : totalChecks - recentChecks - 1;
     return Math.round((successCount / totalChecks) * 100);
   }
@@ -307,7 +307,7 @@ export class LiveDataMonitor {
   private analyzeSystemHealth(): void {
     const primarySources = Array.from(this.healthStatus.values())
       .filter(health => health.isPrimary);
-    
+
     const healthyPrimarySources = primarySources
       .filter(health => health.status === 'healthy' && health.successRate >= this.config.alertThreshold);
 
@@ -321,7 +321,7 @@ export class LiveDataMonitor {
       .filter(health => health.status === 'unhealthy' || health.errorCount > 5);
 
     if (criticalSources.length > 0) {
-      this.createAlert('critical', 'system', 
+      this.createAlert('critical', 'system',
         `${criticalSources.length} critical data source(s) offline. System may be using fallback data.`
       );
     }
@@ -340,8 +340,8 @@ export class LiveDataMonitor {
    */
   private triggerFailover(): void {
     console.warn('🚨 CRITICAL: No healthy primary sources. Triggering failover...');
-    
-    this.createAlert('critical', 'system', 
+
+    this.createAlert('critical', 'system',
       'All primary data sources offline. Switching to backup sources.'
     );
 
@@ -407,10 +407,10 @@ export class LiveDataMonitor {
       .filter(health => health.isPrimary && health.status === 'healthy');
 
     if (primarySources.length === 0) {
-      this.createAlert('critical', 'data-validation', 
+      this.createAlert('critical', 'data-validation',
         'CRITICAL: No live data sources available. System may be using fallback data.'
       );
-      
+
       // Force refresh of data sources
       this.forceDataRefresh();
     }
@@ -421,7 +421,7 @@ export class LiveDataMonitor {
    */
   private async forceDataRefresh(): Promise<void> {
     console.log('🔄 Forcing data source refresh...');
-    
+
     // Clear any cached data
     if (typeof window !== 'undefined' && window.localStorage) {
       const keys = Object.keys(localStorage);
@@ -434,7 +434,7 @@ export class LiveDataMonitor {
 
     // Re-check all sources
     await this.performHealthCheck();
-    
+
     this.emit('data-refresh-complete', { timestamp: new Date() });
   }
 
@@ -453,7 +453,7 @@ export class LiveDataMonitor {
     const criticalAlerts = this.alerts.filter(a => a.type === 'critical' && !a.resolved).length;
 
     let overallStatus: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
-    
+
     if (healthySources === 0) {
       overallStatus = 'unhealthy';
     } else if (healthySources < sources.length * 0.8) {

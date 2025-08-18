@@ -3,6 +3,7 @@
 import { grantsDataPipeline } from './grants-data-pipeline';
 import { liveDataMonitor } from './live-data-monitor';
 import { liveDataValidator } from './live-data-validator';
+import { successRateMonitor } from './success-rate-monitor';
 
 export interface Grant {
   id: number | string;
@@ -252,10 +253,10 @@ export class GrantService {
       }
 
       const data = await response.json();
-      
+
       // Validate the response data
       const validation = await liveDataValidator.validateData(data, `${this.baseUrl}/api/grants`);
-      
+
       if (!validation.isValid || !validation.isLiveData) {
         throw new Error(`CRITICAL: Invalid or non-live data received: ${validation.errors.join(', ')}`);
       }
@@ -263,16 +264,34 @@ export class GrantService {
       // Update monitoring with successful API call
       liveDataMonitor.emit('api-call-success', { endpoint: '/api/grants', timestamp: new Date() });
 
+      // Track success rate for grants API
+      const grantsApiMetric = successRateMonitor.getMetric('grants-api-success');
+      if (grantsApiMetric) {
+        grantsApiMetric.history.push({
+          timestamp: new Date(),
+          value: 100
+        });
+      }
+
       return data.grants || [];
     } catch (error) {
       console.error('Error fetching grants:', error);
-      
+
       // Update monitoring with failed API call
-      liveDataMonitor.emit('api-call-failed', { 
-        endpoint: '/api/grants', 
+      liveDataMonitor.emit('api-call-failed', {
+        endpoint: '/api/grants',
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date() 
+        timestamp: new Date()
       });
+
+      // Track success rate for grants API (failure)
+      const grantsApiMetric = successRateMonitor.getMetric('grants-api-success');
+      if (grantsApiMetric) {
+        grantsApiMetric.history.push({
+          timestamp: new Date(),
+          value: 0
+        });
+      }
 
       // NEVER fall back to test data - throw error instead
       throw new Error(`CRITICAL: Failed to fetch live grants data. ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -398,10 +417,10 @@ export class GrantService {
       }
 
       const data = await response.json();
-      
+
       // Validate the response data
       const validation = await liveDataValidator.validateData(data, `${this.baseUrl}/api/grants/${numericId}`);
-      
+
       if (!validation.isValid || !validation.isLiveData) {
         throw new Error(`CRITICAL: Invalid or non-live data received: ${validation.errors.join(', ')}`);
       }
@@ -412,12 +431,12 @@ export class GrantService {
       return data;
     } catch (error) {
       console.error('Error fetching grant from API:', error);
-      
+
       // Update monitoring with failed API call
-      liveDataMonitor.emit('api-call-failed', { 
-        endpoint: `/api/grants/${id}`, 
+      liveDataMonitor.emit('api-call-failed', {
+        endpoint: `/api/grants/${id}`,
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date() 
+        timestamp: new Date()
       });
 
       // NEVER fall back to test data - throw error instead
@@ -450,10 +469,10 @@ export class GrantService {
       }
 
       const data = await response.json();
-      
+
       // Validate the response data
       const validation = await liveDataValidator.validateData(data, `${this.baseUrl}/api/grants/search`);
-      
+
       if (!validation.isValid || !validation.isLiveData) {
         throw new Error(`CRITICAL: Invalid or non-live data received: ${validation.errors.join(', ')}`);
       }
@@ -464,12 +483,12 @@ export class GrantService {
       return data.grants || [];
     } catch (error) {
       console.error('Error searching grants:', error);
-      
+
       // Update monitoring with failed API call
-      liveDataMonitor.emit('api-call-failed', { 
-        endpoint: '/api/grants/search', 
+      liveDataMonitor.emit('api-call-failed', {
+        endpoint: '/api/grants/search',
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date() 
+        timestamp: new Date()
       });
 
       // NEVER fall back to test data - throw error instead
@@ -511,10 +530,10 @@ export class GrantService {
       }
 
       const data = await response.json();
-      
+
       // Validate the response data
       const validation = await liveDataValidator.validateData(data, `${this.baseUrl}/api/grants/recommendations`);
-      
+
       if (!validation.isValid || !validation.isLiveData) {
         throw new Error(`CRITICAL: Invalid or non-live data received: ${validation.errors.join(', ')}`);
       }
@@ -525,12 +544,12 @@ export class GrantService {
       return data.recommendations || [];
     } catch (error) {
       console.error('Error fetching recommendations:', error);
-      
+
       // Update monitoring with failed API call
-      liveDataMonitor.emit('api-call-failed', { 
-        endpoint: '/api/grants/recommendations', 
+      liveDataMonitor.emit('api-call-failed', {
+        endpoint: '/api/grants/recommendations',
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date() 
+        timestamp: new Date()
       });
 
       // NEVER fall back to test data - throw error instead

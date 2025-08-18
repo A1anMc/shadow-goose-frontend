@@ -44,9 +44,9 @@ export class LiveDataValidator {
         description: 'Data must come from live API, not fallback sources',
         severity: 'critical',
         validate: (data: any) => {
-          return data && 
-                 data.data_source && 
-                 data.data_source !== 'fallback' && 
+          return data &&
+                 data.data_source &&
+                 data.data_source !== 'fallback' &&
                  data.data_source !== 'curated' &&
                  data.data_source !== 'mock';
         },
@@ -75,9 +75,9 @@ export class LiveDataValidator {
         description: 'Data must have required fields and valid structure',
         severity: 'critical',
         validate: (data: any) => {
-          return data && 
-                 typeof data === 'object' && 
-                 Array.isArray(data.grants) && 
+          return data &&
+                 typeof data === 'object' &&
+                 Array.isArray(data.grants) &&
                  data.grants.length > 0;
         },
         errorMessage: 'CRITICAL: Invalid data structure or missing required fields'
@@ -104,7 +104,7 @@ export class LiveDataValidator {
         severity: 'warning',
         validate: (data: any) => {
           if (!data || !data.grants) return false;
-          
+
           let qualityScore = 100;
           const grants = data.grants;
 
@@ -148,7 +148,7 @@ export class LiveDataValidator {
     for (const rule of this.validationRules) {
       try {
         const ruleValid = rule.validate(data);
-        
+
         if (!ruleValid) {
           if (rule.severity === 'critical') {
             errors.push(rule.errorMessage);
@@ -217,8 +217,8 @@ export class LiveDataValidator {
     }
 
     // Check for external API indicators
-    if (source.includes('screenaustralia.gov.au') || 
-        source.includes('creative.gov.au') || 
+    if (source.includes('screenaustralia.gov.au') ||
+        source.includes('creative.gov.au') ||
         source.includes('vicscreen.vic.gov.au')) {
       return true;
     }
@@ -253,8 +253,8 @@ export class LiveDataValidator {
         'Example Grant'
       ];
 
-      return grants.some((grant: any) => 
-        testPatterns.some(pattern => 
+      return grants.some((grant: any) =>
+        testPatterns.some(pattern =>
           grant.title && grant.title.includes(pattern)
         )
       );
@@ -268,13 +268,13 @@ export class LiveDataValidator {
    */
   private blockFallbackUsage(validation: DataValidationResult): void {
     console.error('🚨 CRITICAL: Blocking fallback data usage', validation);
-    
+
     // Create critical alert
     this.createCriticalAlert(validation);
-    
+
     // Force data refresh
     this.forceLiveDataRefresh();
-    
+
     // Emit blocking event
     this.emit('fallback-blocked', {
       timestamp: new Date(),
@@ -288,10 +288,10 @@ export class LiveDataValidator {
    */
   private async forceLiveDataRefresh(): Promise<void> {
     console.log('🔄 Forcing live data refresh...');
-    
+
     // Clear cached data
     this.clearCachedData();
-    
+
     // Attempt to fetch live data
     try {
       const liveData = await this.fetchLiveData();
@@ -304,8 +304,8 @@ export class LiveDataValidator {
       }
     } catch (error) {
       console.error('❌ Live data refresh error:', error);
-      this.emit('live-data-refresh-error', { 
-        timestamp: new Date(), 
+      this.emit('live-data-refresh-error', {
+        timestamp: new Date(),
         error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
@@ -334,7 +334,7 @@ export class LiveDataValidator {
         if (response.ok) {
           const data = await response.json();
           const validation = await this.validateData(data, source);
-          
+
           if (validation.isValid && validation.isLiveData) {
             return data;
           }
@@ -354,8 +354,8 @@ export class LiveDataValidator {
     if (typeof window !== 'undefined' && window.localStorage) {
       const keys = Object.keys(localStorage);
       keys.forEach(key => {
-        if (key.includes('grants') || 
-            key.includes('applications') || 
+        if (key.includes('grants') ||
+            key.includes('applications') ||
             key.includes('cache') ||
             key.includes('fallback')) {
           localStorage.removeItem(key);
@@ -425,7 +425,7 @@ export class LiveDataValidator {
     const liveDataAvailable = this.isUsingLiveData();
 
     let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
-    
+
     if (criticalErrors > 0 || !liveDataAvailable) {
       status = 'unhealthy';
     } else if (warnings > 0) {

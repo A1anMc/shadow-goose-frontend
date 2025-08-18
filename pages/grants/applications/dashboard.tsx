@@ -65,7 +65,7 @@ export default function ApplicationsDashboard() {
     .sort((a, b) => {
       const grantA = grants.find(g => g.id === a.grant_id);
       const grantB = grants.find(g => g.id === b.grant_id);
-      
+
       switch (sortBy) {
         case 'deadline':
           return new Date(grantA?.deadline || '').getTime() - new Date(grantB?.deadline || '').getTime();
@@ -195,7 +195,7 @@ export default function ApplicationsDashboard() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
@@ -209,7 +209,7 @@ export default function ApplicationsDashboard() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
@@ -223,7 +223,7 @@ export default function ApplicationsDashboard() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
@@ -267,7 +267,7 @@ export default function ApplicationsDashboard() {
                   <option value="rejected">Rejected</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Sort By
@@ -284,7 +284,7 @@ export default function ApplicationsDashboard() {
                 </select>
               </div>
             </div>
-            
+
             <div className="flex-1 max-w-md">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Search Grants
@@ -307,7 +307,7 @@ export default function ApplicationsDashboard() {
               Applications ({filteredApplications.length})
             </h2>
           </div>
-          
+
           {filteredApplications.length === 0 ? (
             <div className="p-8 text-center">
               <div className="text-4xl mb-4">📝</div>
@@ -315,7 +315,7 @@ export default function ApplicationsDashboard() {
                 No applications found
               </h3>
               <p className="text-gray-600 mb-4">
-                {filter === 'all' 
+                {filter === 'all'
                   ? "You haven't started any grant applications yet."
                   : `No applications with status "${filter.replace('_', ' ')}" found.`
                 }
@@ -333,7 +333,7 @@ export default function ApplicationsDashboard() {
                 const grant = grants.find(g => g.id === application.grant_id);
                 const urgency = grant ? getUrgencyLevel(grant.deadline) : null;
                 const completionPercentage = getCompletionPercentage(application);
-                
+
                 return (
                   <div key={application.id} className="p-6 hover:bg-gray-50 transition-colors">
                     <div className="flex items-start justify-between">
@@ -347,7 +347,7 @@ export default function ApplicationsDashboard() {
                             {application.status.replace('_', ' ')}
                           </span>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                           <div>
                             <span className="text-sm text-gray-500">Grant Amount:</span>
@@ -364,16 +364,16 @@ export default function ApplicationsDashboard() {
                             <p className="font-medium">{formatDate(application.updated_at)}</p>
                           </div>
                         </div>
-                        
+
                         {grant && (
                           <div className="mb-4">
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-sm text-gray-500">Deadline:</span>
                               <span className={`text-sm font-medium ${urgency?.color}`}>
-                                {getDaysUntilDeadline(grant.deadline) < 0 
-                                  ? 'Expired' 
-                                  : getDaysUntilDeadline(grant.deadline) === 0 
-                                    ? 'Today' 
+                                {getDaysUntilDeadline(grant.deadline) < 0
+                                  ? 'Expired'
+                                  : getDaysUntilDeadline(grant.deadline) === 0
+                                    ? 'Today'
                                     : `${getDaysUntilDeadline(grant.deadline)} days left`
                                 }
                               </span>
@@ -381,7 +381,7 @@ export default function ApplicationsDashboard() {
                             <p className="text-sm text-gray-600">{formatDate(grant.deadline)}</p>
                           </div>
                         )}
-                        
+
                         {/* Progress Bar */}
                         <div className="mb-4">
                           <div className="flex items-center justify-between mb-1">
@@ -396,18 +396,18 @@ export default function ApplicationsDashboard() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col space-y-2 ml-6">
                         <button
                           onClick={() => router.push(`/grants/applications/${application.id}`)}
                           className="bg-sg-primary text-white px-4 py-2 rounded-md hover:bg-sg-primary/90 text-sm font-medium"
                         >
-                          {application.status === 'draft' || application.status === 'in_progress' 
-                            ? 'Continue Editing' 
+                          {application.status === 'draft' || application.status === 'in_progress'
+                            ? 'Continue Editing'
                             : 'View Application'
                           }
                         </button>
-                        
+
                         {application.status === 'draft' && (
                           <button
                             onClick={() => router.push(`/grants/applications/${application.id}`)}
@@ -416,7 +416,7 @@ export default function ApplicationsDashboard() {
                             Submit Application
                           </button>
                         )}
-                        
+
                         {application.status === 'submitted' && (
                           <button
                             onClick={() => window.open(grant?.application_url, '_blank')}

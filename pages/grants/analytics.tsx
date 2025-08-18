@@ -69,7 +69,7 @@ export default function GrantsAnalytics() {
   const getFilteredData = () => {
     const now = new Date();
     const filterDate = new Date();
-    
+
     switch (timeRange) {
       case '30d':
         filterDate.setDate(now.getDate() - 30);
@@ -84,7 +84,7 @@ export default function GrantsAnalytics() {
         return { applications, grants };
     }
 
-    const filteredApplications = applications.filter(app => 
+    const filteredApplications = applications.filter(app =>
       new Date(app.created_at) >= filterDate
     );
 
@@ -136,7 +136,7 @@ export default function GrantsAnalytics() {
     const submitted = filteredApplications.filter(app => app.status === 'submitted').length;
     const approved = filteredApplications.filter(app => app.status === 'approved').length;
     const rejected = filteredApplications.filter(app => app.status === 'rejected').length;
-    
+
     const totalDecided = approved + rejected;
     return totalDecided > 0 ? (approved / totalDecided) * 100 : 0;
   };
@@ -151,7 +151,7 @@ export default function GrantsAnalytics() {
   };
 
   const getAverageApplicationTime = () => {
-    const completedApplications = filteredApplications.filter(app => 
+    const completedApplications = filteredApplications.filter(app =>
       app.status === 'submitted' || app.status === 'approved' || app.status === 'rejected'
     );
 
@@ -173,16 +173,16 @@ export default function GrantsAnalytics() {
     filteredApplications.forEach(app => {
       const date = new Date(app.created_at);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
+
       const current = monthlyData.get(monthKey) || { applications: 0, approvals: 0, funding: 0 };
       current.applications++;
-      
+
       if (app.status === 'approved') {
         current.approvals++;
         const grant = filteredGrants.find(g => g.id === app.grant_id);
         current.funding += grant?.amount || 0;
       }
-      
+
       monthlyData.set(monthKey, current);
     });
 
@@ -253,7 +253,7 @@ export default function GrantsAnalytics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
@@ -265,7 +265,7 @@ export default function GrantsAnalytics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
@@ -277,7 +277,7 @@ export default function GrantsAnalytics() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-orange-100 rounded-lg">
@@ -307,8 +307,8 @@ export default function GrantsAnalytics() {
                     <div className="w-32 bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-sg-primary h-2 rounded-full"
-                        style={{ 
-                          width: `${filteredApplications.length > 0 ? (count / filteredApplications.length) * 100 : 0}%` 
+                        style={{
+                          width: `${filteredApplications.length > 0 ? (count / filteredApplications.length) * 100 : 0}%`
                         }}
                       ></div>
                     </div>
@@ -353,9 +353,9 @@ export default function GrantsAnalytics() {
             {monthlyTrends.map(([month, data]) => (
               <div key={month} className="border border-gray-200 rounded-lg p-4">
                 <h4 className="text-sm font-medium text-gray-900 mb-2">
-                  {new Date(month + '-01').toLocaleDateString('en-AU', { 
-                    year: 'numeric', 
-                    month: 'short' 
+                  {new Date(month + '-01').toLocaleDateString('en-AU', {
+                    year: 'numeric',
+                    month: 'short'
                   })}
                 </h4>
                 <div className="space-y-2">

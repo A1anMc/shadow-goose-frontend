@@ -8,10 +8,10 @@ interface LiveDataStatusProps {
   autoRefresh?: boolean;
 }
 
-export default function LiveDataStatus({ 
-  showDetails = true, 
-  showAlerts = true, 
-  autoRefresh = true 
+export default function LiveDataStatus({
+  showDetails = true,
+  showAlerts = true,
+  autoRefresh = true
 }: LiveDataStatusProps) {
   const [healthSummary, setHealthSummary] = useState(liveDataMonitor.getHealthSummary());
   const [validationResult, setValidationResult] = useState<DataValidationResult | null>(null);
@@ -54,7 +54,7 @@ export default function LiveDataStatus({
     liveDataMonitor.on('system-health-update', handleHealthUpdate);
     liveDataMonitor.on('alert-created', handleAlertUpdate);
     liveDataMonitor.on('critical-alert', handleCriticalAlert);
-    
+
     liveDataValidator.on('fallback-blocked', handleFallbackBlocked);
     liveDataValidator.on('live-data-refreshed', handleValidationUpdate);
 
@@ -103,7 +103,7 @@ export default function LiveDataStatus({
     // Create a modal or notification for critical alerts
     const message = `🚨 CRITICAL: ${alert.message}`;
     alert(message); // Simple alert for now, could be replaced with a proper modal
-    
+
     // Log to console for debugging
     console.error('Critical Alert Details:', alert);
   };
@@ -111,7 +111,7 @@ export default function LiveDataStatus({
   const showFallbackBlockedAlert = (data: any) => {
     const message = `🚨 FALLBACK BLOCKED: System attempted to use fallback data. Live data required.`;
     alert(message);
-    
+
     console.error('Fallback Blocked Details:', data);
   };
 
@@ -137,7 +137,7 @@ export default function LiveDataStatus({
             Last updated: {lastUpdate.toLocaleTimeString()}
           </span>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <button
             onClick={handleRefresh}
@@ -183,7 +183,7 @@ export default function LiveDataStatus({
             <span className="text-red-600 font-bold">🚨 CRITICAL ISSUES DETECTED</span>
           </div>
           <p className="text-red-700 text-sm">
-            {healthSummary.criticalAlerts} critical alert(s) require immediate attention. 
+            {healthSummary.criticalAlerts} critical alert(s) require immediate attention.
             System may be using fallback data.
           </p>
         </div>
@@ -200,7 +200,7 @@ export default function LiveDataStatus({
               {validationResult.isValid ? 'VALID' : 'INVALID'}
             </span>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="font-medium">Data Source:</span> {validationResult.dataSource}
@@ -209,7 +209,7 @@ export default function LiveDataStatus({
               <span className="font-medium">Quality Score:</span> {validationResult.quality}%
             </div>
             <div>
-              <span className="font-medium">Live Data:</span> 
+              <span className="font-medium">Live Data:</span>
               <span className={validationResult.isLiveData ? 'text-green-600' : 'text-red-600'}>
                 {validationResult.isLiveData ? ' Yes' : ' No'}
               </span>

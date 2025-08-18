@@ -79,7 +79,7 @@ const liveDataValidator = new LiveDataValidator();
 ### **3. Live Data Status Component (`LiveDataStatus.tsx`)**
 ```typescript
 // Real-time UI showing data health
-<LiveDataStatus 
+<LiveDataStatus
   showDetails={true}
   showAlerts={true}
   autoRefresh={true}
@@ -126,15 +126,15 @@ async getGrants(): Promise<Grant[]> {
 // Detects and blocks fallback data
 private isFallbackData(data: any): boolean {
   // Check data source field
-  if (data.data_source === 'fallback' || 
-      data.data_source === 'curated' || 
+  if (data.data_source === 'fallback' ||
+      data.data_source === 'curated' ||
       data.data_source === 'mock') {
     return true;
   }
 
   // Check for test data patterns
   const testPatterns = ['Test Grant', 'Sample Grant', 'Demo Grant'];
-  return data.grants.some(grant => 
+  return data.grants.some(grant =>
     testPatterns.some(pattern => grant.title.includes(pattern))
   );
 }
@@ -145,13 +145,13 @@ private isFallbackData(data: any): boolean {
 // Automatically blocks fallback usage
 private blockFallbackUsage(validation: DataValidationResult): void {
   console.error('🚨 CRITICAL: Blocking fallback data usage');
-  
+
   // Create critical alert
   this.createCriticalAlert(validation);
-  
+
   // Force live data refresh
   this.forceLiveDataRefresh();
-  
+
   // Clear cached fallback data
   this.clearCachedData();
 }

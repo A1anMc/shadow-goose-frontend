@@ -93,7 +93,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
     try {
       const success = await grantService.updateQuestionAnswer(applicationId, questionId, answer);
       if (success) {
-        setQuestions(prev => prev.map(q => 
+        setQuestions(prev => prev.map(q =>
           q.id === questionId ? { ...q, answer, last_updated: new Date().toISOString() } : q
         ));
         onUpdate();
@@ -303,7 +303,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
                       className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
                       maxLength={question.max_length}
                     />
-                    
+
                     {question.max_length && (
                       <div className="text-xs text-gray-500 text-right">
                         {(question.answer?.length || 0)} / {question.max_length} characters
@@ -355,7 +355,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
               {teamAssignments.map(assignment => {
                 const teamMember = availableTeamMembers.find(m => m.id === assignment.user_id);
                 const question = questions.find(q => q.id === assignment.question_id);
-                
+
                 return (
                   <div key={assignment.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start">
@@ -438,7 +438,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
         {activeTab === 'progress' && progress && (
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900">Application Progress</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="font-medium text-gray-900 mb-4">Overall Progress</h4>
@@ -449,13 +449,13 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
                       <span>{progress.percentage_complete}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-sg-primary h-2 rounded-full transition-all duration-300" 
+                      <div
+                        className="bg-sg-primary h-2 rounded-full transition-all duration-300"
                         style={{ width: `${progress.percentage_complete}%` }}
                       ></div>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="text-gray-600">Total Questions:</span>
@@ -494,7 +494,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
         {activeTab === 'project' && (
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900">Project Management</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-3">Create Project from Application</h4>

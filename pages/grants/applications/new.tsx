@@ -101,7 +101,7 @@ export default function NewGrantApplication() {
     const completedFields = fields.filter(field => field.trim().length > 0).length;
     const progress = Math.round((completedFields / fields.length) * 100);
     setCompletionProgress(progress);
-    
+
     // Generate writing tips based on grant type
     if (grant) {
       generateWritingTips();
@@ -113,7 +113,7 @@ export default function NewGrantApplication() {
       setLoading(true);
       const grantData = await grantService.getGrant(id);
       setGrant(grantData);
-      
+
       // Pre-fill with smart suggestions based on grant type
       if (grantData) {
         prefillSmartSuggestions(grantData);
@@ -129,7 +129,7 @@ export default function NewGrantApplication() {
   const prefillSmartSuggestions = (grantData: Grant) => {
     const category = grantData.category;
     const template = GRANT_TEMPLATES[category as keyof typeof GRANT_TEMPLATES];
-    
+
     if (template) {
       setSmartSuggestions({
         project_title: [
@@ -152,7 +152,7 @@ export default function NewGrantApplication() {
 
   const generateWritingTips = () => {
     if (!grant) return;
-    
+
     const tips = [
       "Use specific, measurable objectives with clear timelines",
       "Include quantifiable outcomes and impact metrics",
@@ -162,7 +162,7 @@ export default function NewGrantApplication() {
       "Address potential risks and mitigation strategies",
       "Explain how the project will be sustainable beyond funding"
     ];
-    
+
     setWritingTips(tips);
   };
 
@@ -196,7 +196,7 @@ export default function NewGrantApplication() {
 
     try {
       setAiLoading(prev => ({ ...prev, [field]: true }));
-      
+
       const response = await aiWritingAssistant.generateGrantContent({
         section: field,
         grant_context: {
@@ -243,7 +243,7 @@ export default function NewGrantApplication() {
     try {
       setSaving(true);
       const newApplication = await grantService.createApplication(grant.id as number);
-      
+
       if (newApplication) {
         // Save the application content
         await grantService.updateApplicationContent(newApplication.id, application);
@@ -347,7 +347,7 @@ export default function NewGrantApplication() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Grant Details
               </h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <h4 className="font-medium text-gray-900">{grant.name}</h4>
@@ -377,8 +377,8 @@ export default function NewGrantApplication() {
                 <div className="border-t pt-4">
                   <h5 className="font-medium text-gray-900 mb-2">Application Progress</h5>
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                    <div 
-                      className="bg-sg-primary h-2 rounded-full transition-all duration-300" 
+                    <div
+                      className="bg-sg-primary h-2 rounded-full transition-all duration-300"
                       style={{ width: `${completionProgress}%` }}
                     ></div>
                   </div>
@@ -433,7 +433,7 @@ export default function NewGrantApplication() {
                   >
                     {showTemplates ? 'Hide Templates' : 'Show Templates'}
                   </button>
-                  
+
                   {showTemplates && (
                     <div className="mt-3 space-y-2">
                       {Object.entries(GRANT_TEMPLATES).map(([key, template]) => (
@@ -490,7 +490,7 @@ export default function NewGrantApplication() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">
                         Project Overview
                       </h3>
-                      
+
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -638,7 +638,7 @@ export default function NewGrantApplication() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">
                         Project Details
                       </h3>
-                      
+
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -734,7 +734,7 @@ export default function NewGrantApplication() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">
                         Implementation & Risk Management
                       </h3>
-                      
+
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -830,7 +830,7 @@ export default function NewGrantApplication() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">
                         Budget & Timeline
                       </h3>
-                      
+
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -926,7 +926,7 @@ export default function NewGrantApplication() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">
                         Team & Qualifications
                       </h3>
-                      
+
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">

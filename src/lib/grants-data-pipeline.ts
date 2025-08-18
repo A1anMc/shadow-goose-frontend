@@ -220,7 +220,7 @@ class GrantsDataPipeline {
     let score = 0;
 
     // Amount suitability (0-30 points)
-    if (grant.amount >= this.sgeProfile.target_amount_range.min && 
+    if (grant.amount >= this.sgeProfile.target_amount_range.min &&
         grant.amount <= this.sgeProfile.target_amount_range.max) {
       score += 30;
     } else if (grant.amount >= 5000 && grant.amount <= 150000) {
@@ -239,9 +239,9 @@ class GrantsDataPipeline {
     }
 
     // Geographic focus (0-20 points)
-    const hasGeographicMatch = this.sgeProfile.geographic_scope.some(scope => 
+    const hasGeographicMatch = this.sgeProfile.geographic_scope.some(scope =>
       grant.description.toLowerCase().includes(scope.toLowerCase()) ||
-      grant.eligibility_criteria.some(criteria => 
+      grant.eligibility_criteria.some(criteria =>
         criteria.toLowerCase().includes(scope.toLowerCase())
       )
     );
@@ -282,13 +282,13 @@ class GrantsDataPipeline {
     }
 
     // Amount suitability
-    if (grant.amount >= this.sgeProfile.target_amount_range.min && 
+    if (grant.amount >= this.sgeProfile.target_amount_range.min &&
         grant.amount <= this.sgeProfile.target_amount_range.max) {
       score += 0.2;
     }
 
     // Geographic alignment
-    const hasGeographicMatch = this.sgeProfile.geographic_scope.some(scope => 
+    const hasGeographicMatch = this.sgeProfile.geographic_scope.some(scope =>
       grant.description.toLowerCase().includes(scope.toLowerCase())
     );
     if (hasGeographicMatch) {
@@ -349,16 +349,16 @@ class GrantsDataPipeline {
 
   async getGrantsByAmountRange(minAmount: number, maxAmount: number): Promise<UnifiedGrant[]> {
     const allGrants = await this.getAllGrants();
-    return allGrants.filter(grant => 
+    return allGrants.filter(grant =>
       grant.amount >= minAmount && grant.amount <= maxAmount
     );
   }
 
   async getPipelineStats(): Promise<GrantsDataPipelineStats> {
     const allGrants = await this.getAllGrants();
-    
+
     const totalFunding = allGrants.reduce((sum, grant) => sum + grant.amount, 0);
-    const avgSuccessScore = allGrants.length > 0 ? 
+    const avgSuccessScore = allGrants.length > 0 ?
       allGrants.reduce((sum, grant) => sum + grant.success_score, 0) / allGrants.length : 0;
     const avgPriorityScore = allGrants.length > 0 ?
       allGrants.reduce((sum, grant) => sum + grant.priority_score, 0) / allGrants.length : 0;
@@ -397,13 +397,13 @@ class GrantsDataPipeline {
   private calculateDataFreshness(): 'excellent' | 'good' | 'acceptable' | 'stale' {
     const cacheKey = 'all_grants';
     const cached = this.cache.get(cacheKey);
-    
+
     if (!cached) {
       return 'stale';
     }
 
     const ageInHours = (Date.now() - cached.timestamp) / (1000 * 60 * 60);
-    
+
     if (ageInHours < 1) {
       return 'excellent';
     } else if (ageInHours < 2) {
@@ -565,15 +565,15 @@ class GrantsDataPipeline {
 
     const dataSources = {
       creative_australia: {
-        status: creativeAustraliaHealth.status === 'fulfilled' ? 
+        status: creativeAustraliaHealth.status === 'fulfilled' ?
           creativeAustraliaHealth.value.status : 'unhealthy',
-        last_updated: creativeAustraliaHealth.status === 'fulfilled' ? 
+        last_updated: creativeAustraliaHealth.status === 'fulfilled' ?
           creativeAustraliaHealth.value.last_updated : 'unknown'
       },
       screen_australia: {
-        status: screenAustraliaHealth.status === 'fulfilled' ? 
+        status: screenAustraliaHealth.status === 'fulfilled' ?
           screenAustraliaHealth.value.status : 'unhealthy',
-        last_updated: screenAustraliaHealth.status === 'fulfilled' ? 
+        last_updated: screenAustraliaHealth.status === 'fulfilled' ?
           screenAustraliaHealth.value.last_updated : 'unknown'
       }
     };

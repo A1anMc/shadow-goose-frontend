@@ -84,7 +84,7 @@ class AIWritingAssistant {
   // Generate grant application content
   async generateGrantContent(request: GrantContentRequest): Promise<AIWritingResponse> {
     const { successMetricsTracker } = await import('./success-metrics');
-    
+
     const startTime = Date.now();
     try {
       const systemPrompt = this.buildSystemPrompt({
@@ -259,7 +259,7 @@ Please provide a detailed analysis with scores and specific feedback.`;
 
       // Parse the analysis to extract scores and feedback
       const scores = this.parseAnalysisScores(analysis);
-      
+
       return {
         grant_alignment: scores.grant_alignment || 75,
         completeness: scores.completeness || 70,
@@ -402,10 +402,10 @@ Please provide a detailed analysis with scores and specific feedback.`;
     };
 
     const response = await this.generateGrantContent(enhancedPrompt);
-    
+
     // Add professional enhancement
     const enhancedContent = await this.enhanceContentProfessionalism(response.content, prompt.grant_context);
-    
+
     return {
       ...response,
       content: enhancedContent,
@@ -461,7 +461,7 @@ Please enhance this content to meet professional grant writing standards while m
 
   private parseAnalysisScores(analysis: string): Record<string, number> {
     const scores: Record<string, number> = {};
-    
+
     // Extract scores from analysis text
     const scoreMatches = analysis.match(/(\w+):\s*(\d+)/g);
     if (scoreMatches) {
@@ -470,7 +470,7 @@ Please enhance this content to meet professional grant writing standards while m
         scores[key.toLowerCase()] = parseInt(value);
       });
     }
-    
+
     return scores;
   }
 
@@ -521,7 +521,7 @@ Please enhance this content to meet professional grant writing standards while m
 
   async enhanceContent(content: string, prompt: AIWritingPrompt): Promise<AIWritingResponse> {
     const { successMetricsTracker } = await import('./success-metrics');
-    
+
     try {
       const originalAnalysis = await this.analyzeContent(content, {
         grant_title: prompt.grant_title,
@@ -533,18 +533,18 @@ Please enhance this content to meet professional grant writing standards while m
       const originalScore = originalAnalysis.overall_score;
       const enhancementPrompt = `
         Please enhance the following grant application content to make it more compelling and aligned with the grant requirements.
-        
+
         Original Content:
         ${content}
-        
+
         Grant Details:
         - Title: ${prompt.grant_title}
         - Description: ${prompt.grant_description}
         - Amount: $${prompt.grant_amount.toLocaleString()}
         - Category: ${prompt.grant_category}
-        
+
         Current Quality Score: ${originalScore}/100
-        
+
         Please improve the content to achieve a higher quality score by:
         1. Making it more specific and measurable
         2. Better aligning with grant requirements
@@ -608,22 +608,22 @@ Please enhance this content to meet professional grant writing standards while m
   }> {
     const assistancePrompt = `
       You are an expert grant writing assistant. Please analyze the following content and provide helpful suggestions.
-      
+
       Current Content:
       ${currentContent}
-      
+
       Grant Context:
       - Title: ${context.grant_title}
       - Description: ${context.grant_description}
       - Amount: $${context.grant_amount.toLocaleString()}
       - Category: ${context.grant_category}
       - Section: ${context.writing_section}
-      
+
       Please provide:
       1. 3-5 specific suggestions for improvement
       2. 2-3 areas that need enhancement
       3. A hint for what to focus on in the next section
-      
+
       Format your response as JSON with keys: suggestions, improvements, next_section_hint
     `;
 
@@ -652,7 +652,7 @@ Please enhance this content to meet professional grant writing standards while m
 
       const data = await response.json();
       const assistanceText = data.choices[0].message.content;
-      
+
       return this.parseAssistanceResponse(assistanceText);
     } catch (error) {
       console.error('Error providing writing assistance:', error);
@@ -674,24 +674,24 @@ Please enhance this content to meet professional grant writing standards while m
   }> {
     const analysisPrompt = `
       Please analyze the following grant application content and provide a comprehensive assessment.
-      
+
       Content:
       ${content}
-      
+
       Grant Requirements:
       - Title: ${grantRequirements.grant_title}
       - Description: ${grantRequirements.grant_description}
       - Amount: $${grantRequirements.grant_amount?.toLocaleString() || 'N/A'}
       - Category: ${grantRequirements.grant_category}
-      
+
       Please evaluate on a scale of 0-100 for each criterion:
       1. Grant Alignment: How well does the content align with the grant's purpose and requirements?
       2. Completeness: How complete and comprehensive is the content?
       3. Clarity: How clear and understandable is the writing?
       4. Persuasiveness: How compelling and convincing is the argument?
-      
+
       Also provide 3-5 specific feedback points for improvement.
-      
+
       Format your response as JSON with keys: grant_alignment, completeness, clarity, persuasiveness, overall_score, feedback
     `;
 
@@ -720,7 +720,7 @@ Please enhance this content to meet professional grant writing standards while m
 
       const data = await response.json();
       const analysisText = data.choices[0].message.content;
-      
+
       return this.parseAnalysisResponse(analysisText);
     } catch (error) {
       console.error('Error analyzing content:', error);
@@ -832,7 +832,7 @@ Please provide high-quality content that will help secure this grant funding.`;
 
   private generateFallbackContent(prompt: AIWritingPrompt): string {
     const tone = this.getRandomTone();
-    
+
     return `[${prompt.writing_section.toUpperCase()} SECTION - ${tone.toUpperCase()} TONE]
 
 This is a placeholder for the ${prompt.writing_section} section of your grant application for ${prompt.grant_title}.
@@ -884,7 +884,7 @@ Please replace this placeholder with your specific content tailored to this gran
     try {
       const parsed = JSON.parse(response);
       const overall = Math.round((parsed.grant_alignment + parsed.completeness + parsed.clarity + parsed.persuasiveness) / 4);
-      
+
       return {
         grant_alignment: parsed.grant_alignment || 70,
         completeness: parsed.completeness || 70,
@@ -951,7 +951,7 @@ Please replace this placeholder with your specific content tailored to this gran
   async generateAlternativeVersions(prompt: AIWritingPrompt): Promise<string[]> {
     try {
       const versions: string[] = [];
-      
+
       // Generate 3 alternative versions
       for (let i = 0; i < 3; i++) {
         const version = await this.generateGrantContent({
@@ -969,7 +969,7 @@ Please replace this placeholder with your specific content tailored to this gran
         });
         versions.push(version.content);
       }
-      
+
       return versions;
     } catch (error) {
       console.error('Error generating alternative versions:', error);
