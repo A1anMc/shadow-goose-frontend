@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { successRateMonitor, SuccessMetric, SuccessAlert } from '../lib/success-rate-monitor';
+import { useEffect, useState } from 'react';
+import { SuccessAlert, SuccessMetric, successRateMonitor } from '../lib/success-rate-monitor';
 
 interface SuccessRateDashboardProps {
   showDetails?: boolean;
@@ -8,11 +8,11 @@ interface SuccessRateDashboardProps {
   compact?: boolean;
 }
 
-export default function SuccessRateDashboard({ 
-  showDetails = true, 
-  showAlerts = true, 
+export default function SuccessRateDashboard({
+  showDetails = true,
+  showAlerts = true,
   autoRefresh = true,
-  compact = false 
+  compact = false
 }: SuccessRateDashboardProps) {
   const [metrics, setMetrics] = useState<SuccessMetric[]>([]);
   const [alerts, setAlerts] = useState<SuccessAlert[]>([]);
@@ -123,7 +123,7 @@ export default function SuccessRateDashboard({
             Last updated: {lastUpdate.toLocaleTimeString()}
           </span>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <button
             onClick={() => successRateMonitor.startMonitoring()}
@@ -147,10 +147,10 @@ export default function SuccessRateDashboard({
             {overallSuccessRate.toFixed(1)}%
           </div>
           <div className="text-lg text-gray-600 mb-4">Overall Success Rate</div>
-          
+
           {/* Progress Bar */}
           <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
-            <div 
+            <div
               className={`h-4 rounded-full transition-all duration-500 ${
                 overallSuccessRate >= 95 ? 'bg-green-500' :
                 overallSuccessRate >= 85 ? 'bg-blue-500' :

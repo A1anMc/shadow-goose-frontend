@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Grant, GrantService } from '../src/lib/grants';
 import SuccessRateDashboard from '../src/components/SuccessRateDashboard';
+import { Grant, GrantService } from '../src/lib/grants';
 
 interface PipelineStats {
   total_grants: number;
@@ -269,7 +269,7 @@ export default function GrantsDashboard() {
 
         {/* Success Rate Dashboard */}
         <div className="mb-8">
-          <SuccessRateDashboard 
+          <SuccessRateDashboard
             showDetails={true}
             showAlerts={true}
             autoRefresh={true}
