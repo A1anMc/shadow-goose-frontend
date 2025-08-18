@@ -47,7 +47,7 @@ export default function Grants() {
       const result = await bulletproofGrantService.getGrants();
       
       setGrants(result.data);
-      setDataSource(result.source as 'api' | 'fallback' | 'mock' | 'unified_pipeline');
+      setDataSource(result.source as 'api' | 'fallback' | 'unified_pipeline');
 
       // Track grant discovery for analytics
       if (result.data.length > 0) {
@@ -76,7 +76,7 @@ export default function Grants() {
       setSearching(true);
       const result = await bulletproofGrantService.searchGrants(searchFilters);
       setGrants(result.data);
-      setDataSource(result.source as 'api' | 'fallback' | 'mock' | 'unified_pipeline');
+      setDataSource(result.source as 'api' | 'fallback' | 'unified_pipeline');
     } catch (error) {
       console.error('Error searching grants:', error);
       setError('Search failed. Please try again.');

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { getBranding } from "../src/lib/branding";
+import { useEffect, useState } from "react";
 import { authService } from "../src/lib/auth";
-import { bulletproofGrantService } from "../src/lib/grants-bulletproof";
+import { getBranding } from "../src/lib/branding";
 import { Grant, GrantSearchFilters } from "../src/lib/grants";
+import { bulletproofGrantService } from "../src/lib/grants-bulletproof";
 
 export default function BulletproofGrants() {
   const router = useRouter();
@@ -82,7 +82,6 @@ export default function BulletproofGrants() {
       case 'primary': return '🟢';
       case 'cache': return '🟡';
       case 'fallback': return '🟠';
-      case 'mock': return '🔴';
       default: return '❓';
     }
   };

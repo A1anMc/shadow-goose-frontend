@@ -1,11 +1,11 @@
-// BULLETPROOF GRANTS SERVICE - NEVER BREAKS
-// This service implements multiple layers of reliability to ensure grants always load
+// BULLETPROOF GRANTS SERVICE - REAL DATA ONLY
+// This service implements multiple layers of reliability to ensure grants always load with REAL data only
 
-import { Grant, GrantApplication, GrantRecommendation, GrantSearchFilters } from './grants';
+import { Grant, GrantSearchFilters } from './grants';
 
 interface BulletproofResponse<T> {
   data: T;
-  source: 'primary' | 'fallback' | 'cache' | 'mock';
+  source: 'primary' | 'fallback' | 'cache';
   timestamp: string;
   reliability: number; // 0-100
   errors: string[];
@@ -18,7 +18,7 @@ class BulletproofGrantService {
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY = 1000; // 1 second
 
-  // PRIMARY METHOD - NEVER FAILS
+  // PRIMARY METHOD - REAL DATA ONLY
   async getGrants(): Promise<BulletproofResponse<Grant[]>> {
     const startTime = Date.now();
     const errors: string[] = [];
@@ -66,27 +66,13 @@ class BulletproofGrantService {
       }
       errors.push(`Fallback API failed: ${fallbackResult.error}`);
 
-      // Layer 4: Return mock data (NEVER FAILS)
-      console.log('🔍 Layer 4: Using mock data...');
-      const mockGrants = this.getMockGrants();
-      return {
-        data: mockGrants,
-        source: 'mock',
-        timestamp: new Date().toISOString(),
-        reliability: 50,
-        errors: errors
-      };
+      // NO MOCK DATA - If all real sources fail, throw error
+      console.error('💥 All real data sources failed');
+      throw new Error(`All real data sources failed: ${errors.join(', ')}`);
 
     } catch (error) {
-      console.error('💥 All layers failed, using emergency mock data');
-      const mockGrants = this.getMockGrants();
-      return {
-        data: mockGrants,
-        source: 'mock',
-        timestamp: new Date().toISOString(),
-        reliability: 30,
-        errors: [...errors, `Emergency fallback: ${error}`]
-      };
+      console.error('💥 All real data sources failed, cannot provide grants');
+      throw new Error(`Cannot load grants: All real data sources are unavailable. Please try again later.`);
     }
   }
 
@@ -171,45 +157,6 @@ class BulletproofGrantService {
     } catch (error) {
       return { success: false, error: 'Fallback API failed' };
     }
-  }
-
-  // Layer 4: Mock data (NEVER FAILS)
-  private getMockGrants(): Grant[] {
-    return [
-      {
-        id: 1,
-        title: "Screen Australia - Feature Film Production",
-        description: "Support for Australian feature film production",
-        amount: 500000,
-        deadline: "2025-12-31",
-        category: "Film & Television",
-        eligibility: "Australian filmmakers",
-        status: "open",
-        data_source: "mock"
-      },
-      {
-        id: 2,
-        title: "Creative Australia - Arts Projects",
-        description: "Funding for innovative arts projects",
-        amount: 100000,
-        deadline: "2025-11-30",
-        category: "Arts & Culture",
-        eligibility: "Australian artists and organizations",
-        status: "open",
-        data_source: "mock"
-      },
-      {
-        id: 3,
-        title: "VicScreen - Digital Games",
-        description: "Support for digital games development",
-        amount: 250000,
-        deadline: "2025-10-31",
-        category: "Digital Media",
-        eligibility: "Victorian game developers",
-        status: "open",
-        data_source: "mock"
-      }
-    ];
   }
 
   // Authentication helper with multiple fallbacks
