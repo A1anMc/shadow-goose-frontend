@@ -22,7 +22,7 @@ export interface IGrantsService {
   // Additional methods for backward compatibility
   getApplications(): Promise<any[]>;
   getApplication(id: number): Promise<any | null>;
-  getGrant(id: number): Promise<Grant | null>;
+  getGrant(id: number | string): Promise<Grant | null>;
   getApplicationAnswers(id: number): Promise<any[]>;
   getApplicationComments(id: number): Promise<any[]>;
   updateApplicationAnswer(id: number, answer: any): Promise<any>;
