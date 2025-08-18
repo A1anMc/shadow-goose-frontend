@@ -323,16 +323,28 @@ class GrantsDataPipeline {
   async getHighPriorityGrants(limit: number = 10): Promise<UnifiedGrant[]> {
     const allGrants = await this.getAllGrants();
     return allGrants
-      .filter(grant => grant.status !== 'closed')
+      .filter(grant => grant.status !== 'expired')
       .sort((a, b) => b.priority_score - a.priority_score)
       .slice(0, limit);
   }
 
   async getClosingSoonGrants(): Promise<UnifiedGrant[]> {
     const allGrants = await this.getAllGrants();
-    return allGrants.filter(grant => 
-      grant.status === 'closing_soon' || grant.status === 'closing_today'
-    );
+    return allGrants
+      .filter(grant => grant.days_until_deadline <= 7 && grant.days_until_deadline > 0)
+      .sort((a, b) => a.days_until_deadline - b.days_until_deadline);
+  }
+
+  async getGrantById(id: string): Promise<UnifiedGrant | null> {
+    try {
+      const allGrants = await this.getAllGrants();
+      return allGrants.find(grant => grant.id === id) || null;
+    } catch (error) {
+      console.error('Error fetching grant by ID:', error);
+      // Try fallback grants if pipeline fails
+      const fallbackGrants = this.getFallbackGrants();
+      return fallbackGrants.find(grant => grant.id === id) || null;
+    }
   }
 
   async getGrantsByAmountRange(minAmount: number, maxAmount: number): Promise<UnifiedGrant[]> {
@@ -406,80 +418,137 @@ class GrantsDataPipeline {
   private getFallbackGrants(): UnifiedGrant[] {
     return [
       {
-        id: 'fallback-doc-2024',
-        title: 'Documentary Development Grant',
-        description: 'Support for documentary development and production.',
-        amount: 25000.00,
-        deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(), // 45 days - normal
-        category: 'documentary',
+        id: '1',
+        title: 'Creative Australia Arts Project Grant',
+        description: 'Funding for innovative arts projects that engage communities and tell important Australian stories.',
+        amount: 15000.00,
+        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(), // 60 days
+        category: 'arts_culture',
         organization: 'Creative Australia',
-        eligibility_criteria: ['Australian organizations', 'Documentary filmmakers'],
-        required_documents: ['Project proposal', 'Creative team CVs'],
-        success_score: 0.85,
+        eligibility_criteria: ['Arts organizations', 'Community engagement focus', 'Innovative approach'],
+        required_documents: ['Project proposal', 'Creative team CVs', 'Community impact plan'],
+        success_score: 0.75,
         priority_score: 85,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         data_source: 'creative_australia',
         status: 'open',
-        days_until_deadline: 45,
+        days_until_deadline: 60,
         sge_alignment_score: 0.9
       },
       {
-        id: 'fallback-urgent-2024',
-        title: 'Emergency Community Grant',
-        description: 'Urgent funding for community projects that need immediate support.',
-        amount: 15000.00,
-        deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days - urgent
-        category: 'community',
-        organization: 'Screen Australia',
-        eligibility_criteria: ['Community organizations', 'Emergency situation'],
-        required_documents: ['Emergency request', 'Impact statement'],
-        success_score: 0.70,
+        id: '2',
+        title: 'Creative Australia Documentary Production Grant',
+        description: 'Funding for documentary production including filming, editing, and post-production work.',
+        amount: 50000.00,
+        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days - urgent
+        category: 'documentary',
+        organization: 'Creative Australia',
+        eligibility_criteria: ['Australian organizations', 'Documentary filmmakers', 'Production experience'],
+        required_documents: ['Production proposal', 'Director CV', 'Budget breakdown'],
+        success_score: 0.75,
         priority_score: 95,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        data_source: 'screen_australia',
+        data_source: 'creative_australia',
         status: 'closing_soon',
-        days_until_deadline: 2,
+        days_until_deadline: 7,
         sge_alignment_score: 0.8
       },
       {
-        id: 'fallback-soon-2024',
-        title: 'Youth Arts Project Grant',
-        description: 'Funding for youth-focused arts projects with community impact.',
-        amount: 18000.00,
-        deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days - soon
-        category: 'youth',
-        organization: 'Regional Arts Fund',
-        eligibility_criteria: ['Youth organizations', 'Arts focus', 'Community impact'],
-        required_documents: ['Project proposal', 'Youth engagement plan'],
-        success_score: 0.80,
+        id: '3',
+        title: 'Creative Australia Documentary Research Grant',
+        description: 'Support for documentary research and development, including archival research and interviews.',
+        amount: 15000.00,
+        deadline: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(), // 21 days
+        category: 'documentary',
+        organization: 'Creative Australia',
+        eligibility_criteria: ['Australian organizations', 'Researchers', 'Documentary projects'],
+        required_documents: ['Research proposal', 'Researcher CV', 'Timeline'],
+        success_score: 0.9,
         priority_score: 88,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        data_source: 'creative_australia',
+        status: 'open',
+        days_until_deadline: 21,
+        sge_alignment_score: 0.8
+      },
+      {
+        id: '4',
+        title: 'Screen Australia Documentary Development Grant',
+        description: 'Funding for documentary development including research, scripting, and pre-production.',
+        amount: 25000.00,
+        deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+        category: 'documentary',
+        organization: 'Screen Australia',
+        eligibility_criteria: ['Australian filmmakers', 'Documentary experience', 'Strong concept'],
+        required_documents: ['Development proposal', 'Director CV', 'Treatment'],
+        success_score: 0.8,
+        priority_score: 82,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        data_source: 'screen_australia',
+        status: 'open',
+        days_until_deadline: 30,
+        sge_alignment_score: 0.85
+      },
+      {
+        id: '5',
+        title: 'VicScreen Regional Development Fund',
+        description: 'Support for regional Victorian screen projects and talent development.',
+        amount: 35000.00,
+        deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(), // 45 days
+        category: 'regional',
+        organization: 'VicScreen',
+        eligibility_criteria: ['Victorian organizations', 'Regional focus', 'Screen content'],
+        required_documents: ['Project proposal', 'Regional impact plan', 'Budget'],
+        success_score: 0.7,
+        priority_score: 75,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        data_source: 'vic_screen',
+        status: 'open',
+        days_until_deadline: 45,
+        sge_alignment_score: 0.7
+      },
+      {
+        id: '6',
+        title: 'Regional Arts Fund - Community Arts',
+        description: 'Funding for community arts projects that engage local communities.',
+        amount: 20000.00,
+        deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days
+        category: 'community',
+        organization: 'Regional Arts Fund',
+        eligibility_criteria: ['Regional organizations', 'Community focus', 'Arts engagement'],
+        required_documents: ['Community engagement plan', 'Project proposal', 'Partnership letters'],
+        success_score: 0.85,
+        priority_score: 90,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         data_source: 'regional_arts',
         status: 'open',
         days_until_deadline: 14,
-        sge_alignment_score: 0.85
+        sge_alignment_score: 0.9
       },
       {
-        id: 'fallback-expired-2024',
-        title: 'Community Health Documentary Grant',
-        description: 'Funding for documentary projects focused on community health and wellness.',
-        amount: 30000.00,
-        deadline: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago - expired
-        category: 'documentary',
-        organization: 'VicScreen',
-        eligibility_criteria: ['Victorian organizations', 'Health focus', 'Documentary experience'],
-        required_documents: ['Project proposal', 'Health impact assessment'],
-        success_score: 0.75,
-        priority_score: 0,
+        id: '7',
+        title: 'Youth Media Innovation Fund',
+        description: 'Support for innovative youth media projects and digital content creation.',
+        amount: 12000.00,
+        deadline: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000).toISOString(), // 25 days
+        category: 'youth',
+        organization: 'Youth Media Fund',
+        eligibility_criteria: ['Youth organizations', 'Digital media focus', 'Innovation'],
+        required_documents: ['Innovation proposal', 'Youth engagement plan', 'Digital strategy'],
+        success_score: 0.8,
+        priority_score: 85,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        data_source: 'vic_screen',
-        status: 'expired',
-        days_until_deadline: -5,
-        sge_alignment_score: 0.9
+        data_source: 'regional_arts',
+        status: 'open',
+        days_until_deadline: 25,
+        sge_alignment_score: 0.8
       }
     ];
   }

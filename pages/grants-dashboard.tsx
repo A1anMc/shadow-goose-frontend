@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { GrantService } from '../src/lib/grants';
-import { Grant } from '../src/lib/grants';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Grant, GrantService } from '../src/lib/grants';
 
 interface PipelineStats {
   total_grants: number;
@@ -34,29 +33,33 @@ export default function GrantsDashboard() {
 
   const grantService = useMemo(() => new GrantService(), []);
 
+  const loadGrantsData = async () => {
+    try {
+      setLoading(true);
+      const grantsData = await grantService.getGrantsWithSource();
+      setGrants(grantsData.grants);
+    } catch (error) {
+      console.error('Error loading grants:', error);
+      setError('Failed to load grants data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const loadDashboardData = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
-
-      // Load all data in parallel
-      const [
-        grantsData,
-        highPriorityData,
-        closingSoonData,
-        statsData,
-        healthData
-      ] = await Promise.allSettled([
-        grantService.getGrants(),
-        grantService.getHighPriorityGrants(5),
+      
+      // Load grants data using the new method
+      await loadGrantsData();
+      
+      // Load other data
+      const [highPriorityData, closingSoonData, statsData, healthData] = await Promise.allSettled([
+        grantService.getHighPriorityGrants(),
         grantService.getClosingSoonGrants(),
         grantService.getPipelineStats(),
         grantService.getPipelineHealth()
       ]);
-
-      if (grantsData.status === 'fulfilled') {
-        setGrants(grantsData.value.grants);
-      }
 
       if (highPriorityData.status === 'fulfilled') {
         setHighPriorityGrants(highPriorityData.value);
@@ -79,7 +82,7 @@ export default function GrantsDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [grantService]);
+  }, [grantService, loadGrantsData]);
 
   useEffect(() => {
     loadDashboardData();

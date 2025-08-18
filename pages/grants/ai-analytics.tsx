@@ -12,6 +12,7 @@ export default function AIAnalytics() {
   const [grants, setGrants] = useState<Grant[]>([]);
   const [applications, setApplications] = useState<GrantApplication[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
   const [analysis, setAnalysis] = useState<GrantAnalysisResult | null>(null);
   const [realTimeData, setRealTimeData] = useState({
@@ -24,7 +25,7 @@ export default function AIAnalytics() {
   const animationRef = useRef<number>();
 
   useEffect(() => {
-    loadData();
+    loadGrantsData();
     startRealTimeUpdates();
     return () => {
       if (animationRef.current) {
@@ -39,17 +40,14 @@ export default function AIAnalytics() {
     }
   }, [grants]);
 
-  const loadData = async () => {
+  const loadGrantsData = async () => {
     try {
       setLoading(true);
-      const [grantsData, applicationsData] = await Promise.all([
-        grantService.getGrants(),
-        grantService.getApplications(),
-      ]);
+      const grantsData = await grantService.getGrantsWithSource();
       setGrants(grantsData.grants);
-      setApplications(applicationsData);
     } catch (error) {
-      console.error("Error loading AI analytics data:", error);
+      console.error('Error loading grants:', error);
+      setError('Failed to load grants data');
     } finally {
       setLoading(false);
     }

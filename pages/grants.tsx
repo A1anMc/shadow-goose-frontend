@@ -31,69 +31,45 @@ export default function Grants() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [searching, setSearching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadData();
+    loadGrants();
   }, []);
 
-  const loadData = async () => {
+  const loadGrants = async () => {
     try {
       setLoading(true);
-      const [
-        grantsResponse,
-        applicationsData,
-        recommendationsData,
-        categoriesData,
-      ] = await Promise.all([
-        grantService.getGrants(),
-        grantService.getApplications(),
-        grantService.getRecommendations(),
-        grantService.getCategories(),
-      ]);
-
+      const grantsResponse = await grantService.getGrantsWithSource();
       setGrants(grantsResponse.grants);
-      setDataSource(grantsResponse.dataSource);
-      setApplications(applicationsData);
-      setRecommendations(recommendationsData);
-      setCategories(categoriesData as string[]);
-
-      // Track grant discovery for metrics
-      grantsResponse.grants.forEach(grant => {
-        successMetricsTracker.trackGrantDiscovery(grantsResponse.grants.length, 0.5, 85); // High relevance for SGE
-      });
-
-      // Update metrics display
-      setSuccessMetrics(successMetricsTracker.getMetrics());
+      setDataSource(grantsResponse.dataSource as 'api' | 'fallback' | 'mock' | 'unified_pipeline');
+      
+      // Track grant discovery for analytics
+      if (grantsResponse.grants.length > 0) {
+        grantsResponse.grants.forEach(grant => {
+          successMetricsTracker.trackGrantDiscovery(grantsResponse.grants.length, 0.5, 85); // High relevance for SGE
+        });
+      }
     } catch (error) {
-      console.error("Error loading grants data:", error);
+      console.error('Error loading grants:', error);
+      setError('Failed to load grants. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchFilters: GrantSearchFilters) => {
     try {
-      setLoading(true);
-      const results = await grantService.searchGrants(searchFilters);
-
-      // Ensure we have the correct structure
-      if (results && typeof results === 'object' && 'grants' in results) {
-        setGrants(results.grants || []);
-        setDataSource(results.dataSource || 'api');
-      } else {
-        // Fallback if results structure is unexpected
-        console.warn('Unexpected results structure:', results);
-        setGrants([]);
-        setDataSource('fallback');
-      }
+      setSearching(true);
+      const results = await grantService.searchGrantsWithFilters(searchFilters);
+      setGrants(results.grants || []);
+      setDataSource(results.dataSource || 'api');
     } catch (error) {
-      console.error("Error searching grants:", error);
-      // Use fallback data on error
-      const fallbackData = await grantService.getGrants();
-      setGrants(fallbackData.grants);
-      setDataSource('fallback');
+      console.error('Error searching grants:', error);
+      setError('Search failed. Please try again.');
     } finally {
-      setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -599,7 +575,7 @@ export default function Grants() {
                     Clear Filters
                   </button>
                   <button
-                    onClick={handleSearch}
+                    onClick={() => handleSearch(searchFilters)}
                     className="px-4 py-2 bg-sg-primary text-white rounded-md text-sm font-medium hover:bg-sg-primary/90"
                   >
                     Search

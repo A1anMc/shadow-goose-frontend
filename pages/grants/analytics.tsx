@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getBranding } from "../../src/lib/branding";
 import {
-  grantService,
-  GrantApplication,
-  Grant,
+    Grant,
+    GrantApplication,
+    grantService,
 } from "../../src/lib/grants";
 import { successMetricsTracker } from "../../src/lib/success-metrics";
 
@@ -13,6 +13,7 @@ export default function GrantsAnalytics() {
   const [applications, setApplications] = useState<GrantApplication[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'30d' | '90d' | '1y' | 'all'>('90d');
   const [successMetrics, setSuccessMetrics] = useState(successMetricsTracker.getMetrics());
 
@@ -25,12 +26,26 @@ export default function GrantsAnalytics() {
       setLoading(true);
       const [applicationsData, grantsData] = await Promise.all([
         grantService.getApplications(),
-        grantService.getGrants(),
+        grantService.getGrantsWithSource(),
       ]);
       setApplications(applicationsData);
       setGrants(grantsData.grants);
     } catch (error) {
       console.error("Error loading analytics data:", error);
+      setError('Failed to load analytics data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadGrantsData = async () => {
+    try {
+      setLoading(true);
+      const grantsData = await grantService.getGrantsWithSource();
+      setGrants(grantsData.grants);
+    } catch (error) {
+      console.error('Error loading grants:', error);
+      setError('Failed to load grants data');
     } finally {
       setLoading(false);
     }

@@ -47,14 +47,14 @@ export default function AIGrantWriter({
     setShowSuggestion(false);
 
     try {
-      const content = await aiWritingAssistant.generateGrantContent({
+      const response = await aiWritingAssistant.generateGrantContent({
         section,
         grant_context: grantContext,
         existing_content: existingContent,
         user_context: `Generate content for ${sectionLabels[section as keyof typeof sectionLabels] || section}`
       });
 
-      setSuggestion(content);
+      setSuggestion(response.content);
       setShowSuggestion(true);
     } catch (error) {
       console.error('Error generating content:', error);

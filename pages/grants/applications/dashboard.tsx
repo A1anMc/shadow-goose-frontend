@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { getBranding } from "../../../src/lib/branding";
 import {
-  grantService,
-  GrantApplication,
-  Grant,
+    Grant,
+    GrantApplication,
+    grantService,
 } from "../../../src/lib/grants";
-import { successMetricsTracker } from "../../../src/lib/success-metrics";
 
 export default function ApplicationsDashboard() {
   const router = useRouter();
@@ -15,6 +14,7 @@ export default function ApplicationsDashboard() {
   const [applications, setApplications] = useState<GrantApplication[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'draft' | 'in_progress' | 'submitted' | 'approved' | 'rejected'>('all');
   const [sortBy, setSortBy] = useState<'date' | 'deadline' | 'amount' | 'status'>('date');
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,12 +28,26 @@ export default function ApplicationsDashboard() {
       setLoading(true);
       const [applicationsData, grantsData] = await Promise.all([
         grantService.getApplications(),
-        grantService.getGrants(),
+        grantService.getGrantsWithSource(),
       ]);
       setApplications(applicationsData);
       setGrants(grantsData.grants);
     } catch (error) {
-      console.error("Error loading applications:", error);
+      console.error("Error loading applications data:", error);
+      setError('Failed to load applications data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadGrantsData = async () => {
+    try {
+      setLoading(true);
+      const grantsData = await grantService.getGrantsWithSource();
+      setGrants(grantsData.grants);
+    } catch (error) {
+      console.error('Error loading grants:', error);
+      setError('Failed to load grants data');
     } finally {
       setLoading(false);
     }
