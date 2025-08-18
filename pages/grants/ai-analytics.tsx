@@ -57,25 +57,60 @@ export default function AIAnalytics() {
   const startRealTimeUpdates = () => {
     const updateRealTimeData = async () => {
       try {
-        // Get real data from the grants service
+        // Get REAL data from multiple sources
         const grantsService = getGrantsService();
-        const grantsData = await grantsService.getGrantsWithSource();
-        
-        // Calculate real metrics based on actual data
-        const activeUsers = grantsData.data.length > 0 ? Math.min(grantsData.data.length * 2, 100) : 0;
-        const applicationsStarted = grantsData.data.length > 0 ? Math.min(grantsData.data.length, 50) : 0;
-        const aiPredictions = grantsData.data.length > 0 ? grantsData.data.length * 3 : 0;
-        const successRate = grantsData.data.length > 0 ? 0.75 + (grantsData.data.length * 0.01) : 0.75; // Base 75% + bonus per grant
-        
+        const [grantsData, applicationsData, userData] = await Promise.allSettled([
+          grantsService.getGrantsWithSource(),
+          grantsService.getGrantApplications(),
+          grantsService.getServiceHealth()
+        ]);
+
+        // REAL METRICS - No fake calculations
+        let activeUsers = 0;
+        let applicationsStarted = 0;
+        let aiPredictions = 0;
+        let successRate = 0;
+
+        // Active Users: Based on actual user sessions or API calls
+        if (userData.status === 'fulfilled' && userData.value) {
+          activeUsers = userData.value.activeSessions || 0;
+        }
+
+        // Applications Started: Based on actual applications in system
+        if (applicationsData.status === 'fulfilled' && applicationsData.value) {
+          applicationsStarted = applicationsData.value.length || 0;
+        }
+
+        // AI Predictions: Based on actual AI analysis performed
+        if (grantsData.status === 'fulfilled' && grantsData.value) {
+          // Count grants that have been analyzed
+          aiPredictions = grantsData.value.data.filter(grant => 
+            grant.success_score !== undefined || grant.success_probability !== undefined
+          ).length;
+        }
+
+        // Success Rate: Based on actual success metrics
+        if (grantsData.status === 'fulfilled' && grantsData.value) {
+          const grantsWithScores = grantsData.value.data.filter(grant => 
+            grant.success_score !== undefined
+          );
+          if (grantsWithScores.length > 0) {
+            const avgSuccess = grantsWithScores.reduce((sum, grant) => 
+              sum + (grant.success_score || 0), 0
+            ) / grantsWithScores.length;
+            successRate = avgSuccess;
+          }
+        }
+
         setRealTimeData({
           activeUsers,
           applicationsStarted,
           aiPredictions,
-          successRate: Math.min(successRate, 0.95), // Cap at 95%
+          successRate: Math.min(successRate, 1.0), // Cap at 100%
         });
       } catch (error) {
         console.error('Error updating real-time data:', error);
-        // Set minimal values if data fetch fails
+        // Show zero values if data fetch fails - NO FAKE DATA
         setRealTimeData({
           activeUsers: 0,
           applicationsStarted: 0,
@@ -86,7 +121,7 @@ export default function AIAnalytics() {
     };
 
     updateRealTimeData();
-    const interval = setInterval(updateRealTimeData, 30000); // Update every 30 seconds instead of 3
+    const interval = setInterval(updateRealTimeData, 60000); // Update every minute
     return () => clearInterval(interval);
   };
 
@@ -209,17 +244,35 @@ export default function AIAnalytics() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Real-Time Metrics */}
+        {/* Real Business Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
-                <span className="text-2xl">👥</span>
+                <span className="text-2xl">🎯</span>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Users</p>
-                <p className="text-2xl font-bold text-gray-900">{realTimeData.activeUsers}</p>
-                <p className="text-xs text-green-600">+12% from last hour</p>
+                <p className="text-sm font-medium text-gray-600">High-Priority Grants</p>
+                <p className="text-2xl font-bold text-gray-900">{grants.filter(g => (g.priority_score || 0) > 7).length}</p>
+                <p className="text-xs text-blue-600">Requires immediate attention</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500">
+            <div className="flex items-center">
+              <div className="p-2 bg-red-100 rounded-lg">
+                <span className="text-2xl">⏰</span>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Closing Soon</p>
+                <p className="text-2xl font-bold text-gray-900">{grants.filter(g => {
+                  const deadline = new Date(g.deadline);
+                  const now = new Date();
+                  const daysLeft = (deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+                  return daysLeft <= 30 && daysLeft > 0;
+                }).length}</p>
+                <p className="text-xs text-red-600">Deadline within 30 days</p>
               </div>
             </div>
           </div>
@@ -227,12 +280,12 @@ export default function AIAnalytics() {
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
-                <span className="text-2xl">📝</span>
+                <span className="text-2xl">💰</span>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Applications Started</p>
-                <p className="text-2xl font-bold text-gray-900">{realTimeData.applicationsStarted}</p>
-                <p className="text-xs text-green-600">+5 this hour</p>
+                <p className="text-sm font-medium text-gray-600">Total Funding</p>
+                <p className="text-2xl font-bold text-gray-900">${grants.reduce((sum, g) => sum + (g.amount || 0), 0).toLocaleString()}</p>
+                <p className="text-xs text-green-600">Available across all grants</p>
               </div>
             </div>
           </div>
@@ -240,25 +293,12 @@ export default function AIAnalytics() {
           <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <span className="text-2xl">🤖</span>
+                <span className="text-2xl">📈</span>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">AI Predictions</p>
-                <p className="text-2xl font-bold text-gray-900">{realTimeData.aiPredictions}</p>
-                <p className="text-xs text-purple-600">98.7% accuracy</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-500">
-            <div className="flex items-center">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <span className="text-2xl">📊</span>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Success Rate</p>
-                <p className="text-2xl font-bold text-gray-900">{formatPercentage(realTimeData.successRate)}</p>
-                <p className="text-xs text-orange-600">+2.3% this week</p>
+                <p className="text-sm font-medium text-gray-600">Avg Success Score</p>
+                <p className="text-2xl font-bold text-gray-900">{formatPercentage(grants.filter(g => g.success_score).reduce((sum, g) => sum + (g.success_score || 0), 0) / Math.max(grants.filter(g => g.success_score).length, 1))}</p>
+                <p className="text-xs text-purple-600">Based on grant analysis</p>
               </div>
             </div>
           </div>
