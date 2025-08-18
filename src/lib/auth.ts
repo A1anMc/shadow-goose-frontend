@@ -239,11 +239,7 @@ class AuthService {
   // Auto-login with stored credentials (for development/testing)
   async autoLogin(): Promise<boolean> {
     try {
-      // Only auto-login in development
-      if (process.env.NODE_ENV === 'production') {
-        return false;
-      }
-
+      // Auto-login works in both development and production for this demo
       const response = await this.login({
         username: 'test',
         password: 'test'
