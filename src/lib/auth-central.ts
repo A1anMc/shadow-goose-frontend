@@ -98,10 +98,10 @@ class CentralAuthService {
       }
 
       const data: AuthResponse = await response.json();
-      
+
       // Store authentication data
       this.setAuth(data.access_token, data.user);
-      
+
       return data;
     } catch (error) {
       console.error('Login failed:', error);
@@ -206,7 +206,7 @@ class CentralAuthService {
   async refreshUserData(): Promise<User | null> {
     try {
       const response = await this.authenticatedRequest(`${configService.getApiUrl()}/auth/user`);
-      
+
       if (response.ok) {
         const userData = await response.json();
         this.state.user = userData;
@@ -216,7 +216,7 @@ class CentralAuthService {
     } catch (error) {
       console.error('Failed to refresh user data:', error);
     }
-    
+
     return null;
   }
 

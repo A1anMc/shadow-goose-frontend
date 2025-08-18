@@ -80,8 +80,10 @@ export interface ProjectMilestone {
 export class GrantService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'https://shadow-goose-api.onrender.com') {
-    this.baseUrl = baseUrl;
+  constructor(baseUrl?: string) {
+    // Use centralized configuration service
+    const { configService } = require('./config');
+    this.baseUrl = baseUrl || configService.getApiUrl();
   }
 
   /**
@@ -123,7 +125,7 @@ export class GrantService {
       // Fetch from external sources
       const externalResults = await externalGrantsService.fetchAllSources();
       const externalGrants: Grant[] = [];
-      
+
       externalResults.forEach(result => {
         if (result.success) {
           externalGrants.push(...result.grants);
@@ -196,24 +198,24 @@ export class GrantService {
   async searchGrantsWithFilters(filters: GrantSearchFilters): Promise<{ grants: Grant[]; dataSource: 'api' | 'fallback' | 'mock' | 'unified_pipeline' }> {
     try {
       const allGrants = await this.getGrants();
-      
+
       // Apply filters
       let filteredGrants = allGrants;
 
       if (filters.category) {
-        filteredGrants = filteredGrants.filter(grant => 
+        filteredGrants = filteredGrants.filter(grant =>
           grant.category?.toLowerCase().includes(filters.category!.toLowerCase())
         );
       }
 
       if (filters.minAmount) {
-        filteredGrants = filteredGrants.filter(grant => 
+        filteredGrants = filteredGrants.filter(grant =>
           grant.amount >= filters.minAmount!
         );
       }
 
       if (filters.maxAmount) {
-        filteredGrants = filteredGrants.filter(grant => 
+        filteredGrants = filteredGrants.filter(grant =>
           grant.amount <= filters.maxAmount!
         );
       }
@@ -274,7 +276,7 @@ export class GrantService {
   private async getAuthToken(): Promise<string> {
     // Use the auth service for consistent token management
     const { centralAuthService } = await import('./auth-central');
-    
+
     // Check if user is authenticated
     if (!centralAuthService.isAuthenticated()) {
       try {
@@ -288,14 +290,15 @@ export class GrantService {
         throw new Error('Authentication required. Please login.');
       }
       }
-      
+
     const token = centralAuthService.getToken();
     if (!token) {
       throw new Error('No authentication token available');
     }
-    
+
     return token;
   }
 }
 
-export const grantService = new GrantService();
+// Use centralized service factory instead of direct instantiation
+// export const grantService = new GrantService();

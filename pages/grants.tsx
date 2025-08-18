@@ -42,11 +42,11 @@ export default function Grants() {
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log('🚀 Loading grants with centralized service...');
       const grantsService = getGrantsService();
       const result = await grantsService.getGrantsWithSource();
-      
+
       setGrants(result.data);
       setDataSource(result.source as 'api' | 'fallback' | 'unified_pipeline');
 
@@ -56,14 +56,14 @@ export default function Grants() {
           successMetricsTracker.trackGrantDiscovery(result.data.length, 0.5, 85); // High relevance for SGE
         });
       }
-      
+
       console.log(`✅ Grants loaded successfully!`, {
         count: result.data.length,
         source: result.source,
         reliability: result.reliability,
         errors: result.errors
       });
-      
+
     } catch (error) {
       console.error('Error loading grants:', error);
       setError('Failed to load grants. Please try again.');
@@ -370,7 +370,7 @@ export default function Grants() {
             </button>
           </div>
         </div>
-        
+
         {/* Tab Navigation */}
         <div className="border-b border-gray-200 mb-8">
           <nav className="-mb-px flex space-x-8">

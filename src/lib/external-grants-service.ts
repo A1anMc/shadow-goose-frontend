@@ -77,7 +77,7 @@ class ExternalGrantsService {
 
     try {
       const grants = await this.scrapeGrantsFromSource(source);
-      
+
       // Update source stats
       source.grantCount = grants.length;
       source.lastSync = new Date().toISOString();

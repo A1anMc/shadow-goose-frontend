@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { authService } from "../src/lib/auth";
-import { grantService } from "../src/lib/grants";
+import { getGrantsService } from "../src/lib/services/grants-service";
 
 export default function TestAuth() {
   const [status, setStatus] = useState("Loading...");
@@ -29,7 +29,8 @@ export default function TestAuth() {
         
         // Test grants API
         setStatus("Fetching grants...");
-        const grantsData = await grantService.getGrants();
+        const grantsService = getGrantsService();
+        const grantsData = await grantsService.getGrants();
         setGrants(grantsData);
         setStatus(`Success! Found ${grantsData.length} grants`);
         

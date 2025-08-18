@@ -28,24 +28,24 @@ export default function BulletproofGrants() {
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log('🚀 Loading grants with bulletproof service...');
       const grantsService = getGrantsService();
       const result = await grantsService.getGrantsWithSource();
-      
+
       setGrants(result.data);
       setReliability(result.reliability);
       setDataSource(result.source);
       setLastUpdated(result.timestamp);
       setErrors(result.errors);
-      
+
       console.log(`✅ Grants loaded successfully!`, {
         count: result.data.length,
         source: result.source,
         reliability: result.reliability,
         errors: result.errors
       });
-      
+
     } catch (error) {
       console.error('💥 Unexpected error in bulletproof grants:', error);
       setError('Unexpected error occurred');
@@ -102,7 +102,7 @@ export default function BulletproofGrants() {
                 Bulletproof grant discovery system
               </p>
             </div>
-            
+
             {/* Reliability Status */}
             <div className="flex items-center space-x-4">
               <div className={`px-3 py-2 rounded-full text-sm font-medium ${getReliabilityColor(reliability)}`}>
@@ -133,7 +133,7 @@ export default function BulletproofGrants() {
                 Found {grants.length} grants
               </span>
             </div>
-            
+
             {errors.length > 0 && (
               <div className="text-sm text-red-600">
                 ⚠️ {errors.length} error(s) occurred
@@ -193,11 +193,11 @@ export default function BulletproofGrants() {
                       {grant.status}
                     </span>
                   </div>
-                  
+
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                     {grant.description}
                   </p>
-                  
+
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Amount:</span>
@@ -205,12 +205,12 @@ export default function BulletproofGrants() {
                         ${grant.amount?.toLocaleString() || 'TBD'}
                       </span>
                     </div>
-                    
+
                     <div className="flex justify-between">
                       <span className="text-gray-500">Category:</span>
                       <span className="font-medium">{grant.category}</span>
                     </div>
-                    
+
                     <div className="flex justify-between">
                       <span className="text-gray-500">Deadline:</span>
                       <span className="font-medium">
@@ -218,7 +218,7 @@ export default function BulletproofGrants() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 pt-4 border-t">
                     <p className="text-xs text-gray-500">
                       Source: {grant.data_source || 'unknown'}

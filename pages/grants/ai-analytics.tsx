@@ -4,8 +4,8 @@ import { getBranding } from "../../src/lib/branding";
 import {
     Grant,
     GrantApplication,
-    grantService,
-} from "../../src/lib/grants";
+} from "../../src/lib/types/grants";
+import { getGrantsService } from "../../src/lib/services/grants-service";
 
 export default function AIAnalytics() {
   const branding = getBranding();
@@ -43,8 +43,9 @@ export default function AIAnalytics() {
   const loadGrantsData = async () => {
     try {
       setLoading(true);
-      const grantsData = await grantService.getGrantsWithSource();
-      setGrants(grantsData.grants);
+              const grantsService = getGrantsService();
+        const grantsData = await grantsService.getGrantsWithSource();
+              setGrants(grantsData.data);
     } catch (error) {
       console.error('Error loading grants:', error);
       setError('Failed to load grants data');

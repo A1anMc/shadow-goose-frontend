@@ -238,8 +238,8 @@ class ErrorHandler {
   static isRetryableError(error: any): boolean {
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
-      return message.includes('timeout') || 
-             message.includes('network') || 
+      return message.includes('timeout') ||
+             message.includes('network') ||
              message.includes('500') ||
              message.includes('502') ||
              message.includes('503') ||
@@ -252,7 +252,7 @@ class ErrorHandler {
   static getErrorSeverity(error: any): 'low' | 'medium' | 'high' | 'critical' {
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
-      
+
       if (message.includes('validation') || message.includes('format')) {
         return 'low';
       } else if (message.includes('timeout') || message.includes('network')) {

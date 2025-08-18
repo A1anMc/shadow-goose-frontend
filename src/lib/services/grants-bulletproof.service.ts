@@ -88,24 +88,24 @@ export class GrantsBulletproofService implements IGrantsService {
 
   async searchGrantsWithFilters(filters: GrantSearchFilters): Promise<BulletproofResponse<Grant[]>> {
     const allGrants = await this.getGrantsWithSource();
-    
+
     // Apply filters to the grants
     let filteredGrants = allGrants.data;
 
     if (filters.category) {
-      filteredGrants = filteredGrants.filter(grant => 
+      filteredGrants = filteredGrants.filter(grant =>
         grant.category?.toLowerCase().includes(filters.category!.toLowerCase())
       );
     }
 
     if (filters.minAmount) {
-      filteredGrants = filteredGrants.filter(grant => 
+      filteredGrants = filteredGrants.filter(grant =>
         grant.amount >= filters.minAmount!
       );
     }
 
     if (filters.maxAmount) {
-      filteredGrants = filteredGrants.filter(grant => 
+      filteredGrants = filteredGrants.filter(grant =>
         grant.amount <= filters.maxAmount!
       );
     }
@@ -343,7 +343,7 @@ export class GrantsBulletproofService implements IGrantsService {
           if (response.ok) {
             const data = await response.json();
             const grants = data.grants || [];
-            
+
             // Cache successful response
             this.cache.set('grants', {
               data: grants,
@@ -361,7 +361,7 @@ export class GrantsBulletproofService implements IGrantsService {
           await this.delay(this.RETRY_DELAY * attempt);
         }
       }
-      
+
       // If we get here, all retries failed
       return { success: false, error: 'All retry attempts failed' };
     } catch (error) {

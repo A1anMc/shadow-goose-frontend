@@ -199,9 +199,9 @@ export interface BulletproofResponse<T> {
 
 // Type guards for runtime type checking
 export const isGrant = (obj: any): obj is Grant => {
-  return obj && 
-         typeof obj.id !== 'undefined' && 
-         typeof obj.title === 'string' && 
+  return obj &&
+         typeof obj.id !== 'undefined' &&
+         typeof obj.title === 'string' &&
          typeof obj.description === 'string' &&
          typeof obj.amount === 'number';
 };

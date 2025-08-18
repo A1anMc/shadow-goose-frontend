@@ -36,11 +36,11 @@ class ConfigService {
   static getApiUrl(): string {
     return process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api.onrender.com';
   }
-  
+
   static getClientName(): string {
     return process.env.NEXT_PUBLIC_CLIENT || 'sge';
   }
-  
+
   static isProduction(): boolean {
     return process.env.NODE_ENV === 'production';
   }
@@ -53,18 +53,18 @@ class ConfigService {
 class CentralAuthService {
   private static instance: CentralAuthService;
   private tokenKey = 'sge_auth_token';
-  
+
   static getInstance(): CentralAuthService {
     if (!CentralAuthService.instance) {
       CentralAuthService.instance = new CentralAuthService();
     }
     return CentralAuthService.instance;
   }
-  
+
   getToken(): string | null {
     // ONE implementation used everywhere
   }
-  
+
   isAuthenticated(): boolean {
     // ONE implementation used everywhere
   }
@@ -78,7 +78,7 @@ class ErrorHandler {
   static handleApiError(error: any, context: string): void {
     // ONE error handling pattern
   }
-  
+
   static logError(error: any, context: string): void {
     // ONE logging pattern
   }

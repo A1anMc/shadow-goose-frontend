@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { authService } from "../../src/lib/auth";
 import { getBranding } from "../../src/lib/branding";
 import { ExternalGrantSource, externalGrantsService } from "../../src/lib/external-grants-service";
-import { grantService } from "../../src/lib/grants";
+import { getGrantsService } from "../../src/lib/services/grants-service";
 
 export default function ExternalGrantSources() {
   const router = useRouter();
@@ -27,9 +27,10 @@ export default function ExternalGrantSources() {
           return;
         }
 
+        const grantsService = getGrantsService();
         const [sourcesData, statsData] = await Promise.all([
           externalGrantsService.getSources(),
-          grantService.getExternalSourcesStats()
+          grantsService.getExternalSourcesStats()
         ]);
 
         setSources(sourcesData);
