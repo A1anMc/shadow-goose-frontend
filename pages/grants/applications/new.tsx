@@ -245,11 +245,16 @@ export default function NewGrantApplication() {
     try {
       setSaving(true);
       const grantsService = getGrantsService();
-      const newApplication = await grantsService.createGrantApplication({ grant_id: grant.id as number });
+      
+      // Create new application with grant ID (handle both string and number)
+      const grantId = typeof grant.id === 'string' ? grant.id : grant.id;
+      const newApplication = await grantsService.createGrantApplication({ 
+        grant_id: grantId,
+        project_title: application.project_title || 'Untitled Application'
+      });
 
       if (newApplication) {
         // Save the application content
-        const grantsService = getGrantsService();
         await grantsService.updateApplicationContent(newApplication.id, application);
         router.push(`/grants/applications/${newApplication.id}`);
       }

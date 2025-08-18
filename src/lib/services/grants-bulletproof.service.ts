@@ -134,15 +134,75 @@ export class GrantsBulletproofService implements IGrantsService {
   }
 
   async createGrantApplication(application: any): Promise<any> {
-    throw new Error('Not implemented');
+    try {
+      // Create a new application with basic structure
+      const newApplication = {
+        id: Date.now(), // Temporary ID for demo
+        grant_id: application.grant_id,
+        user_id: 1, // Default user ID
+        title: application.project_title || 'Untitled Application',
+        status: 'draft' as const,
+        priority: 'medium' as const,
+        answers: [],
+        comments: [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        team_assignments: [],
+        questions: [],
+        progress: {
+          overall: 0,
+          sections: {}
+        },
+        collaborators: [],
+        workflow_stage: 'planning' as const,
+        deadline_reminders: []
+      };
+
+      // Store in localStorage for persistence (temporary solution)
+      const applications = JSON.parse(localStorage.getItem('grant_applications') || '[]');
+      applications.push(newApplication);
+      localStorage.setItem('grant_applications', JSON.stringify(applications));
+
+      return newApplication;
+    } catch (error) {
+      console.error('Error creating grant application:', error);
+      throw new Error('Failed to create grant application');
+    }
   }
 
   async updateGrantApplication(id: number, application: any): Promise<any> {
-    throw new Error('Not implemented');
+    try {
+      // Update application in localStorage
+      const applications = JSON.parse(localStorage.getItem('grant_applications') || '[]');
+      const index = applications.findIndex((app: any) => app.id === id);
+      
+      if (index !== -1) {
+        applications[index] = {
+          ...applications[index],
+          ...application,
+          updated_at: new Date().toISOString()
+        };
+        localStorage.setItem('grant_applications', JSON.stringify(applications));
+        return applications[index];
+      }
+      
+      throw new Error('Application not found');
+    } catch (error) {
+      console.error('Error updating grant application:', error);
+      throw new Error('Failed to update grant application');
+    }
   }
 
   async deleteGrantApplication(id: number): Promise<boolean> {
-    throw new Error('Not implemented');
+    try {
+      const applications = JSON.parse(localStorage.getItem('grant_applications') || '[]');
+      const filteredApplications = applications.filter((app: any) => app.id !== id);
+      localStorage.setItem('grant_applications', JSON.stringify(filteredApplications));
+      return true;
+    } catch (error) {
+      console.error('Error deleting grant application:', error);
+      return false;
+    }
   }
 
   // Additional methods for backward compatibility
@@ -179,7 +239,26 @@ export class GrantsBulletproofService implements IGrantsService {
   }
 
   async updateApplicationContent(id: number, content: any): Promise<any> {
-    throw new Error('Not implemented');
+    try {
+      // Update application content in localStorage
+      const applications = JSON.parse(localStorage.getItem('grant_applications') || '[]');
+      const index = applications.findIndex((app: any) => app.id === id);
+      
+      if (index !== -1) {
+        applications[index] = {
+          ...applications[index],
+          ...content,
+          updated_at: new Date().toISOString()
+        };
+        localStorage.setItem('grant_applications', JSON.stringify(applications));
+        return applications[index];
+      }
+      
+      throw new Error('Application not found');
+    } catch (error) {
+      console.error('Error updating application content:', error);
+      throw new Error('Failed to update application content');
+    }
   }
 
   // Dashboard methods
