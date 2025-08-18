@@ -1,9 +1,9 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { getBranding } from "../src/lib/branding";
 import { authService } from "../src/lib/auth";
-import { sgeProjectService, SGEProject } from "../src/lib/projects";
+import { getBranding } from "../src/lib/branding";
+import { SGEProject, sgeProjectService } from "../src/lib/projects";
 
 // Production-ready dashboard with enhanced analytics and UI/UX
 // Version: 1.0.1 - Enhanced Dashboard with Analytics
