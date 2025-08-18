@@ -84,7 +84,7 @@ export class SGEMLService {
   }
 
   // Calculate SGE-specific match score
-  private calculateSGEMatchScore(grant: SGEGrant): number {
+  calculateSGEMatchScore(grant: SGEGrant): number {
     let score = 0;
     let factors = 0;
 
@@ -211,7 +211,7 @@ export class SGEMLService {
   }
 
   // Generate SGE-specific recommendations
-  private generateSGERecommendations(grant: SGEGrant): string[] {
+  generateSGERecommendations(grant: SGEGrant): string[] {
     const recommendations: string[] = [];
 
     // Media-specific recommendations
