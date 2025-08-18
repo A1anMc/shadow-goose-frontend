@@ -76,7 +76,7 @@ export class GrantsBulletproofService implements IGrantsService {
     }
   }
 
-  async getGrantById(id: number): Promise<Grant | null> {
+  async getGrantById(id: number | string): Promise<Grant | null> {
     const allGrants = await this.getGrants();
     return allGrants.find(g => g.id === id) || null;
   }
@@ -154,7 +154,7 @@ export class GrantsBulletproofService implements IGrantsService {
     return this.getGrantApplicationById(id);
   }
 
-  async getGrant(id: number): Promise<Grant | null> {
+  async getGrant(id: number | string): Promise<Grant | null> {
     return this.getGrantById(id);
   }
 

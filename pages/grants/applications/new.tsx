@@ -112,7 +112,8 @@ export default function NewGrantApplication() {
     try {
       setLoading(true);
       const grantsService = getGrantsService();
-      const grantData = await grantsService.getGrant(parseInt(id as string));
+      // Handle both string and number IDs properly
+      const grantData = await grantsService.getGrant(id);
       setGrant(grantData);
 
       // Pre-fill with smart suggestions based on grant type

@@ -8,7 +8,7 @@ export interface IGrantsService {
   // Core grant operations
   getGrants(): Promise<Grant[]>;
   getGrantsWithSource(): Promise<BulletproofResponse<Grant[]>>;
-  getGrantById(id: number): Promise<Grant | null>;
+  getGrantById(id: number | string): Promise<Grant | null>;
   searchGrants(filters: GrantSearchFilters): Promise<Grant[]>;
   searchGrantsWithFilters(filters: GrantSearchFilters): Promise<BulletproofResponse<Grant[]>>;
 

@@ -164,9 +164,9 @@ generate_unified_summary() {
     echo -e "${CYAN}=============================${NC}"
     
     # Count total issues
-    local total_alerts=$(grep -c "ALERT\|❌\|FAILED" system-monitor-output.txt api-management-output.txt 2>/dev/null || echo "0")
-    local total_warnings=$(grep -c "⚠️\|WARNING" system-monitor-output.txt api-management-output.txt 2>/dev/null || echo "0")
-    local total_success=$(grep -c "✅\|SUCCESS" system-monitor-output.txt api-management-output.txt 2>/dev/null || echo "0")
+    local total_alerts=$(grep -c "ALERT\|❌\|FAILED" system-monitor-output.txt api-management-output.txt 2>/dev/null | awk '{sum += $1} END {print sum+0}')
+    local total_warnings=$(grep -c "⚠️\|WARNING" system-monitor-output.txt api-management-output.txt 2>/dev/null | awk '{sum += $1} END {print sum+0}')
+    local total_success=$(grep -c "✅\|SUCCESS" system-monitor-output.txt api-management-output.txt 2>/dev/null | awk '{sum += $1} END {print sum+0}')
     
     echo "Total Alerts: $total_alerts"
     echo "Total Warnings: $total_warnings"
