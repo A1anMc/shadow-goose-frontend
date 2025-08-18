@@ -1294,38 +1294,29 @@ export class GrantService {
    * Utility method to get authentication token
    */
   private async getAuthToken(): Promise<string> {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      let token = localStorage.getItem('auth_token');
-      
-      // If no token, try to authenticate
-      if (!token) {
-        try {
-          const response = await fetch('https://shadow-goose-api.onrender.com/auth/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              username: 'test',
-              password: 'test'
-            })
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            token = data.access_token;
-            if (token) {
-              localStorage.setItem('auth_token', token);
-            }
-          }
-        } catch (error) {
-          console.error('Authentication failed:', error);
+    // Use the auth service for consistent token management
+    const { authService } = await import('./auth');
+    
+    // Check if user is authenticated
+    if (!authService.isAuthenticated()) {
+      try {
+        // Try to auto-login if not authenticated
+        const success = await authService.autoLogin();
+        if (!success) {
+          throw new Error('Authentication required');
         }
+      } catch (error) {
+        console.error('Authentication failed:', error);
+        throw new Error('Authentication required. Please login.');
       }
-      
-      return token || '';
     }
-    return '';
+    
+    const token = authService.getToken();
+    if (!token) {
+      throw new Error('No authentication token available');
+    }
+    
+    return token;
   }
 }
 

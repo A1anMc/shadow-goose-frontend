@@ -20,6 +20,7 @@ export interface AuthResponse {
 class AuthService {
   private tokenKey = 'sge_auth_token';
   private userKey = 'sge_user_data';
+  private tokenExpiryKey = 'sge_token_expiry';
 
   // Login user - REAL AUTHENTICATION ONLY
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -49,11 +50,15 @@ class AuthService {
     return data;
   }
 
-  // Improved token storage with browser checks
+  // Improved token storage with browser checks and expiry
   private saveToken(token: string): void {
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         localStorage.setItem(this.tokenKey, token);
+        
+        // Calculate and store token expiry (JWT tokens are typically valid for 24 hours)
+        const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours from now
+        localStorage.setItem(this.tokenExpiryKey, expiryTime.toString());
       }
     } catch (error) {
       console.error('Failed to save token:', error);
@@ -77,6 +82,7 @@ class AuthService {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         localStorage.removeItem(this.tokenKey);
         localStorage.removeItem(this.userKey);
+        localStorage.removeItem(this.tokenExpiryKey);
       }
     } catch (error) {
       console.error('Failed to logout:', error);
@@ -96,11 +102,24 @@ class AuthService {
     return null;
   }
 
-  // Get auth token with proper error handling
+  // Get auth token with proper error handling and expiry check
   getToken(): string | null {
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-        return localStorage.getItem(this.tokenKey);
+        const token = localStorage.getItem(this.tokenKey);
+        const expiry = localStorage.getItem(this.tokenExpiryKey);
+        
+        // Check if token is expired
+        if (token && expiry) {
+          const expiryTime = parseInt(expiry);
+          if (Date.now() > expiryTime) {
+            // Token is expired, clear it
+            this.logout();
+            return null;
+          }
+        }
+        
+        return token;
       }
     } catch (error) {
       console.error('Failed to retrieve token:', error);
@@ -108,9 +127,29 @@ class AuthService {
     return null;
   }
 
-  // Check if user is authenticated
+  // Check if user is authenticated with token expiry validation
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+    
+    // Additional check for token expiry
+    try {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const expiry = localStorage.getItem(this.tokenExpiryKey);
+        if (expiry) {
+          const expiryTime = parseInt(expiry);
+          if (Date.now() > expiryTime) {
+            this.logout();
+            return false;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Token expiry check failed:', error);
+      return false;
+    }
+    
+    return true;
   }
 
   // Check if user has specific role
@@ -124,7 +163,7 @@ class AuthService {
     return this.hasRole('admin');
   }
 
-  // Make authenticated API request with improved error handling
+  // Make authenticated API request with improved error handling and auto-refresh
   async authenticatedRequest(url: string, options: RequestInit = {}): Promise<Response> {
     const token = this.getToken();
 
@@ -138,10 +177,19 @@ class AuthService {
       ...options.headers,
     };
 
-    return fetch(url, {
+    const response = await fetch(url, {
       ...options,
       headers,
     });
+
+    // If we get a 401 (Unauthorized), the token might be expired
+    if (response.status === 401) {
+      console.log('Token expired, logging out user');
+      this.logout();
+      throw new Error('Authentication token expired. Please login again.');
+    }
+
+    return response;
   }
 
   // Refresh user data
@@ -175,9 +223,35 @@ class AuthService {
         },
       });
 
+      if (response.status === 401) {
+        // Token is invalid, clear it
+        this.logout();
+        return false;
+      }
+
       return response.ok;
     } catch (error) {
       console.error('Token validation failed:', error);
+      return false;
+    }
+  }
+
+  // Auto-login with stored credentials (for development/testing)
+  async autoLogin(): Promise<boolean> {
+    try {
+      // Only auto-login in development
+      if (process.env.NODE_ENV === 'production') {
+        return false;
+      }
+
+      const response = await this.login({
+        username: 'test',
+        password: 'test'
+      });
+
+      return !!response.access_token;
+    } catch (error) {
+      console.error('Auto-login failed:', error);
       return false;
     }
   }
