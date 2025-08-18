@@ -7,8 +7,8 @@ import {
     GrantApplication,
     GrantRecommendation,
     GrantSearchFilters,
-    grantService,
 } from "../src/lib/grants";
+import { bulletproofGrantService } from "../src/lib/grants-bulletproof";
 import { successMetricsTracker } from "../src/lib/success-metrics";
 
 export default function Grants() {
@@ -41,16 +41,28 @@ export default function Grants() {
   const loadGrants = async () => {
     try {
       setLoading(true);
-      const grantsResponse = await grantService.getGrantsWithSource();
-      setGrants(grantsResponse.grants);
-      setDataSource(grantsResponse.dataSource as 'api' | 'fallback' | 'mock' | 'unified_pipeline');
+      setError(null);
+      
+      console.log('🚀 Loading grants with bulletproof service...');
+      const result = await bulletproofGrantService.getGrants();
+      
+      setGrants(result.data);
+      setDataSource(result.source as 'api' | 'fallback' | 'mock' | 'unified_pipeline');
 
       // Track grant discovery for analytics
-      if (grantsResponse.grants.length > 0) {
-        grantsResponse.grants.forEach(grant => {
-          successMetricsTracker.trackGrantDiscovery(grantsResponse.grants.length, 0.5, 85); // High relevance for SGE
+      if (result.data.length > 0) {
+        result.data.forEach(grant => {
+          successMetricsTracker.trackGrantDiscovery(result.data.length, 0.5, 85); // High relevance for SGE
         });
       }
+      
+      console.log(`✅ Grants loaded successfully!`, {
+        count: result.data.length,
+        source: result.source,
+        reliability: result.reliability,
+        errors: result.errors
+      });
+      
     } catch (error) {
       console.error('Error loading grants:', error);
       setError('Failed to load grants. Please try again.');
@@ -62,9 +74,9 @@ export default function Grants() {
   const handleSearch = async (searchFilters: GrantSearchFilters) => {
     try {
       setSearching(true);
-      const results = await grantService.searchGrantsWithFilters(searchFilters);
-      setGrants(results.grants || []);
-      setDataSource(results.dataSource || 'api');
+      const result = await bulletproofGrantService.searchGrants(searchFilters);
+      setGrants(result.data);
+      setDataSource(result.source as 'api' | 'fallback' | 'mock' | 'unified_pipeline');
     } catch (error) {
       console.error('Error searching grants:', error);
       setError('Search failed. Please try again.');
@@ -331,6 +343,31 @@ export default function Grants() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Reliability Status */}
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6 border-l-4 border-green-500">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-green-600">🟢</span>
+                <span className="text-sm font-medium text-gray-900">Bulletproof System Active</span>
+              </div>
+              <span className="text-sm text-gray-600">
+                Data source: {dataSource.toUpperCase()}
+              </span>
+              <span className="text-sm text-gray-600">
+                {grants.length} grants available
+              </span>
+            </div>
+            <button
+              onClick={loadGrants}
+              disabled={loading}
+              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+            >
+              {loading ? '🔄' : '🔄'} Refresh
+            </button>
+          </div>
+        </div>
+        
         {/* Tab Navigation */}
         <div className="border-b border-gray-200 mb-8">
           <nav className="-mb-px flex space-x-8">
