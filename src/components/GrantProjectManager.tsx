@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ApplicationProgress, Collaborator, GrantQuestion, grantService, TeamAssignment } from '../lib/grants';
+import { getGrantsService } from '../lib/services/grants-service';
+import { ApplicationProgress, Collaborator, GrantQuestion, TeamAssignment } from '../lib/types/grants';
 
 interface GrantProjectManagerProps {
   applicationId: number;
@@ -26,6 +27,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
   const loadProjectData = async () => {
     try {
       setLoading(true);
+      const grantsService = getGrantsService();
       const [
         questionsData,
         assignmentsData,
@@ -33,11 +35,11 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
         progressData,
         teamMembersData
       ] = await Promise.all([
-        grantService.getApplicationQuestions(applicationId),
-        grantService.getTeamAssignments(applicationId),
-        grantService.getCollaborators(applicationId),
-        grantService.getApplicationProgress(applicationId),
-        grantService.getAvailableTeamMembers()
+        grantsService.getApplicationQuestions(applicationId),
+        grantsService.getTeamAssignments(applicationId),
+        grantsService.getCollaborators(applicationId),
+        grantsService.getApplicationProgress(applicationId),
+        grantsService.getAvailableTeamMembers()
       ]);
 
       setQuestions(questionsData);
@@ -54,7 +56,8 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
 
   const assignTeamMember = async (questionId: string, userId: number, role: string) => {
     try {
-      const assignment = await grantService.assignTeamMember(applicationId, {
+      const grantsService = getGrantsService();
+      const assignment = await grantsService.assignTeamMember(applicationId, {
         question_id: questionId,
         user_id: userId,
         role: role as any,
@@ -73,7 +76,8 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
 
   const inviteCollaborator = async (email: string, name: string, role: string) => {
     try {
-      const collaborator = await grantService.inviteCollaborator(applicationId, {
+      const grantsService = getGrantsService();
+      const collaborator = await grantsService.inviteCollaborator(applicationId, {
         email,
         name,
         role: role as any,
@@ -91,7 +95,8 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
 
   const updateQuestionAnswer = async (questionId: string, answer: string) => {
     try {
-      const success = await grantService.updateQuestionAnswer(applicationId, questionId, answer);
+      const grantsService = getGrantsService();
+      const success = await grantsService.updateQuestionAnswer(applicationId, questionId, answer);
       if (success) {
         setQuestions(prev => prev.map(q =>
           q.id === questionId ? { ...q, answer, last_updated: new Date().toISOString() } : q

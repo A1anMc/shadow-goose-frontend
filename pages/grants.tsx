@@ -2,14 +2,14 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import NotificationBell from "../src/components/NotificationBell";
 import { getBranding } from "../src/lib/branding";
+import { getGrantsService } from "../src/lib/services/grants-service";
+import { successMetricsTracker } from "../src/lib/success-metrics";
 import {
     Grant,
     GrantApplication,
     GrantRecommendation,
     GrantSearchFilters,
-} from "../src/lib/grants";
-import { bulletproofGrantService } from "../src/lib/grants-bulletproof";
-import { successMetricsTracker } from "../src/lib/success-metrics";
+} from "../src/lib/types/grants";
 
 export default function Grants() {
   const router = useRouter();
@@ -43,8 +43,9 @@ export default function Grants() {
       setLoading(true);
       setError(null);
       
-      console.log('🚀 Loading grants with bulletproof service...');
-      const result = await bulletproofGrantService.getGrants();
+      console.log('🚀 Loading grants with centralized service...');
+      const grantsService = getGrantsService();
+      const result = await grantsService.getGrantsWithSource();
       
       setGrants(result.data);
       setDataSource(result.source as 'api' | 'fallback' | 'unified_pipeline');
@@ -74,7 +75,8 @@ export default function Grants() {
   const handleSearch = async (searchFilters: GrantSearchFilters) => {
     try {
       setSearching(true);
-      const result = await bulletproofGrantService.searchGrants(searchFilters);
+      const grantsService = getGrantsService();
+      const result = await grantsService.searchGrantsWithFilters(searchFilters);
       setGrants(result.data);
       setDataSource(result.source as 'api' | 'fallback' | 'unified_pipeline');
     } catch (error) {
@@ -94,26 +96,26 @@ export default function Grants() {
       }
 
       // Amount filter
-      if (searchFilters.min_amount && grant.amount < searchFilters.min_amount) {
+      if (searchFilters.minAmount && grant.amount < searchFilters.minAmount) {
         return false;
       }
-      if (searchFilters.max_amount && grant.amount > searchFilters.max_amount) {
+      if (searchFilters.maxAmount && grant.amount > searchFilters.maxAmount) {
         return false;
       }
 
       // Keywords filter
       if (searchFilters.keywords) {
         const keywords = searchFilters.keywords.toLowerCase();
-        const searchText = `${grant.name} ${grant.description} ${grant.category}`.toLowerCase();
+        const searchText = `${grant.title} ${grant.description} ${grant.category}`.toLowerCase();
         if (!searchText.includes(keywords)) {
           return false;
         }
       }
 
       // Deadline filter
-      if (searchFilters.deadline_before) {
+      if (searchFilters.deadlineBefore) {
         const deadline = new Date(grant.deadline);
-        const beforeDate = new Date(searchFilters.deadline_before);
+                  const beforeDate = new Date(searchFilters.deadlineBefore);
         if (deadline > beforeDate) {
           return false;
         }
@@ -158,7 +160,8 @@ export default function Grants() {
 
   const handleApply = async (grantId: number) => {
     try {
-      const application = await grantService.createApplication(grantId);
+      const grantsService = getGrantsService();
+      const application = await grantsService.createGrantApplication({ grant_id: grantId });
       if (application) {
         router.push(`/grants/applications/${application.id}`);
       }
@@ -257,12 +260,12 @@ export default function Grants() {
   };
 
   const shareGrant = (grant: Grant) => {
-    const shareText = `Check out this grant opportunity: ${grant.name} - ${formatCurrency(grant.amount)}`;
+    const shareText = `Check out this grant opportunity: ${grant.title} - ${formatCurrency(grant.amount)}`;
     const shareUrl = `${window.location.origin}/grants`;
 
     if (navigator.share) {
       navigator.share({
-        title: grant.name,
+        title: grant.title,
         text: shareText,
         url: shareUrl,
       });
@@ -515,11 +518,11 @@ export default function Grants() {
                     <input
                       type="number"
                       placeholder="Min"
-                      value={searchFilters.min_amount || ""}
+                      value={searchFilters.minAmount || ""}
                       onChange={(e) =>
                         setSearchFilters({
                           ...searchFilters,
-                          min_amount: Number(e.target.value),
+                                                      minAmount: Number(e.target.value),
                         })
                       }
                       className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
@@ -527,11 +530,11 @@ export default function Grants() {
                     <input
                       type="number"
                       placeholder="Max"
-                      value={searchFilters.max_amount || ""}
+                      value={searchFilters.maxAmount || ""}
                       onChange={(e) =>
                         setSearchFilters({
                           ...searchFilters,
-                          max_amount: Number(e.target.value),
+                                                      maxAmount: Number(e.target.value),
                         })
                       }
                       className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
@@ -561,11 +564,11 @@ export default function Grants() {
                   </label>
                   <input
                     type="date"
-                    value={searchFilters.deadline_before || ""}
+                    value={searchFilters.deadlineBefore || ""}
                     onChange={(e) =>
                       setSearchFilters({
                         ...searchFilters,
-                        deadline_before: e.target.value,
+                                                  deadlineBefore: e.target.value,
                       })
                     }
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sg-primary"
@@ -654,7 +657,7 @@ export default function Grants() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
-                                {grant.name}
+                                {grant.title}
                               </h3>
                               {grant.data_source === 'fallback' && (
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -789,7 +792,7 @@ export default function Grants() {
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-2">
                             <h3 className="text-xl font-semibold text-gray-900">
-                              {grant.name}
+                              {grant.title}
                             </h3>
                             {grant.data_source === 'fallback' && (
                               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -913,7 +916,7 @@ export default function Grants() {
                         <div className="flex justify-between items-start">
                           <div>
                             <h3 className="font-semibold text-gray-900">
-                              {grant?.name || "Unknown Grant"}
+                              {grant?.title || "Unknown Grant"}
                             </h3>
                             <p className="text-sm text-gray-600 mt-1">
                               Applied on {formatDate(application.created_at)}
@@ -989,7 +992,7 @@ export default function Grants() {
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="text-xl font-semibold text-gray-900">
-                            {rec.grant.name}
+                            {rec.grant.title}
                           </h3>
                           <p className="text-gray-600 mt-1">
                             {rec.grant.description}

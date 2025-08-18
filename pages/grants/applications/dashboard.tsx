@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getBranding } from "../../../src/lib/branding";
+import { getGrantsService } from "../../../src/lib/services/grants-service";
 import {
     Grant,
     GrantApplication,
-    grantService,
-} from "../../../src/lib/grants";
+} from "../../../src/lib/types/grants";
 
 export default function ApplicationsDashboard() {
   const router = useRouter();
@@ -26,12 +26,13 @@ export default function ApplicationsDashboard() {
   const loadData = async () => {
     try {
       setLoading(true);
+      const grantsService = getGrantsService();
       const [applicationsData, grantsData] = await Promise.all([
-        grantService.getApplications(),
-        grantService.getGrantsWithSource(),
+        grantsService.getApplications(),
+        grantsService.getGrantsWithSource(),
       ]);
       setApplications(applicationsData);
-      setGrants(grantsData.grants);
+      setGrants(grantsData.data);
     } catch (error) {
       console.error("Error loading applications data:", error);
       setError('Failed to load applications data');
@@ -43,8 +44,9 @@ export default function ApplicationsDashboard() {
   const loadGrantsData = async () => {
     try {
       setLoading(true);
-      const grantsData = await grantService.getGrantsWithSource();
-      setGrants(grantsData.grants);
+      const grantsService = getGrantsService();
+      const grantsData = await grantsService.getGrantsWithSource();
+      setGrants(grantsData.data);
     } catch (error) {
       console.error('Error loading grants:', error);
       setError('Failed to load grants data');
@@ -58,7 +60,7 @@ export default function ApplicationsDashboard() {
       if (filter !== 'all' && app.status !== filter) return false;
       if (searchTerm) {
         const grant = grants.find(g => g.id === app.grant_id);
-        return grant?.name.toLowerCase().includes(searchTerm.toLowerCase());
+        return grant?.title.toLowerCase().includes(searchTerm.toLowerCase());
       }
       return true;
     })
@@ -341,7 +343,7 @@ export default function ApplicationsDashboard() {
                         <div className="flex items-center space-x-3 mb-2">
                           <span className="text-2xl">{getStatusIcon(application.status)}</span>
                           <h3 className="text-lg font-semibold text-gray-900">
-                            {grant?.name || 'Unknown Grant'}
+                            {grant?.title || 'Unknown Grant'}
                           </h3>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
                             {application.status.replace('_', ' ')}

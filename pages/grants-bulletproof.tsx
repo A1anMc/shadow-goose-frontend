@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { authService } from "../src/lib/auth";
 import { getBranding } from "../src/lib/branding";
-import { Grant, GrantSearchFilters } from "../src/lib/grants";
-import { bulletproofGrantService } from "../src/lib/grants-bulletproof";
+import { getGrantsService } from "../src/lib/services/grants-service";
+import { Grant, GrantSearchFilters } from "../src/lib/types/grants";
 
 export default function BulletproofGrants() {
   const router = useRouter();
@@ -30,7 +30,8 @@ export default function BulletproofGrants() {
       setError(null);
       
       console.log('🚀 Loading grants with bulletproof service...');
-      const result = await bulletproofGrantService.getGrants();
+      const grantsService = getGrantsService();
+      const result = await grantsService.getGrantsWithSource();
       
       setGrants(result.data);
       setReliability(result.reliability);
@@ -56,7 +57,8 @@ export default function BulletproofGrants() {
   const handleSearch = async (searchFilters: GrantSearchFilters) => {
     try {
       setLoading(true);
-      const result = await bulletproofGrantService.searchGrants(searchFilters);
+      const grantsService = getGrantsService();
+      const result = await grantsService.searchGrantsWithFilters(searchFilters);
       setGrants(result.data);
       setReliability(result.reliability);
       setDataSource(result.source);

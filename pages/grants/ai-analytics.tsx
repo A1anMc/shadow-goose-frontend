@@ -264,7 +264,7 @@ export default function AIAnalytics() {
             {selectedGrant ? (
               <div className="space-y-4">
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-gray-900">{selectedGrant.name}</h4>
+                  <h4 className="font-medium text-gray-900">{selectedGrant.title}</h4>
                   <p className="text-sm text-gray-600">{formatCurrency(selectedGrant.amount)}</p>
                 </div>
 
@@ -329,7 +329,7 @@ export default function AIAnalytics() {
                 }`}
               >
                 <div className="text-left">
-                  <h4 className="font-medium text-gray-900 truncate">{grant.name}</h4>
+                  <h4 className="font-medium text-gray-900 truncate">{grant.title}</h4>
                   <p className="text-sm text-gray-600">{formatCurrency(grant.amount)}</p>
                   <div className="flex items-center mt-2">
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${

@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SuccessRateDashboard from '../src/components/SuccessRateDashboard';
-import { Grant, GrantService } from '../src/lib/grants';
+import { getGrantsService } from '../src/lib/services/grants-service';
+import { Grant } from '../src/lib/types/grants';
 
 interface PipelineStats {
   total_grants: number;
@@ -32,13 +33,13 @@ export default function GrantsDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<'overview' | 'high-priority' | 'closing-soon' | 'all-grants'>('overview');
 
-  const grantService = useMemo(() => new GrantService(), []);
+  const grantService = useMemo(() => getGrantsService(), []);
 
   const loadGrantsData = async () => {
     try {
       setLoading(true);
       const grantsData = await grantService.getGrantsWithSource();
-      setGrants(grantsData.grants);
+      setGrants(grantsData.data);
     } catch (error) {
       console.error('Error loading grants:', error);
       setError('Failed to load grants data');
@@ -350,7 +351,7 @@ export default function GrantsDashboard() {
                     <div key={grant.id} className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h5 className="font-medium text-gray-900">{grant.name}</h5>
+                          <h5 className="font-medium text-gray-900">{grant.title}</h5>
                           <p className="text-sm text-gray-600">{grant.organization}</p>
                           <p className="text-sm text-gray-500">{formatCurrency(grant.amount)}</p>
                         </div>
@@ -378,7 +379,7 @@ export default function GrantsDashboard() {
                   <div key={grant.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h5 className="font-medium text-gray-900">{grant.name}</h5>
+                        <h5 className="font-medium text-gray-900">{grant.title}</h5>
                         <p className="text-sm text-gray-600 mt-1">{grant.description}</p>
                         <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
                           <span>{grant.organization}</span>
@@ -412,7 +413,7 @@ export default function GrantsDashboard() {
                   <div key={grant.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h5 className="font-medium text-gray-900">{grant.name}</h5>
+                        <h5 className="font-medium text-gray-900">{grant.title}</h5>
                         <p className="text-sm text-gray-600 mt-1">{grant.description}</p>
                         <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
                           <span>{grant.organization}</span>
@@ -446,7 +447,7 @@ export default function GrantsDashboard() {
                   <div key={grant.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h5 className="font-medium text-gray-900">{grant.name}</h5>
+                        <h5 className="font-medium text-gray-900">{grant.title}</h5>
                         <p className="text-sm text-gray-600 mt-1">{grant.description}</p>
                         <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
                           <span>{grant.organization}</span>

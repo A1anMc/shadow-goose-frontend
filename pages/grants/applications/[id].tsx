@@ -1,14 +1,13 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { getBranding } from "../../../src/lib/branding";
+import { getGrantsService } from "../../../src/lib/services/grants-service";
 import {
-  grantService,
-  GrantApplication,
-  Grant,
-  GrantAnswer,
-  GrantComment,
-} from "../../../src/lib/grants";
-import { authService } from "../../../src/lib/auth";
+    Grant,
+    GrantAnswer,
+    GrantApplication,
+    GrantComment,
+} from "../../../src/lib/types/grants";
 
 export default function GrantApplicationDetail() {
   const router = useRouter();
@@ -36,16 +35,17 @@ export default function GrantApplicationDetail() {
   const loadApplicationData = async (applicationId: string) => {
     try {
       setLoading(true);
+      const grantsService = getGrantsService();
       const [appData, answersData, commentsData] = await Promise.all([
-        grantService.getApplication(parseInt(applicationId)),
-        grantService.getApplicationAnswers(parseInt(applicationId)),
-        grantService.getApplicationComments(parseInt(applicationId)),
+        grantsService.getApplication(parseInt(applicationId)),
+        grantsService.getApplicationAnswers(parseInt(applicationId)),
+        grantsService.getApplicationComments(parseInt(applicationId)),
       ]);
 
       if (appData) {
         setApplication(appData);
         // Load the associated grant
-        const grantData = await grantService.getGrant(appData.grant_id);
+        const grantData = await grantsService.getGrant(appData.grant_id);
         setGrant(grantData);
       }
 
@@ -64,11 +64,10 @@ export default function GrantApplicationDetail() {
 
     try {
       setSaving(true);
-      const answer = await grantService.updateApplicationAnswer(
+      const grantsService = getGrantsService();
+      const answer = await grantsService.updateApplicationAnswer(
         application.id,
-        question,
-        newAnswer,
-        "SGE Team"
+        { question, answer: newAnswer, author: "SGE Team" }
       );
 
       if (answer) {
@@ -88,10 +87,10 @@ export default function GrantApplicationDetail() {
 
     try {
       setSaving(true);
-      const comment = await grantService.addComment(
+      const grantsService = getGrantsService();
+      const comment = await grantsService.addComment(
         application.id,
-        newComment,
-        "SGE Team"
+        { comment: newComment, user_id: 1 }
       );
 
       if (comment) {
@@ -111,7 +110,8 @@ export default function GrantApplicationDetail() {
 
     try {
       setSubmitting(true);
-      const success = await grantService.submitApplication(application.id);
+      const grantsService = getGrantsService();
+      const success = await grantsService.submitApplication(application.id);
 
       if (success) {
         setApplication(prev => prev ? { ...prev, status: "submitted" } : null);
@@ -284,7 +284,7 @@ export default function GrantApplicationDetail() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Grant Title</h3>
-                    <p className="mt-1 text-sm text-gray-900">{grant.name}</p>
+                    <p className="mt-1 text-sm text-gray-900">{grant.title}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Amount</h3>
@@ -409,9 +409,9 @@ export default function GrantApplicationDetail() {
                 ) : (
                   comments.map((comment) => (
                     <div key={comment.id} className="p-4 border border-gray-200 rounded-lg">
-                      <p className="text-sm text-gray-700">{comment.content}</p>
+                      <p className="text-sm text-gray-700">{comment.comment}</p>
                       <p className="text-xs text-gray-500 mt-1">
-                        By {comment.author} on {formatDate(comment.created_at)}
+                        By {comment.user_id} on {formatDate(comment.created_at)}
                       </p>
                     </div>
                   ))

@@ -144,7 +144,7 @@ class ExternalGrantsService {
     return [
       {
         id: 'screen-australia-documentary-2025',
-        name: 'Screen Australia Documentary Development',
+        title: 'Screen Australia Documentary Development',
         description: 'Support for documentary development including research, scriptwriting, and pre-production.',
         amount: 25000,
         category: 'arts_culture',
@@ -162,7 +162,7 @@ class ExternalGrantsService {
       },
       {
         id: 'screen-australia-production-2025',
-        name: 'Screen Australia Documentary Production',
+        title: 'Screen Australia Documentary Production',
         description: 'Major funding for documentary production including feature-length and series.',
         amount: 100000,
         category: 'arts_culture',
@@ -186,7 +186,7 @@ class ExternalGrantsService {
     return [
       {
         id: 'creative-australia-arts-2025',
-        name: 'Creative Australia Arts Projects',
+        title: 'Creative Australia Arts Projects',
         description: 'Support for innovative arts projects that engage communities and create cultural impact.',
         amount: 50000,
         category: 'arts_culture',
@@ -210,7 +210,7 @@ class ExternalGrantsService {
     return [
       {
         id: 'vicscreen-digital-2025',
-        name: 'VicScreen Digital Innovation',
+        title: 'VicScreen Digital Innovation',
         description: 'Supporting digital-first content creation and innovative storytelling in Victoria.',
         amount: 75000,
         category: 'arts_culture',
@@ -234,7 +234,7 @@ class ExternalGrantsService {
     return [
       {
         id: 'regional-arts-community-2025',
-        name: 'Regional Arts Fund Community Engagement',
+        title: 'Regional Arts Fund Community Engagement',
         description: 'Supporting arts and cultural projects in regional communities across Australia.',
         amount: 40000,
         category: 'community',

@@ -4,10 +4,10 @@ import GrantProjectManager from "../../../src/components/GrantProjectManager";
 import GrantWritingAssistant from "../../../src/components/GrantWritingAssistant";
 import { aiWritingAssistant } from "../../../src/lib/ai-writing-assistant";
 import { getBranding } from "../../../src/lib/branding";
+import { getGrantsService } from "../../../src/lib/services/grants-service";
 import {
     Grant,
-    grantService
-} from "../../../src/lib/grants";
+} from "../../../src/lib/types/grants";
 
 // Professional grant application templates
 const GRANT_TEMPLATES = {
@@ -111,7 +111,8 @@ export default function NewGrantApplication() {
   const loadGrantData = async (id: string | number) => {
     try {
       setLoading(true);
-      const grantData = await grantService.getGrant(id);
+      const grantsService = getGrantsService();
+      const grantData = await grantsService.getGrant(parseInt(id as string));
       setGrant(grantData);
 
       // Pre-fill with smart suggestions based on grant type
@@ -200,7 +201,7 @@ export default function NewGrantApplication() {
       const response = await aiWritingAssistant.generateGrantContent({
         section: field,
         grant_context: {
-          name: grant.name,
+          name: grant.title,
           description: grant.description,
           category: grant.category,
           amount: grant.amount,
@@ -242,11 +243,13 @@ export default function NewGrantApplication() {
 
     try {
       setSaving(true);
-      const newApplication = await grantService.createApplication(grant.id as number);
+      const grantsService = getGrantsService();
+      const newApplication = await grantsService.createGrantApplication({ grant_id: grant.id as number });
 
       if (newApplication) {
         // Save the application content
-        await grantService.updateApplicationContent(newApplication.id, application);
+        const grantsService = getGrantsService();
+        await grantsService.updateApplicationContent(newApplication.id, application);
         router.push(`/grants/applications/${newApplication.id}`);
       }
     } catch (error) {
@@ -311,7 +314,7 @@ export default function NewGrantApplication() {
                 New Grant Application
               </h1>
               <p className="text-gray-600 mt-1">
-                {grant.name} - {formatCurrency(grant.amount)}
+                {grant.title} - {formatCurrency(grant.amount)}
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -350,7 +353,7 @@ export default function NewGrantApplication() {
 
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-gray-900">{grant.name}</h4>
+                  <h4 className="font-medium text-gray-900">{grant.title}</h4>
                   <p className="text-sm text-gray-600 mt-1">{grant.description}</p>
                 </div>
 

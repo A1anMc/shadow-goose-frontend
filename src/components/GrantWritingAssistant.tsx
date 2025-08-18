@@ -83,7 +83,7 @@ export default function GrantWritingAssistant({
       const enhancedContent = await aiWritingAssistant.generateProfessionalGrantContent({
         section: currentField,
         grant_context: {
-          name: grant.name,
+          name: grant.title,
           description: grant.description,
           category: grant.category,
           amount: grant.amount,
