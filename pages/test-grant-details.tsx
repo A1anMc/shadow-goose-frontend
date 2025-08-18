@@ -39,7 +39,7 @@ export default function TestGrantDetails() {
         setGrant(firstGrant);
 
         // Also test getting by ID
-        const specificGrant = await grantsService.getGrantById(firstGrant.id);
+        const specificGrant = await grantsService.getGrantById(Number(firstGrant.id));
         console.log('Specific grant by ID:', specificGrant);
 
       } catch (err) {
@@ -103,7 +103,7 @@ export default function TestGrantDetails() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
             <h2 className="text-2xl font-bold text-white">{grant.title}</h2>
-            <p className="text-blue-100 mt-1">{grant.organisation}</p>
+            <p className="text-blue-100 mt-1">{grant.organization}</p>
           </div>
 
           <div className="p-6">
@@ -131,7 +131,7 @@ export default function TestGrantDetails() {
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Priority</dt>
-                    <dd className="text-sm text-gray-900">{grant.priority}</dd>
+                    <dd className="text-sm text-gray-900">{grant.priority_score || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Deadline</dt>
@@ -145,14 +145,14 @@ export default function TestGrantDetails() {
                 <dl className="space-y-3">
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Contact</dt>
-                    <dd className="text-sm text-gray-900">{grant.contact || 'Not specified'}</dd>
+                    <dd className="text-sm text-gray-900">{grant.contact_info || 'Not specified'}</dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Website</dt>
                     <dd className="text-sm text-gray-900">
-                      {grant.website ? (
-                        <a href={grant.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                          {grant.website}
+                      {grant.application_url ? (
+                        <a href={grant.application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          {grant.application_url}
                         </a>
                       ) : (
                         'Not specified'
@@ -162,9 +162,9 @@ export default function TestGrantDetails() {
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Tags</dt>
                     <dd className="text-sm text-gray-900">
-                      {grant.tags && grant.tags.length > 0 ? (
+                      {grant.sdg_alignment && grant.sdg_alignment.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
-                          {grant.tags.map((tag, index) => (
+                          {grant.sdg_alignment.map((tag, index) => (
                             <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
                               {tag}
                             </span>
@@ -199,10 +199,14 @@ export default function TestGrantDetails() {
               </div>
             )}
 
-            {grant.applicationProcess && (
+            {grant.requirements && grant.requirements.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Application Process</h3>
-                <p className="text-gray-700 leading-relaxed">{grant.applicationProcess}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Requirements</h3>
+                <ul className="list-disc list-inside text-gray-700 leading-relaxed">
+                  {grant.requirements.map((req, index) => (
+                    <li key={index}>{req}</li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
