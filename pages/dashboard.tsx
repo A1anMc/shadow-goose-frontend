@@ -338,6 +338,14 @@ export default function Dashboard() {
           </Link>
 
           <Link
+            href="/grants/external-sources"
+            className="p-6 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
+          >
+            <h3 className="text-lg font-semibold mb-2">External Sources</h3>
+            <p className="text-sm opacity-90">Manage grant data sources</p>
+          </Link>
+
+          <Link
             href="/projects/new"
             className="p-6 bg-gradient-to-r from-sg-primary to-sg-accent text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 block"
           >

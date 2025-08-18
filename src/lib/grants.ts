@@ -1,5 +1,6 @@
 // Real grants data - unified data pipeline integration
 
+import { externalGrantsService } from './external-grants-service';
 import { grantsDataPipeline } from './grants-data-pipeline';
 import { liveDataMonitor } from './live-data-monitor';
 import { liveDataValidator } from './live-data-validator';
@@ -231,7 +232,7 @@ export class GrantService {
   }
 
   /**
-   * Get grants with live data validation
+   * Get grants with live data validation and external sources
    */
   async getGrants(): Promise<Grant[]> {
     try {
@@ -241,6 +242,7 @@ export class GrantService {
         throw new Error('CRITICAL: No live data available. System requires live data sources.');
       }
 
+      // Fetch from primary API
       const authToken = await this.getAuthToken();
       const response = await fetch(`${this.baseUrl}/api/grants`, {
         headers: {
@@ -262,6 +264,21 @@ export class GrantService {
         throw new Error(`CRITICAL: Invalid or non-live data received: ${validation.errors.join(', ')}`);
       }
 
+      // Fetch from external sources
+      const externalResults = await externalGrantsService.fetchAllSources();
+      const externalGrants: Grant[] = [];
+      
+      externalResults.forEach(result => {
+        if (result.success) {
+          externalGrants.push(...result.grants);
+        } else {
+          console.warn(`External source ${result.source} failed:`, result.errors);
+        }
+      });
+
+      // Combine primary API grants with external grants
+      const allGrants = [...(data.grants || []), ...externalGrants];
+
       // Update monitoring with successful API call
       liveDataMonitor.emit('api-call-success', { endpoint: '/api/grants', timestamp: new Date() });
 
@@ -274,7 +291,7 @@ export class GrantService {
         });
       }
 
-      return data.grants || [];
+      return allGrants;
     } catch (error) {
       console.error('Error fetching grants:', error);
 
@@ -308,6 +325,37 @@ export class GrantService {
       grants,
       dataSource: 'api'
     };
+  }
+
+  /**
+   * Get external grant sources statistics
+   */
+  async getExternalSourcesStats(): Promise<{
+    totalSources: number;
+    enabledSources: number;
+    totalGrants: number;
+    lastSync: string;
+    sourcesSynced: number;
+  }> {
+    const stats = externalGrantsService.getSourceStats();
+    const syncStatus = externalGrantsService.getLastSyncStatus();
+    
+    return {
+      ...stats,
+      lastSync: syncStatus.lastSync,
+      sourcesSynced: syncStatus.sourcesSynced
+    };
+  }
+
+  /**
+   * Get grants from specific external source
+   */
+  async getGrantsFromSource(sourceId: string): Promise<Grant[]> {
+    const result = await externalGrantsService.fetchFromSource(sourceId);
+    if (!result.success) {
+      throw new Error(`Failed to fetch from ${sourceId}: ${result.errors.join(', ')}`);
+    }
+    return result.grants;
   }
 
   // Get high priority grants from unified pipeline

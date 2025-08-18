@@ -50,7 +50,7 @@ from .api_grants_endpoints import router as grants_router  # ✅ Correct router
 private async getAuthToken(): Promise<string> {
   if (typeof window !== 'undefined' && window.localStorage) {
     let token = localStorage.getItem('auth_token');
-    
+
     // If no token, try to authenticate
     if (!token) {
       try {
@@ -64,7 +64,7 @@ private async getAuthToken(): Promise<string> {
             password: 'test'
           })
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           token = data.access_token;
@@ -76,7 +76,7 @@ private async getAuthToken(): Promise<string> {
         console.error('Authentication failed:', error);
       }
     }
-    
+
     return token || '';
   }
   return '';
