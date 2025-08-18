@@ -14,8 +14,11 @@ export interface Grant {
   category: string;
   deadline: string;
   status: GrantStatus;
-  eligibility: string[];
-  requirements: string[];
+  // API field names (matching actual response)
+  eligibility_criteria?: string[];  // ✅ Match API: eligibility_criteria
+  required_documents?: string[];    // ✅ Match API: required_documents
+  organisation?: string;            // ✅ Match API: organisation
+  priority?: string;                // ✅ Match API: priority
   success_score?: number;
   success_probability?: number;
   time_to_apply?: number;
@@ -23,7 +26,6 @@ export interface Grant {
   geographic_focus?: string[];
   application_url?: string;
   contact_info?: string;
-  organization?: string;
   created_at: string;
   updated_at: string;
   data_source?: GrantDataSource;
@@ -31,6 +33,10 @@ export interface Grant {
   priority_score?: number;
   days_until_deadline?: number;
   sge_alignment_score?: number;
+  // Backward compatibility aliases
+  eligibility?: string[];           // Alias for eligibility_criteria
+  requirements?: string[];          // Alias for required_documents
+  organization?: string;            // Alias for organisation
 }
 
 export interface GrantSearchFilters {

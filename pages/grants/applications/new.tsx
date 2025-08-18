@@ -391,7 +391,7 @@ export default function NewGrantApplication() {
                 <div>
                   <h5 className="font-medium text-gray-900 mb-2">Eligibility Requirements</h5>
                   <ul className="text-sm text-gray-600 space-y-1">
-                    {grant.eligibility.map((item, index) => (
+                    {grant.eligibility_criteria?.map((item, index) => (
                       <li key={index} className="flex items-center">
                         <span className="text-green-500 mr-2">✓</span>
                         {item}

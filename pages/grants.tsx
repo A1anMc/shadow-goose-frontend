@@ -742,7 +742,7 @@ export default function Grants() {
                         {/* Eligibility Tags */}
                         <div className="mb-4">
                           <div className="flex flex-wrap gap-1">
-                            {grant.eligibility.slice(0, 3).map((item, index) => (
+                            {grant.eligibility_criteria && grant.eligibility_criteria.slice(0, 3).map((item, index) => (
                               <span
                                 key={index}
                                 className="inline-block bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full border border-blue-200"
@@ -750,9 +750,9 @@ export default function Grants() {
                                 {item}
                               </span>
                             ))}
-                            {grant.eligibility.length > 3 && (
+                            {grant.eligibility_criteria && grant.eligibility_criteria.length > 3 && (
                               <span className="inline-block bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full border border-gray-200">
-                                +{grant.eligibility.length - 3} more
+                                +{grant.eligibility_criteria.length - 3} more
                               </span>
                             )}
                           </div>
@@ -839,13 +839,13 @@ export default function Grants() {
                         </div>
                         <div>
                           <span className="text-sm font-medium text-gray-500">Requirements</span>
-                          <p className="text-sm text-gray-900">{grant.requirements?.length || 0} items</p>
+                          <p className="text-sm text-gray-900">{grant.required_documents?.length || 0} items</p>
                         </div>
                       </div>
 
                       <div className="flex justify-between items-center">
                         <div className="flex space-x-2">
-                          {grant.eligibility.slice(0, 3).map((item, index) => (
+                          {grant.eligibility_criteria && grant.eligibility_criteria.slice(0, 3).map((item, index) => (
                             <span
                               key={index}
                               className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
