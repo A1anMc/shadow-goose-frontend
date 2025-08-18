@@ -19,7 +19,7 @@ export interface Grant {
   required_documents?: string[];    // ✅ Match API: required_documents
   organisation?: string;            // ✅ Match API: organisation
   priority?: string;                // ✅ Match API: priority
-  success_score?: number;
+  success_score?: number;           // ✅ Match API: success_score
   success_probability?: number;
   time_to_apply?: number;
   sdg_alignment?: string[];
