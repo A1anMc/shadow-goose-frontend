@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { aiGrantAnalyzer, GrantAnalysisResult } from "../../src/lib/ai-grant-analyzer";
 import { getBranding } from "../../src/lib/branding";
+import { getGrantsService } from "../../src/lib/services/grants-service";
 import {
     Grant,
     GrantApplication,
 } from "../../src/lib/types/grants";
-import { getGrantsService } from "../../src/lib/services/grants-service";
 
 export default function AIAnalytics() {
   const branding = getBranding();
