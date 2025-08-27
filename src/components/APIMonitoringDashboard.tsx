@@ -114,7 +114,7 @@ const APIMonitoringDashboard: React.FC = () => {
 
   const getHealthSummary = () => {
     let healthy = 0, degraded = 0, unhealthy = 0, unknown = 0;
-    
+
     healthStatus.forEach(status => {
       switch (status.status) {
         case 'healthy': healthy++; break;
@@ -201,8 +201,8 @@ const APIMonitoringDashboard: React.FC = () => {
                   <td className="px-4 py-2 text-sm text-gray-900">
                     <div className="flex items-center">
                       <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
+                        <div
+                          className="bg-blue-600 h-2 rounded-full"
                           style={{ width: `${status.dataQuality}%` }}
                         ></div>
                       </div>
@@ -250,7 +250,7 @@ const APIMonitoringDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-4">
             <div className="text-sm text-gray-600">
               <strong>Last Sync:</strong> {new Date(fallbackStatus.lastSync).toLocaleString()}

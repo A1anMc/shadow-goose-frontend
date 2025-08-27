@@ -101,12 +101,12 @@ class FallbackAPIService {
 
   private initializeRealData(): void {
     monitorLogger.info('Initializing fallback API with real data', 'initializeRealData');
-    
+
     // Initialize with real, production-quality data
     this.loadRealGrantsData();
     this.loadRealProjectsData();
     this.loadRealOKRsData();
-    
+
     // Set up periodic data refresh
     if (this.config.enableRealData) {
       setInterval(() => {
@@ -119,7 +119,7 @@ class FallbackAPIService {
   async getRealGrants(): Promise<{ grants: RealGrantData[]; total_grants: number; data_source: string }> {
     const cacheKey = 'real_grants';
     const cached = this.dataCache.get(cacheKey);
-    
+
     if (cached && Date.now() - cached.timestamp < this.config.maxDataAge) {
       monitorLogger.info('Using cached real grants data', 'getRealGrants', {
         dataAge: Date.now() - cached.timestamp,
@@ -131,7 +131,7 @@ class FallbackAPIService {
     // Load fresh real data
     const realData = this.loadRealGrantsData();
     this.dataCache.set(cacheKey, { data: realData, timestamp: Date.now() });
-    
+
     return realData;
   }
 
@@ -139,14 +139,14 @@ class FallbackAPIService {
   async getRealProjects(): Promise<{ projects: RealProjectData[]; total_projects: number; data_source: string }> {
     const cacheKey = 'real_projects';
     const cached = this.dataCache.get(cacheKey);
-    
+
     if (cached && Date.now() - cached.timestamp < this.config.maxDataAge) {
       return cached.data;
     }
 
     const realData = this.loadRealProjectsData();
     this.dataCache.set(cacheKey, { data: realData, timestamp: Date.now() });
-    
+
     return realData;
   }
 
@@ -154,14 +154,14 @@ class FallbackAPIService {
   async getRealOKRs(): Promise<{ okrs: RealOKRData[]; total_okrs: number; data_source: string }> {
     const cacheKey = 'real_okrs';
     const cached = this.dataCache.get(cacheKey);
-    
+
     if (cached && Date.now() - cached.timestamp < this.config.maxDataAge) {
       return cached.data;
     }
 
     const realData = this.loadRealOKRsData();
     this.dataCache.set(cacheKey, { data: realData, timestamp: Date.now() });
-    
+
     return realData;
   }
 
@@ -514,23 +514,23 @@ class FallbackAPIService {
   // Refresh real data
   private async refreshRealData(): Promise<void> {
     monitorLogger.info('Refreshing fallback API real data', 'refreshRealData');
-    
+
     try {
       // Clear old cache
       this.dataCache.clear();
-      
+
       // Reload real data
       this.loadRealGrantsData();
       this.loadRealProjectsData();
       this.loadRealOKRsData();
-      
+
       this.lastSyncTime = Date.now();
-      
+
       monitorLogger.info('Successfully refreshed fallback API data', 'refreshRealData', {
         lastSyncTime: this.lastSyncTime,
         cacheSize: this.dataCache.size
       });
-      
+
     } catch (error) {
       monitorLogger.error('Failed to refresh fallback API data', 'refreshRealData', error as Error);
     }

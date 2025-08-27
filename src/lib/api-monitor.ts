@@ -169,9 +169,9 @@ class APIMonitor {
 
   addEndpoint(endpoint: APIEndpoint): void {
     this.endpoints.set(endpoint.name, endpoint);
-    monitorLogger.info('Added API endpoint for monitoring', 'addEndpoint', { 
-      name: endpoint.name, 
-      url: endpoint.url 
+    monitorLogger.info('Added API endpoint for monitoring', 'addEndpoint', {
+      name: endpoint.name,
+      url: endpoint.url
     });
   }
 
@@ -183,9 +183,9 @@ class APIMonitor {
     }
 
     this.monitoringActive = true;
-    monitorLogger.info('Starting API monitoring', 'startMonitoring', { 
+    monitorLogger.info('Starting API monitoring', 'startMonitoring', {
       endpointCount: this.endpoints.size,
-      checkInterval: this.config.checkInterval 
+      checkInterval: this.config.checkInterval
     });
 
     // Initial health check
@@ -227,7 +227,7 @@ class APIMonitor {
     try {
       const response = await this.makeRequest(endpoint);
       responseTime = Date.now() - startTime;
-      
+
       if (response.ok) {
         status = responseTime <= this.config.healthThreshold ? 'healthy' : 'degraded';
       } else {
@@ -304,7 +304,7 @@ class APIMonitor {
         return response;
       } catch (error) {
         lastError = error as Error;
-        
+
         if (attempt < endpoint.retries) {
           await this.delay(1000 * attempt); // Exponential backoff
         }
@@ -326,13 +326,13 @@ class APIMonitor {
     try {
       // Try primary endpoint
       const response = await this.makeRequest(endpoint);
-      
+
       if (response.ok) {
         const data = await response.json();
-        
+
         // Cache successful response
         this.cacheData(endpointName, data, 'primary');
-        
+
         return data;
       } else {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -363,16 +363,16 @@ class APIMonitor {
     switch (endpoint.fallbackStrategy) {
       case 'cache':
         return this.getCachedData(endpointName);
-      
+
       case 'external':
         return this.getExternalData(endpointName);
-      
+
       case 'local':
         return this.getLocalData(endpointName);
-      
+
       case 'none':
         throw new Error(`No fallback strategy for ${endpointName}`);
-      
+
       default:
         throw new Error(`Unknown fallback strategy: ${endpoint.fallbackStrategy}`);
     }
@@ -381,14 +381,14 @@ class APIMonitor {
   // Get cached data
   private getCachedData(endpointName: string): any {
     const cached = this.fallbackCache.get(endpointName);
-    
+
     if (cached && new Date() < new Date(cached.expiresAt)) {
       monitorLogger.info('Using cached fallback data', 'getCachedData', {
         endpoint: endpointName,
         source: cached.source,
         quality: cached.quality
       });
-      
+
       return cached.data;
     }
 
@@ -400,13 +400,13 @@ class APIMonitor {
     switch (endpointName) {
       case 'grants':
         return this.getExternalGrantsData();
-      
+
       case 'projects':
         return this.getExternalProjectsData();
-      
+
       case 'okrs':
         return this.getExternalOKRsData();
-      
+
       default:
         throw new Error(`No external data source for ${endpointName}`);
     }
@@ -417,16 +417,16 @@ class APIMonitor {
     switch (endpointName) {
       case 'grants':
         return this.getLocalGrantsData();
-      
+
       case 'projects':
         return this.getLocalProjectsData();
-      
+
       case 'okrs':
         return this.getLocalOKRsData();
-      
+
       case 'health':
         return this.getLocalHealthData();
-      
+
       default:
         throw new Error(`No local data for ${endpointName}`);
     }
@@ -446,16 +446,16 @@ class APIMonitor {
         const response = await fetch(source, {
           signal: AbortSignal.timeout(10000)
         });
-        
+
         if (response.ok) {
           const data = await response.json();
-          
+
           // Transform external data to match our format
           const transformedData = this.transformExternalGrantsData(data, source);
-          
+
           // Cache the external data
           this.cacheData('grants', transformedData, 'external');
-          
+
           return transformedData;
         }
       } catch (error) {
@@ -659,7 +659,7 @@ class APIMonitor {
   private transformCreativeAustraliaData(data: any): any {
     // Transform Creative Australia API response
     const grants = Array.isArray(data) ? data : (data.grants || []);
-    
+
     return {
       grants: grants.map((grant: any) => ({
         id: grant.id || `creative-${Date.now()}`,
@@ -685,7 +685,7 @@ class APIMonitor {
   private transformScreenAustraliaData(data: any): any {
     // Transform Screen Australia API response
     const grants = Array.isArray(data) ? data : (data.grants || []);
-    
+
     return {
       grants: grants.map((grant: any) => ({
         id: grant.id || `screen-${Date.now()}`,
@@ -711,7 +711,7 @@ class APIMonitor {
   private transformVicScreenData(data: any): any {
     // Transform VicScreen API response
     const grants = Array.isArray(data) ? data : (data.grants || []);
-    
+
     return {
       grants: grants.map((grant: any) => ({
         id: grant.id || `vicscreen-${Date.now()}`,
@@ -745,7 +745,7 @@ class APIMonitor {
     };
 
     this.fallbackCache.set(endpointName, fallbackData);
-    
+
     monitorLogger.info('Cached data for fallback', 'cacheData', {
       endpoint: endpointName,
       source,
@@ -783,8 +783,8 @@ class APIMonitor {
       else if (health.status === 'unhealthy') report.unhealthyEndpoints++;
     });
 
-    report.averageResponseTime = report.endpoints.length > 0 
-      ? report.endpoints.reduce((sum, h) => sum + h.responseTime, 0) / report.endpoints.length 
+    report.averageResponseTime = report.endpoints.length > 0
+      ? report.endpoints.reduce((sum, h) => sum + h.responseTime, 0) / report.endpoints.length
       : 0;
 
     // Log report

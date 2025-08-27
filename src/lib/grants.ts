@@ -94,29 +94,29 @@ export class GrantService {
    */
   async getGrants(): Promise<Grant[]> {
     grantsLogger.info('Starting grants fetch with API monitoring', 'getGrants');
-    
+
     try {
       // Use API monitor to get data with fallback
       const apiData = await apiMonitor.getData('grants', { useFallback: true });
-      
+
       if (apiData && apiData.grants) {
         grantsLogger.info('Successfully fetched grants from API monitor', 'getGrants', {
           grantCount: apiData.grants.length,
           dataSource: apiData.data_source || 'api'
         });
-        
+
         return apiData.grants;
       }
-      
+
       // If API monitor fails, use fallback API
       grantsLogger.warn('API monitor failed, using fallback API', 'getGrants');
       const fallbackData = await fallbackAPI.getRealGrants();
-      
+
       grantsLogger.info('Successfully fetched grants from fallback API', 'getGrants', {
         grantCount: fallbackData.grants.length,
         dataSource: fallbackData.data_source
       });
-      
+
       // Transform fallback data to match Grant interface
       const transformedGrants: Grant[] = fallbackData.grants.map(grant => ({
         ...grant,
@@ -125,7 +125,7 @@ export class GrantService {
         contact_info: grant.contact_info ? JSON.stringify(grant.contact_info) : undefined,
         data_source: 'fallback' as const
       }));
-      
+
       return transformedGrants;
 
       // Fetch from primary API
