@@ -1,3 +1,6 @@
+import { authLogger } from './logger';
+import { errorRecoveryService } from './error-recovery';
+
 export interface User {
   id: number;
   username: string;
@@ -61,7 +64,7 @@ class AuthService {
         localStorage.setItem(this.tokenExpiryKey, expiryTime.toString());
       }
     } catch (error) {
-      console.error('Failed to save token:', error);
+      authLogger.error('Failed to save token', 'saveToken', error as Error);
     }
   }
 
@@ -72,7 +75,7 @@ class AuthService {
         localStorage.setItem(this.userKey, JSON.stringify(user));
       }
     } catch (error) {
-      console.error('Failed to save user:', error);
+      authLogger.error('Failed to save user', 'saveUser', error as Error);
     }
   }
 
@@ -85,7 +88,7 @@ class AuthService {
         localStorage.removeItem(this.tokenExpiryKey);
       }
     } catch (error) {
-      console.error('Failed to logout:', error);
+      authLogger.error('Failed to logout', 'logout', error as Error);
     }
   }
 
@@ -97,7 +100,7 @@ class AuthService {
         return userData ? JSON.parse(userData) : null;
       }
     } catch (error) {
-      console.error('Failed to retrieve user data:', error);
+      authLogger.error('Failed to retrieve user data', 'getCurrentUser', error as Error);
     }
     return null;
   }
@@ -145,7 +148,7 @@ class AuthService {
         }
       }
     } catch (error) {
-      console.error('Token expiry check failed:', error);
+      authLogger.error('Token expiry check failed', 'isTokenExpired', error as Error);
       return false;
     }
 
@@ -173,7 +176,7 @@ class AuthService {
 
     // Validate token format before making request
     if (!this.isValidTokenFormat(token)) {
-      console.warn('Invalid token format detected, logging out user');
+      authLogger.warn('Invalid token format detected, logging out user', 'authenticatedRequest');
       this.logout();
       throw new Error('Invalid authentication token. Please login again.');
     }
@@ -192,7 +195,7 @@ class AuthService {
 
       // Handle different error status codes properly
       if (response.status === 401) {
-        console.log('Token expired or invalid, logging out user');
+        authLogger.info('Token expired or invalid, logging out user', 'authenticatedRequest');
         this.logout();
         throw new Error('Authentication token expired. Please login again.');
       }
