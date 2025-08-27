@@ -55,7 +55,7 @@ class AuthService {
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         localStorage.setItem(this.tokenKey, token);
-        
+
         // Calculate and store token expiry (JWT tokens are typically valid for 24 hours)
         const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours from now
         localStorage.setItem(this.tokenExpiryKey, expiryTime.toString());
@@ -108,7 +108,7 @@ class AuthService {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         const token = localStorage.getItem(this.tokenKey);
         const expiry = localStorage.getItem(this.tokenExpiryKey);
-        
+
         // Check if token is expired
         if (token && expiry) {
           const expiryTime = parseInt(expiry);
@@ -118,7 +118,7 @@ class AuthService {
             return null;
           }
         }
-        
+
         return token;
       }
     } catch (error) {
@@ -131,7 +131,7 @@ class AuthService {
   isAuthenticated(): boolean {
     const token = this.getToken();
     if (!token) return false;
-    
+
     // Additional check for token expiry
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
@@ -148,7 +148,7 @@ class AuthService {
       console.error('Token expiry check failed:', error);
       return false;
     }
-    
+
     return true;
   }
 
@@ -171,25 +171,81 @@ class AuthService {
       throw new Error('No authentication token available');
     }
 
+    // Validate token format before making request
+    if (!this.isValidTokenFormat(token)) {
+      console.warn('Invalid token format detected, logging out user');
+      this.logout();
+      throw new Error('Invalid authentication token. Please login again.');
+    }
+
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
       ...options.headers,
     };
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
 
-    // If we get a 401 (Unauthorized), the token might be expired
-    if (response.status === 401) {
-      console.log('Token expired, logging out user');
-      this.logout();
-      throw new Error('Authentication token expired. Please login again.');
+      // Handle different error status codes properly
+      if (response.status === 401) {
+        console.log('Token expired or invalid, logging out user');
+        this.logout();
+        throw new Error('Authentication token expired. Please login again.');
+      }
+
+      if (response.status === 403) {
+        throw new Error('Access denied. You do not have permission to perform this action.');
+      }
+
+      if (response.status === 404) {
+        throw new Error('Resource not found.');
+      }
+
+      if (response.status >= 500) {
+        throw new Error('Server error. Please try again later.');
+      }
+
+      return response;
+    } catch (error) {
+      // Handle network errors and other fetch failures
+      if (error instanceof TypeError) {
+        throw new Error('Network error. Please check your connection and try again.');
+      }
+
+      // Re-throw authentication errors
+      if (error instanceof Error && error.message.includes('Authentication')) {
+        throw error;
+      }
+
+      // Handle other errors
+      throw new Error('Request failed. Please try again.');
     }
+  }
 
-    return response;
+  // Validate token format (basic JWT structure check)
+  private isValidTokenFormat(token: string): boolean {
+    try {
+      // Check if token has the basic JWT structure (3 parts separated by dots)
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        return false;
+      }
+
+      // Check if parts are base64 encoded
+      parts.forEach(part => {
+        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(part)) {
+          return false;
+        }
+      });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   // Refresh user data

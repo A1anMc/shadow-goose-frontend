@@ -170,7 +170,7 @@ class BlockchainGrantTracker {
       // Create new block
       const previousBlock = this.chain[this.chain.length - 1];
       const timestamp = new Date().toISOString();
-      
+
       // Create block data
       const blockData = {
         grant_id: grantId,
@@ -195,7 +195,7 @@ class BlockchainGrantTracker {
       // Calculate hash
       const dataString = JSON.stringify(blockData);
       const hash = await this.calculateHash(dataString);
-      
+
       // Create blockchain record
       const record: BlockchainRecord = {
         id: `block-${this.chain.length + 1}`,
@@ -236,7 +236,7 @@ class BlockchainGrantTracker {
     try {
       const previousBlock = this.chain[this.chain.length - 1];
       const timestamp = new Date().toISOString();
-      
+
       const blockData = {
         application_id: applicationId,
         timestamp,
@@ -255,7 +255,7 @@ class BlockchainGrantTracker {
 
       const dataString = JSON.stringify(blockData);
       const hash = await this.calculateHash(dataString);
-      
+
       const record: BlockchainRecord = {
         id: `block-${this.chain.length + 1}`,
         grant_id: this.getGrantIdFromApplication(applicationId),
@@ -286,7 +286,7 @@ class BlockchainGrantTracker {
 
   // Get application history from blockchain
   getApplicationHistory(applicationId: string): BlockchainRecord[] {
-    return this.chain.filter(block => 
+    return this.chain.filter(block =>
       block.application_id === applicationId
     ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }
@@ -312,7 +312,7 @@ class BlockchainGrantTracker {
         data: currentBlock.data
       });
 
-      this.calculateHash(dataString).then(hash => {
+      this.calculateHash(dataString).then((hash) => {
         if (hash !== currentBlock.hash) {
           issues.push(`Block ${i}: Hash integrity check failed`);
         }
@@ -424,7 +424,7 @@ class BlockchainGrantTracker {
   // Search blockchain records
   searchBlockchain(query: string): BlockchainRecord[] {
     const searchTerm = query.toLowerCase();
-    return this.chain.filter(block => 
+    return this.chain.filter(block =>
       block.grant_id.toLowerCase().includes(searchTerm) ||
       block.application_id.toLowerCase().includes(searchTerm) ||
       block.data.organization.toLowerCase().includes(searchTerm) ||
@@ -454,7 +454,7 @@ class BlockchainGrantTracker {
   private emitBlockchainEvent(eventName: string, data: any) {
     // Simulate blockchain event emission
     console.log(`Blockchain Event: ${eventName}`, data);
-    
+
     // In a real implementation, this would emit to WebSocket or event system
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('blockchain-event', {
@@ -464,30 +464,30 @@ class BlockchainGrantTracker {
   }
 
   private getApplicationStatus(applicationId: string): string {
-    const applicationBlocks = this.chain.filter(block => 
+    const applicationBlocks = this.chain.filter(block =>
       block.application_id === applicationId
     );
-    return applicationBlocks.length > 0 
-      ? applicationBlocks[applicationBlocks.length - 1].data.status 
+    return applicationBlocks.length > 0
+      ? applicationBlocks[applicationBlocks.length - 1].data.status
       : 'unknown';
   }
 
   private getGrantIdFromApplication(applicationId: string): string {
-    const applicationBlock = this.chain.find(block => 
+    const applicationBlock = this.chain.find(block =>
       block.application_id === applicationId
     );
     return applicationBlock?.grant_id || 'unknown';
   }
 
   private getOrganizationFromApplication(applicationId: string): string {
-    const applicationBlock = this.chain.find(block => 
+    const applicationBlock = this.chain.find(block =>
       block.application_id === applicationId
     );
     return applicationBlock?.data.organization || 'unknown';
   }
 
   private getApplicantFromApplication(applicationId: string): string {
-    const applicationBlock = this.chain.find(block => 
+    const applicationBlock = this.chain.find(block =>
       block.application_id === applicationId
     );
     return applicationBlock?.data.applicant || 'SGE';
@@ -505,7 +505,7 @@ class BlockchainGrantTracker {
   }
 
   private generateTransactionHash(): string {
-    return '0x' + Array.from({ length: 64 }, () => 
+    return '0x' + Array.from({ length: 64 }, () =>
       Math.floor(Math.random() * 16).toString(16)
     ).join('');
   }

@@ -1,6 +1,0 @@
-🤖 API MANAGEMENT BOT STARTED - 2025-08-18 20:30:45
-==================================================
-[2025-08-18 20:30:45] [INFO] Starting comprehensive API management...
-[2025-08-18 20:30:46] [INFO] Checking internal API endpoints...
-[2025-08-18 20:30:46] [INFO] Checking grants API endpoint: /api/grants
-[0;31m❌ grants: HTTP 000 - API not responding[0m
