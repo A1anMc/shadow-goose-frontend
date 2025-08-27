@@ -129,7 +129,7 @@ class ErrorRecoveryService {
 
   // Attempt recovery for a specific error
   async attemptRecovery(
-    error: Error, 
+    error: Error,
     context: Omit<RecoveryContext, 'error' | 'timestamp' | 'retryCount'>
   ): Promise<RecoveryResult> {
     const recoveryContext: RecoveryContext = {
@@ -147,7 +147,7 @@ class ErrorRecoveryService {
 
     // Determine appropriate strategy based on error type
     const strategy = this.determineStrategy(error, recoveryContext);
-    
+
     if (!strategy) {
       errorLogger.warn('No recovery strategy found', 'attemptRecovery', {
         service: context.service,
@@ -213,7 +213,7 @@ class ErrorRecoveryService {
     for (let attempt = 0; attempt <= strategy.maxRetries; attempt++) {
       try {
         const result = await strategy.fallbackAction();
-        
+
         if (strategy.successCriteria(result)) {
           const recoveryResult: RecoveryResult = {
             success: true,
@@ -224,7 +224,7 @@ class ErrorRecoveryService {
           };
 
           this.addToHistory(recoveryResult);
-          
+
           errorLogger.info('Recovery successful', 'executeStrategy', {
             strategy: strategy.name,
             retryCount: attempt,
@@ -264,7 +264,7 @@ class ErrorRecoveryService {
     };
 
     this.addToHistory(recoveryResult);
-    
+
     errorLogger.error('Recovery failed after all attempts', 'executeStrategy', lastError as Error, {
       strategy: strategy.name,
       retryCount: strategy.maxRetries,
@@ -282,7 +282,7 @@ class ErrorRecoveryService {
       if (cachedData) {
         return JSON.parse(cachedData);
       }
-      
+
       // Return default data structure
       return {
         success: true,
@@ -300,12 +300,12 @@ class ErrorRecoveryService {
       // Clear invalid authentication data
       localStorage.removeItem('sge_auth_token');
       localStorage.removeItem('sge_user_data');
-      
+
       // Redirect to login page
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
       }
-      
+
       return {
         authenticated: false,
         action: 'redirect_to_login',
@@ -374,7 +374,7 @@ class ErrorRecoveryService {
 
   private addToHistory(result: RecoveryResult): void {
     this.recoveryHistory.push(result);
-    
+
     // Keep only recent history
     if (this.recoveryHistory.length > this.maxHistorySize) {
       this.recoveryHistory = this.recoveryHistory.slice(-this.maxHistorySize);
@@ -392,8 +392,8 @@ class ErrorRecoveryService {
     const totalAttempts = this.recoveryHistory.length;
     const successfulRecoveries = this.recoveryHistory.filter(r => r.success).length;
     const successRate = totalAttempts > 0 ? (successfulRecoveries / totalAttempts) * 100 : 0;
-    const averageRecoveryTime = this.recoveryHistory.length > 0 
-      ? this.recoveryHistory.reduce((sum, r) => sum + r.recoveryTime, 0) / this.recoveryHistory.length 
+    const averageRecoveryTime = this.recoveryHistory.length > 0
+      ? this.recoveryHistory.reduce((sum, r) => sum + r.recoveryTime, 0) / this.recoveryHistory.length
       : 0;
     const recentFailures = this.recoveryHistory.filter(r => !r.success).slice(-10);
 

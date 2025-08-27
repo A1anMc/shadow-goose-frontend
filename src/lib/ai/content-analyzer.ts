@@ -1,8 +1,8 @@
 // AI Content Analyzer Service
 // Handles grant content analysis and quality assessment
 
-import { ContentAnalysisResult, AIWritingConfig } from './types';
 import { aiLogger } from '../logger';
+import { AIWritingConfig, ContentAnalysisResult } from './types';
 
 export class AIContentAnalyzer {
   private config: AIWritingConfig;
@@ -22,7 +22,7 @@ export class AIContentAnalyzer {
   // Enhanced content analysis for grant applications
   async analyzeGrantContent(content: string, grantRequirements: any): Promise<ContentAnalysisResult> {
     aiLogger.info('Starting grant content analysis', 'analyzeGrantContent', { contentLength: content.length });
-    
+
     try {
       const systemPrompt = this.buildAnalysisSystemPrompt();
       const userPrompt = this.buildAnalysisUserPrompt(content, grantRequirements);
@@ -65,16 +65,16 @@ export class AIContentAnalyzer {
         compliance_issues: this.extractComplianceIssues(analysis)
       };
 
-      aiLogger.info('Content analysis completed successfully', 'analyzeGrantContent', { 
+      aiLogger.info('Content analysis completed successfully', 'analyzeGrantContent', {
         overallScore: result.overall_score,
-        feedbackCount: result.feedback.length 
+        feedbackCount: result.feedback.length
       });
 
       return result;
 
     } catch (error) {
       aiLogger.error('Content analysis failed', 'analyzeGrantContent', error as Error, { contentLength: content.length });
-      
+
       // Return fallback analysis
       return {
         grant_alignment: 75,
@@ -125,7 +125,7 @@ COMPLIANCE:
 
   private parseAnalysisScores(analysis: string): Record<string, number> {
     const scores: Record<string, number> = {};
-    
+
     try {
       // Extract scores using regex patterns
       const alignmentMatch = analysis.match(/Grant Alignment:\s*(\d+)/i);
@@ -206,7 +206,7 @@ COMPLIANCE:
   }> {
     const wordCount = content.split(/\s+/).length;
     const readabilityScore = this.calculateReadabilityScore(content);
-    
+
     const hasMeasurableObjectives = /\d+%|\d+\s+(participants|people|students|audience)/i.test(content);
     const hasTimeline = /\d+\s+(months|weeks|days|years)/i.test(content);
     const hasBudget = /\$\d+|\d+\s+(dollars|aud)/i.test(content);

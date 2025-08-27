@@ -1,10 +1,10 @@
 // AI Writing Assistant - Main Service
 // Orchestrates AI writing functionality using modular services
 
-import { AIWritingPrompt, GrantContentRequest, AIWritingResponse, AIWritingConfig } from './types';
-import { aiTemplateService } from './templates';
-import { aiContentAnalyzer } from './content-analyzer';
 import { aiLogger } from '../logger';
+import { aiContentAnalyzer } from './content-analyzer';
+import { aiTemplateService } from './templates';
+import { AIWritingConfig, AIWritingPrompt, AIWritingResponse, GrantContentRequest } from './types';
 
 export class AIWritingAssistant {
   private config: AIWritingConfig;
@@ -24,13 +24,13 @@ export class AIWritingAssistant {
 
   // Generate grant application content
   async generateGrantContent(request: GrantContentRequest): Promise<AIWritingResponse> {
-    aiLogger.info('Starting grant content generation', 'generateGrantContent', { 
+    aiLogger.info('Starting grant content generation', 'generateGrantContent', {
       section: request.section,
-      grantName: request.grant_context.name 
+      grantName: request.grant_context.name
     });
 
     const startTime = Date.now();
-    
+
     try {
       const { successMetricsTracker } = await import('../success-metrics');
 
@@ -145,7 +145,7 @@ export class AIWritingAssistant {
     try {
       // Get professional templates for the grant category
       const templates = aiTemplateService.getProfessionalTemplates(prompt.grant_context.category);
-      
+
       const enhancedPrompt = {
         ...prompt,
         professional_standards: {
@@ -160,10 +160,10 @@ export class AIWritingAssistant {
       };
 
       const result = await this.generateGrantContent(enhancedPrompt);
-      
+
       // Apply professional enhancements
       result.content = this.applyProfessionalEnhancements(result.content, templates);
-      
+
       aiLogger.info('Professional grant content generated successfully', 'generateProfessionalGrantContent', {
         wordCount: result.word_count,
         qualityScore: result.quality_score
@@ -187,13 +187,13 @@ export class AIWritingAssistant {
     if (section) {
       return this.writingHistory.get(section) || [];
     }
-    
+
     // Return all history
     const allHistory: AIWritingResponse[] = [];
     this.writingHistory.forEach(responses => {
       allHistory.push(...responses);
     });
-    
+
     return allHistory;
   }
 
@@ -204,7 +204,7 @@ export class AIWritingAssistant {
     } else {
       this.writingHistory.clear();
     }
-    
+
     aiLogger.info('Writing history cleared', 'clearWritingHistory', { section });
   }
 
@@ -293,7 +293,7 @@ Generate professional, compelling content that builds upon the existing content 
 
   private getFallbackResponse(request: GrantContentRequest): AIWritingResponse {
     aiLogger.warn('Using fallback response', 'getFallbackResponse', { section: request.section });
-    
+
     return {
       content: `This is a fallback response for the ${request.section} section. Please try again or contact support if the issue persists.`,
       word_count: 25,
@@ -313,9 +313,9 @@ Generate professional, compelling content that builds upon the existing content 
     if (!this.writingHistory.has(section)) {
       this.writingHistory.set(section, []);
     }
-    
+
     this.writingHistory.get(section)!.push(response);
-    
+
     // Keep only last 10 responses per section
     if (this.writingHistory.get(section)!.length > 10) {
       this.writingHistory.set(section, this.writingHistory.get(section)!.slice(-10));

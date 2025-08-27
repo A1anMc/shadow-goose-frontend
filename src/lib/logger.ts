@@ -81,17 +81,17 @@ class Logger {
     const level = LogLevel[entry.level];
     const service = entry.context.service;
     const operation = entry.context.operation;
-    
+
     let message = `[${timestamp}] ${level} [${service}:${operation}] ${entry.message}`;
-    
+
     if (entry.data) {
       message += ` | Data: ${JSON.stringify(entry.data)}`;
     }
-    
+
     if (entry.error) {
       message += ` | Error: ${entry.error.message}`;
     }
-    
+
     return message;
   }
 
@@ -117,7 +117,7 @@ class Logger {
     // Console output
     if (this.config.enableConsole) {
       const formattedMessage = this.formatMessage(entry);
-      
+
       switch (level) {
         case LogLevel.DEBUG:
           console.debug(formattedMessage);

@@ -1,5 +1,4 @@
 import { authLogger } from './logger';
-import { errorRecoveryService } from './error-recovery';
 
 export interface User {
   id: number;

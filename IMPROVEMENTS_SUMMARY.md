@@ -21,15 +21,15 @@ This document summarizes the three major improvements implemented to enhance the
 
 ```typescript
 // Structured logging with context
-authLogger.info('User login successful', 'login', { 
-  userId: user.id, 
-  timestamp: new Date().toISOString() 
+authLogger.info('User login successful', 'login', {
+  userId: user.id,
+  timestamp: new Date().toISOString()
 });
 
 // Error logging with stack traces
-aiLogger.error('AI service failed', 'generateContent', error, { 
+aiLogger.error('AI service failed', 'generateContent', error, {
   requestId: 'req-123',
-  section: 'project_overview' 
+  section: 'project_overview'
 });
 ```
 

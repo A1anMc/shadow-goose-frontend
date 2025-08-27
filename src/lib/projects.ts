@@ -1,4 +1,7 @@
+import { apiMonitor } from './api-monitor';
 import { authService } from './auth';
+import { fallbackAPI } from './fallback-api';
+import { projectsLogger } from './logger';
 
 export interface SGEProject {
   id: number;
@@ -69,35 +72,56 @@ class SGEProjectService {
     });
   }
 
-  // Get all SGE projects with improved authentication
+  // Get all SGE projects with comprehensive API monitoring and fallback
   async getProjects(): Promise<SGEProject[]> {
-    if (!this.baseUrl) {
-      console.warn('API URL not configured, using local projects');
-      return Array.from(this.localProjects.values());
-    }
-
+    projectsLogger.info('Starting projects fetch with API monitoring', 'getProjects');
+    
     try {
-      const response = await authService.authenticatedRequest(`${this.baseUrl}/api/projects`);
-
-      if (!response.ok) {
-        throw new Error(`Projects API failed: ${response.status}`);
+      // Use API monitor to get data with fallback
+      const data = await apiMonitor.getData('projects', { useFallback: true });
+      
+      if (data && data.projects) {
+        projectsLogger.info('Successfully fetched projects from API monitor', 'getProjects', {
+          projectCount: data.projects.length,
+          dataSource: data.data_source || 'api'
+        });
+        
+        // Merge backend projects with local projects
+        const backendProjects = data.projects;
+        backendProjects.forEach(project => {
+          // Transform project data to match SGEProject interface
+        const transformedProject: SGEProject = {
+          ...project,
+          status: project.status === 'planning' ? 'draft' : (project.status === 'on_hold' ? 'paused' : project.status)
+        };
+        this.localProjects.set(project.id, transformedProject);
+        });
+        
+        return Array.from(this.localProjects.values());
       }
-
-      const data = await response.json();
-
-      if (!data || !Array.isArray(data.projects)) {
-        throw new Error('Invalid projects data structure');
-      }
-
-      // Merge backend projects with local projects
-      const backendProjects = data.projects;
-      backendProjects.forEach(project => {
-        this.localProjects.set(project.id, project);
+      
+      // If API monitor fails, use fallback API
+      projectsLogger.warn('API monitor failed, using fallback API', 'getProjects');
+      const fallbackData = await fallbackAPI.getRealProjects();
+      
+      projectsLogger.info('Successfully fetched projects from fallback API', 'getProjects', {
+        projectCount: fallbackData.projects.length,
+        dataSource: fallbackData.data_source
       });
-
+      
+      // Merge fallback projects with local projects
+      fallbackData.projects.forEach(project => {
+        // Transform project data to match SGEProject interface
+        const transformedProject: SGEProject = {
+          ...project,
+          status: project.status === 'planning' ? 'draft' : (project.status === 'on_hold' ? 'paused' : project.status)
+        };
+        this.localProjects.set(project.id, transformedProject);
+      });
+      
       return Array.from(this.localProjects.values());
     } catch (error) {
-      console.error('Failed to fetch projects from backend, using local projects:', error);
+      projectsLogger.error('Failed to fetch projects, using local projects', 'getProjects', error as Error);
       return Array.from(this.localProjects.values());
     }
   }

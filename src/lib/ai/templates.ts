@@ -1,8 +1,8 @@
 // AI Writing Templates Service
 // Handles professional grant writing templates and guidelines
 
-import { AITemplate, TemplateCollection, ProfessionalTemplate } from './types';
 import { aiLogger } from '../logger';
+import { AITemplate, TemplateCollection } from './types';
 
 export class AITemplateService {
   private templates: AITemplate[] = [];
@@ -140,7 +140,7 @@ export class AITemplateService {
   // Get professional templates for a grant category
   getProfessionalTemplates(grantCategory: string): TemplateCollection {
     const collection = this.templateCollections.get(grantCategory);
-    
+
     if (collection) {
       aiLogger.info('Retrieved professional templates', 'getProfessionalTemplates', { grantCategory, templateCount: collection.templates.length });
       return collection;

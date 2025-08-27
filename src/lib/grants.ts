@@ -1,9 +1,12 @@
 // Real grants data - unified data pipeline integration
 // Updated to use standardized types from src/lib/types/grants.ts
 
+import { apiMonitor } from './api-monitor';
 import { externalGrantsService } from './external-grants-service';
+import { fallbackAPI } from './fallback-api';
 import { liveDataMonitor } from './live-data-monitor';
 import { liveDataValidator } from './live-data-validator';
+import { grantsLogger } from './logger';
 import { successRateMonitor } from './success-rate-monitor';
 
 // Import standardized types
@@ -87,17 +90,43 @@ export class GrantService {
   }
 
   /**
-   * Get grants with live data validation and external sources
+   * Get grants with comprehensive API monitoring and fallback system
    */
   async getGrants(): Promise<Grant[]> {
+    grantsLogger.info('Starting grants fetch with API monitoring', 'getGrants');
+    
     try {
-      // Validate we have live data before proceeding
-      const systemHealth = liveDataValidator.getSystemHealth();
-      // Temporarily allow grants to load even if live data validation hasn't run yet
-      if (!systemHealth.liveDataAvailable && systemHealth.lastValidation !== null) {
-        console.warn('Live data validation failed, but proceeding with grants fetch...');
-        // throw new Error('CRITICAL: No live data available. System requires live data sources.');
+      // Use API monitor to get data with fallback
+      const apiData = await apiMonitor.getData('grants', { useFallback: true });
+      
+      if (apiData && apiData.grants) {
+        grantsLogger.info('Successfully fetched grants from API monitor', 'getGrants', {
+          grantCount: apiData.grants.length,
+          dataSource: apiData.data_source || 'api'
+        });
+        
+        return apiData.grants;
       }
+      
+      // If API monitor fails, use fallback API
+      grantsLogger.warn('API monitor failed, using fallback API', 'getGrants');
+      const fallbackData = await fallbackAPI.getRealGrants();
+      
+      grantsLogger.info('Successfully fetched grants from fallback API', 'getGrants', {
+        grantCount: fallbackData.grants.length,
+        dataSource: fallbackData.data_source
+      });
+      
+      // Transform fallback data to match Grant interface
+      const transformedGrants: Grant[] = fallbackData.grants.map(grant => ({
+        ...grant,
+        created_at: grant.last_updated,
+        updated_at: grant.last_updated,
+        contact_info: grant.contact_info ? JSON.stringify(grant.contact_info) : undefined,
+        data_source: 'fallback' as const
+      }));
+      
+      return transformedGrants;
 
       // Fetch from primary API
       const authToken = await this.getAuthToken();
@@ -112,10 +141,10 @@ export class GrantService {
         throw new Error(`Failed to fetch grants: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const responseData = await response.json();
 
       // Validate the response data
-      const validation = await liveDataValidator.validateData(data, `${this.baseUrl}/api/grants`);
+      const validation = await liveDataValidator.validateData(responseData, `${this.baseUrl}/api/grants`);
 
       if (!validation.isValid) {
         console.warn('Data validation failed, but proceeding with grants:', validation.errors);
@@ -135,7 +164,7 @@ export class GrantService {
       });
 
       // Combine primary API grants with external grants
-      const allGrants = [...(data.grants || []), ...externalGrants];
+      const allGrants = [...(responseData.grants || []), ...externalGrants];
 
       // Update monitoring with successful API call
       liveDataMonitor.emit('api-call-success', { endpoint: '/api/grants', timestamp: new Date() });
@@ -143,7 +172,7 @@ export class GrantService {
       // Track success rate for grants API
       const grantsApiMetric = successRateMonitor.getMetric('grants-api-success');
       if (grantsApiMetric) {
-        grantsApiMetric.history.push({
+        grantsApiMetric?.history.push({
           timestamp: new Date(),
           value: 100
         });
@@ -163,7 +192,7 @@ export class GrantService {
       // Track success rate for grants API (failure)
       const grantsApiMetric = successRateMonitor.getMetric('grants-api-success');
       if (grantsApiMetric) {
-        grantsApiMetric.history.push({
+        grantsApiMetric?.history.push({
           timestamp: new Date(),
           value: 0
         });
