@@ -299,3 +299,45 @@ export interface SGEDashboardData {
     process_optimizations: string[];
   };
 }
+
+// SGE Success Analysis
+export interface SGESuccessAnalysis {
+  application: SGEApplication;
+  grant: SGEGrant;
+  prediction: SGESuccessPrediction;
+  factors: SGESuccessFactor[];
+  recommendations: string[];
+  riskAssessment: {
+    highRisk: string[];
+    mediumRisk: string[];
+    lowRisk: string[];
+  };
+  improvementOpportunities: {
+    quickWins: string[];
+    mediumTerm: string[];
+    longTerm: string[];
+  };
+}
+
+// SGE Success Factor
+export interface SGESuccessFactor {
+  factor: string;
+  description: string;
+  impact: 'positive' | 'negative' | 'neutral';
+  weight: number;
+  sgeSpecific: boolean;
+}
+
+// SGE Grant Discovery Result
+export interface SGEGrantDiscoveryResult {
+  grants: SGEGrant[];
+  totalFound: number;
+  sourcesSearched: number;
+  matchDistribution: {
+    high: number;
+    medium: number;
+    low: number;
+  };
+  recommendations: string[];
+  nextRefresh: string;
+}

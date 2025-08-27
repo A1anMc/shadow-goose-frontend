@@ -3,7 +3,7 @@
 
 import { centralAuthService } from '../auth-central';
 import { configService } from '../config';
-import { errorHandler } from '../error-handler';
+import { handleApiError } from '../error-handler';
 import {
     SGEApplication,
     SGEBusinessMetrics,
@@ -48,7 +48,7 @@ export class SGEGrantsService {
       return data.grants || [];
     } catch (error) {
       console.error('Error fetching SGE grants:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEGrants');
+      handleApiError(error, 'SGEGrantsService.getSGEGrants');
       return [];
     }
   }
@@ -61,7 +61,7 @@ export class SGEGrantsService {
       return matches;
     } catch (error) {
       console.error('Error getting SGE grant matches:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEGrantMatches');
+      handleApiError(error, 'SGEGrantsService.getSGEGrantMatches');
       return [];
     }
   }
@@ -88,7 +88,7 @@ export class SGEGrantsService {
       return data.grants || [];
     } catch (error) {
       console.error('Error searching SGE grants:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.searchSGEGrants');
+      handleApiError(error, 'SGEGrantsService.searchSGEGrants');
       return [];
     }
   }
@@ -117,7 +117,7 @@ export class SGEGrantsService {
       return data.grant || null;
     } catch (error) {
       console.error('Error fetching SGE grant by ID:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEGrantById');
+      handleApiError(error, 'SGEGrantsService.getSGEGrantById');
       return null;
     }
   }
@@ -143,7 +143,7 @@ export class SGEGrantsService {
       return data.applications || [];
     } catch (error) {
       console.error('Error fetching SGE applications:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEApplications');
+      handleApiError(error, 'SGEGrantsService.getSGEApplications');
       return [];
     }
   }
@@ -172,7 +172,7 @@ export class SGEGrantsService {
       return data.application || null;
     } catch (error) {
       console.error('Error fetching SGE application by ID:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEApplicationById');
+      handleApiError(error, 'SGEGrantsService.getSGEApplicationById');
       return null;
     }
   }
@@ -199,7 +199,7 @@ export class SGEGrantsService {
       return data.application || null;
     } catch (error) {
       console.error('Error creating SGE application:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.createSGEApplication');
+      handleApiError(error, 'SGEGrantsService.createSGEApplication');
       return null;
     }
   }
@@ -226,7 +226,7 @@ export class SGEGrantsService {
       return data.application || null;
     } catch (error) {
       console.error('Error updating SGE application:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.updateSGEApplication');
+      handleApiError(error, 'SGEGrantsService.updateSGEApplication');
       return null;
     }
   }
@@ -239,7 +239,7 @@ export class SGEGrantsService {
       return metrics;
     } catch (error) {
       console.error('Error getting SGE business metrics:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEBusinessMetrics');
+      handleApiError(error, 'SGEGrantsService.getSGEBusinessMetrics');
       return null;
     }
   }
@@ -301,7 +301,7 @@ export class SGEGrantsService {
       return dashboardData;
     } catch (error) {
       console.error('Error getting SGE dashboard data:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEDashboardData');
+      handleApiError(error, 'SGEGrantsService.getSGEDashboardData');
       return null;
     }
   }
@@ -313,7 +313,7 @@ export class SGEGrantsService {
       return matches.filter(match => match.match_score > 0.7); // Only high-quality matches
     } catch (error) {
       console.error('Error getting SGE grant recommendations:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEGrantRecommendations');
+      handleApiError(error, 'SGEGrantsService.getSGEGrantRecommendations');
       return [];
     }
   }
@@ -339,7 +339,7 @@ export class SGEGrantsService {
       return true;
     } catch (error) {
       console.error('Error updating SGE grant status:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.updateSGEGrantStatus');
+      handleApiError(error, 'SGEGrantsService.updateSGEGrantStatus');
       return false;
     }
   }
@@ -380,7 +380,7 @@ export class SGEGrantsService {
       return stats;
     } catch (error) {
       console.error('Error getting SGE grant stats:', error);
-      errorHandler.handleApiError(error, 'SGEGrantsService.getSGEGrantStats');
+      handleApiError(error, 'SGEGrantsService.getSGEGrantStats');
       return {};
     }
   }

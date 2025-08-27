@@ -124,6 +124,18 @@ const SGEDashboard: React.FC = () => {
               >
                 New Application
               </button>
+              <button
+                onClick={() => router.push('/sge/applications/success-analysis')}
+                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+              >
+                Success Analysis
+              </button>
+              <button
+                onClick={() => router.push('/sge/content-optimization')}
+                className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
+              >
+                Content Optimization
+              </button>
             </div>
           </div>
         </div>

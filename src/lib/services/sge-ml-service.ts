@@ -2,14 +2,15 @@
 // Focused on SGE's actual business needs: media projects, cultural representation, social impact
 
 import {
-  SGEGrant,
-  SGEApplication,
-  SGEProfile,
-  SGEGrantMatch,
-  SGESuccessPrediction,
-  SGEEnhancedStory,
-  SGESearchFilters,
-  SGEBusinessMetrics
+    SGEApplication,
+    SGEBusinessMetrics,
+    SGECommunityStory,
+    SGECulturalElement,
+    SGEEnhancedStory,
+    SGEGrant,
+    SGEGrantMatch,
+    SGEImpactMetric,
+    SGEProfile
 } from '../types/sge-types';
 
 export interface SGEMLConfig {
@@ -68,7 +69,12 @@ export class SGEMLService {
           matches.push({
             grant,
             match_score: matchScore,
-            sge_alignment: sgeAlignment,
+            sge_alignment: {
+              media_fit: sgeAlignment.mediaFit,
+              cultural_fit: sgeAlignment.culturalFit,
+              impact_fit: sgeAlignment.impactFit,
+              team_fit: sgeAlignment.teamFit
+            },
             recommended_approach: this.generateSGERecommendations(grant),
             success_probability: successProbability
           });
@@ -313,8 +319,8 @@ export class SGEMLService {
   }
 
   // Generate SGE impact metrics
-  private generateSGEImpactMetrics(content: string): any[] {
-    const metrics = [];
+  private generateSGEImpactMetrics(content: string): SGEImpactMetric[] {
+    const metrics: SGEImpactMetric[] = [];
 
     // Community engagement metrics
     if (content.toLowerCase().includes('community')) {
@@ -351,8 +357,8 @@ export class SGEMLService {
   }
 
   // Identify cultural elements
-  private identifyCulturalElements(content: string): any[] {
-    const elements = [];
+  private identifyCulturalElements(content: string): SGECulturalElement[] {
+    const elements: SGECulturalElement[] = [];
 
     // Look for cultural references
     const culturalKeywords = ['cultural', 'diversity', 'multicultural', 'indigenous', 'community'];
@@ -371,8 +377,8 @@ export class SGEMLService {
   }
 
   // Generate community stories
-  private generateCommunityStories(content: string): any[] {
-    const stories = [];
+  private generateCommunityStories(content: string): SGECommunityStory[] {
+    const stories: SGECommunityStory[] = [];
 
     if (content.toLowerCase().includes('community')) {
       stories.push({
@@ -389,7 +395,7 @@ export class SGEMLService {
 
   // Generate content recommendations
   private generateContentRecommendations(content: string, targetFramework: string): string[] {
-    const recommendations = [];
+    const recommendations: string[] = [];
 
     // Framework-specific recommendations
     if (targetFramework.toLowerCase().includes('un sdg')) {

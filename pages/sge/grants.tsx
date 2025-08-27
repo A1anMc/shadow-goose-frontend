@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import { sgeGrantDiscoveryEngine } from '../../src/lib/services/sge-grant-discovery';
-import { sgeGrantsService } from '../../src/lib/services/sge-grants-service';
-import { SGEGrant, SGESearchFilters, SGEGrantDiscoveryResult } from '../../src/lib/types/sge-types';
+import { SGEGrant, SGEGrantDiscoveryResult, SGESearchFilters } from '../../src/lib/types/sge-types';
 
 const SGEGrantsDiscovery: React.FC = () => {
   const router = useRouter();
@@ -20,7 +19,7 @@ const SGEGrantsDiscovery: React.FC = () => {
   const loadGrants = async () => {
     try {
       setLoading(true);
-      
+
       // Discover new grants using ML engine
       const discovery = await sgeGrantDiscoveryEngine.discoverNewGrants();
       setDiscoveryResult(discovery);
@@ -170,7 +169,7 @@ const SGEGrantsDiscovery: React.FC = () => {
                 <div className="text-sm text-gray-600">Medium Match (60-79%)</div>
               </div>
             </div>
-            
+
             {/* Recommendations */}
             {discoveryResult.recommendations.length > 0 && (
               <div className="mt-6">
@@ -305,10 +304,10 @@ const SGEGrantsDiscovery: React.FC = () => {
                     {grant.sge_status || 'discovered'}
                   </span>
                 </div>
-                
+
                 <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{grant.title}</h3>
                 <p className="text-sm text-gray-600 mb-3">{grant.organization}</p>
-                
+
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-lg font-bold text-green-600">{formatCurrency(grant.amount)}</span>
                   <span className="text-sm text-gray-500">
@@ -338,7 +337,7 @@ const SGEGrantsDiscovery: React.FC = () => {
               {/* Grant Details */}
               <div className="p-6">
                 <p className="text-sm text-gray-700 mb-4 line-clamp-3">{grant.description}</p>
-                
+
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {grant.media_type && (

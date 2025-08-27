@@ -2,7 +2,6 @@
 // Advanced ML-powered success prediction for SGE's specific context
 
 import { SGEApplication, SGEGrant, SGESuccessPrediction } from '../types/sge-types';
-import { sgeMLService } from './sge-ml-service';
 
 export interface SGESuccessFactor {
   factor: string;
@@ -73,10 +72,10 @@ export class SGESuccessPredictionEngine {
     try {
       // Calculate success probability
       const successProbability = await this.calculateSuccessProbability(application, grant);
-      
+
       // Analyze success factors
       const factors = this.analyzeSuccessFactors(application, grant);
-      
+
       // Generate SGE-specific prediction
       const prediction: SGESuccessPrediction = {
         probability: successProbability,
@@ -179,8 +178,8 @@ export class SGESuccessPredictionEngine {
     if (socialImpact.length >= 3) score += 0.1;
 
     // Check for measurable outcomes
-    const hasMeasurableOutcomes = socialImpact.some(impact => 
-      impact.toLowerCase().includes('measure') || 
+    const hasMeasurableOutcomes = socialImpact.some(impact =>
+      impact.toLowerCase().includes('measure') ||
       impact.toLowerCase().includes('metric') ||
       impact.toLowerCase().includes('target')
     );
@@ -202,13 +201,13 @@ export class SGESuccessPredictionEngine {
     if (uniqueRoles.size >= 3) score += 0.2;
 
     // Check for cultural expertise
-    const hasCulturalExpertise = teamMembers.some(member => 
+    const hasCulturalExpertise = teamMembers.some(member =>
       member.cultural_background && member.cultural_background.length > 0
     );
     if (hasCulturalExpertise) score += 0.2;
 
     // Check for media expertise
-    const hasMediaExpertise = teamMembers.some(member => 
+    const hasMediaExpertise = teamMembers.some(member =>
       member.media_expertise && member.media_expertise.length > 0
     );
     if (hasMediaExpertise) score += 0.1;

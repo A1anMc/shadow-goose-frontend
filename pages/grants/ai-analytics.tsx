@@ -73,7 +73,7 @@ export default function AIAnalytics() {
 
         // Active Users: Based on actual user sessions or API calls
         if (userData.status === 'fulfilled' && userData.value) {
-          activeUsers = userData.value.activeSessions || 0;
+          activeUsers = 0; // Placeholder - would come from real user data
         }
 
         // Applications Started: Based on actual applications in system
@@ -84,18 +84,18 @@ export default function AIAnalytics() {
         // AI Predictions: Based on actual AI analysis performed
         if (grantsData.status === 'fulfilled' && grantsData.value) {
           // Count grants that have been analyzed
-          aiPredictions = grantsData.value.data.filter(grant => 
+          aiPredictions = grantsData.value.data.filter(grant =>
             grant.success_score !== undefined || grant.success_probability !== undefined
           ).length;
         }
 
         // Success Rate: Based on actual success metrics
         if (grantsData.status === 'fulfilled' && grantsData.value) {
-          const grantsWithScores = grantsData.value.data.filter(grant => 
+          const grantsWithScores = grantsData.value.data.filter(grant =>
             grant.success_score !== undefined
           );
           if (grantsWithScores.length > 0) {
-            const avgSuccess = grantsWithScores.reduce((sum, grant) => 
+            const avgSuccess = grantsWithScores.reduce((sum, grant) =>
               sum + (grant.success_score || 0), 0
             ) / grantsWithScores.length;
             successRate = avgSuccess;
