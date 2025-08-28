@@ -1,16 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { aiGrantAnalyzer, GrantAnalysisResult } from "../../src/lib/ai-grant-analyzer";
-import { getBranding } from "../../src/lib/branding";
 import { getGrantsService } from "../../src/lib/services/grants-service";
 import {
-  Grant,
-  GrantApplication,
+  Grant
 } from "../../src/lib/types/grants";
 
 export default function AIAnalytics() {
-  const branding = getBranding();
   const [grants, setGrants] = useState<Grant[]>([]);
-  const [applications, setApplications] = useState<GrantApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
@@ -87,9 +83,9 @@ export default function AIAnalytics() {
   const loadGrantsData = async () => {
     try {
       setLoading(true);
-              const grantsService = getGrantsService();
-        const grantsData = await grantsService.getGrantsWithSource();
-              setGrants(grantsData.data);
+      const grantsService = getGrantsService();
+      const grantsData = await grantsService.getGrantsWithSource();
+      setGrants(grantsData.data);
     } catch (error) {
       console.error('Error loading grants:', error);
       setError('Failed to load grants data');
@@ -153,7 +149,6 @@ export default function AIAnalytics() {
           successRate: Math.min(successRate, 1.0), // Cap at 100%
         });
       } catch (error) {
-        console.error('Error updating real-time data:', error);
         // Show zero values if data fetch fails - NO FAKE DATA
         setRealTimeData({
           activeUsers: 0,
@@ -186,7 +181,7 @@ export default function AIAnalytics() {
       const analysisResult = await aiGrantAnalyzer.analyzeGrant(grant, userProfile);
       setAnalysis(analysisResult);
     } catch (error) {
-      console.error('AI analysis failed:', error);
+      setError('AI analysis failed');
     } finally {
       setLoading(false);
     }
