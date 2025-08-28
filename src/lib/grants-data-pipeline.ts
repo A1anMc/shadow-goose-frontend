@@ -99,55 +99,23 @@ class GrantsDataPipeline {
   }
 
   private async fetchCreativeAustraliaGrants(): Promise<UnifiedGrant[]> {
-    const [
-      documentaryGrants,
-      artsGrants,
-      youthGrants
-    ] = await Promise.allSettled([
-      creativeAustraliaAPI.getDocumentaryGrants(),
-      creativeAustraliaAPI.getArtsCultureGrants(),
-      creativeAustraliaAPI.getYouthGrants()
-    ]);
-
-    let grants: UnifiedGrant[] = [];
-
-    if (documentaryGrants.status === 'fulfilled') {
-      grants.push(...this.transformCreativeAustraliaGrants(documentaryGrants.value));
+    try {
+      const response = await creativeAustraliaAPI.getGrants();
+      return this.transformCreativeAustraliaGrants(response.grants);
+    } catch (error) {
+      console.error('Failed to fetch Creative Australia grants:', error);
+      return [];
     }
-    if (artsGrants.status === 'fulfilled') {
-      grants.push(...this.transformCreativeAustraliaGrants(artsGrants.value));
-    }
-    if (youthGrants.status === 'fulfilled') {
-      grants.push(...this.transformCreativeAustraliaGrants(youthGrants.value));
-    }
-
-    return grants;
   }
 
   private async fetchScreenAustraliaGrants(): Promise<UnifiedGrant[]> {
-    const [
-      documentaryProductionGrants,
-      developmentGrants,
-      indigenousGrants
-    ] = await Promise.allSettled([
-      screenAustraliaAPI.getDocumentaryProductionGrants(),
-      screenAustraliaAPI.getDevelopmentGrants(),
-      screenAustraliaAPI.getIndigenousGrants()
-    ]);
-
-    let grants: UnifiedGrant[] = [];
-
-    if (documentaryProductionGrants.status === 'fulfilled') {
-      grants.push(...this.transformScreenAustraliaGrants(documentaryProductionGrants.value));
+    try {
+      const response = await screenAustraliaAPI.getGrants();
+      return this.transformScreenAustraliaGrants(response.grants);
+    } catch (error) {
+      console.error('Failed to fetch Screen Australia grants:', error);
+      return [];
     }
-    if (developmentGrants.status === 'fulfilled') {
-      grants.push(...this.transformScreenAustraliaGrants(developmentGrants.value));
-    }
-    if (indigenousGrants.status === 'fulfilled') {
-      grants.push(...this.transformScreenAustraliaGrants(indigenousGrants.value));
-    }
-
-    return grants;
   }
 
   private transformCreativeAustraliaGrants(grants: CreativeAustraliaGrant[]): UnifiedGrant[] {
@@ -155,17 +123,17 @@ class GrantsDataPipeline {
       id: grant.id,
       title: grant.title,
       description: grant.description,
-      amount: grant.amount,
+      amount: grant.amount.min, // Convert to number for compatibility
       deadline: grant.deadline,
       category: grant.category,
-      organization: grant.organization,
-      eligibility_criteria: grant.eligibility_criteria,
-      required_documents: grant.required_documents,
-      success_score: grant.success_score,
+      organization: 'Creative Australia',
+      eligibility_criteria: grant.eligibility,
+      required_documents: grant.requirements,
+      success_score: grant.success_rate || 0,
       priority_score: 0, // Will be calculated in processGrant
-      created_at: grant.created_at,
-      updated_at: grant.updated_at,
-      data_source: grant.data_source,
+      created_at: grant.last_updated,
+      updated_at: grant.last_updated,
+      data_source: 'creative_australia',
       status: 'open', // Will be calculated in processGrant
       days_until_deadline: 0, // Will be calculated in processGrant
       sge_alignment_score: 0 // Will be calculated in processGrant
@@ -177,17 +145,17 @@ class GrantsDataPipeline {
       id: grant.id,
       title: grant.title,
       description: grant.description,
-      amount: grant.amount,
+      amount: grant.amount.min, // Convert to number for compatibility
       deadline: grant.deadline,
       category: grant.category,
-      organization: grant.organization,
-      eligibility_criteria: grant.eligibility_criteria,
-      required_documents: grant.required_documents,
-      success_score: grant.success_score,
+      organization: 'Screen Australia',
+      eligibility_criteria: grant.eligibility,
+      required_documents: grant.requirements,
+      success_score: grant.success_rate || 0,
       priority_score: 0, // Will be calculated in processGrant
-      created_at: grant.created_at,
-      updated_at: grant.updated_at,
-      data_source: grant.data_source,
+      created_at: grant.last_updated,
+      updated_at: grant.last_updated,
+      data_source: 'screen_australia',
       status: 'open', // Will be calculated in processGrant
       days_until_deadline: 0, // Will be calculated in processGrant
       sge_alignment_score: 0 // Will be calculated in processGrant
@@ -559,8 +527,8 @@ class GrantsDataPipeline {
     cache_status: string;
   }> {
     const [creativeAustraliaHealth, screenAustraliaHealth] = await Promise.allSettled([
-      creativeAustraliaAPI.getHealthStatus(),
-      screenAustraliaAPI.getHealthStatus()
+      creativeAustraliaAPI.getCategories().then(() => ({ status: 'healthy', last_updated: new Date().toISOString() })).catch(() => ({ status: 'unhealthy', last_updated: 'unknown' })),
+      screenAustraliaAPI.getCategories().then(() => ({ status: 'healthy', last_updated: new Date().toISOString() })).catch(() => ({ status: 'unhealthy', last_updated: 'unknown' }))
     ]);
 
     const dataSources = {

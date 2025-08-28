@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { aiGrantAnalyzer, GrantAnalysisResult } from "../../src/lib/ai-grant-analyzer";
 import { getBranding } from "../../src/lib/branding";
 import { getGrantsService } from "../../src/lib/services/grants-service";
 import {
-    Grant,
-    GrantApplication,
+  Grant,
+  GrantApplication,
 } from "../../src/lib/types/grants";
 
 export default function AIAnalytics() {
@@ -34,11 +34,55 @@ export default function AIAnalytics() {
     };
   }, []);
 
+  const init3DVisualization = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Create 3D visualization
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) * 0.3;
+
+    // Draw grants as 3D spheres
+    grants.forEach((grant, index) => {
+      const angle = (index / grants.length) * 2 * Math.PI;
+      const x = centerX + Math.cos(angle) * radius;
+      const y = centerY + Math.sin(angle) * radius;
+      const z = (grant.success_score || 0) * 50; // 3D depth based on success score
+
+      // Draw sphere
+      ctx.beginPath();
+      ctx.arc(x, y, 10 + z / 10, 0, 2 * Math.PI);
+      ctx.fillStyle = `rgba(59, 130, 246, ${0.3 + z / 100})`;
+      ctx.fill();
+
+      // Draw connection lines
+      if (index > 0) {
+        const prevAngle = ((index - 1) / grants.length) * 2 * Math.PI;
+        const prevX = centerX + Math.cos(prevAngle) * radius;
+        const prevY = centerY + Math.sin(prevAngle) * radius;
+        
+        ctx.beginPath();
+        ctx.moveTo(prevX, prevY);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    });
+  }, [grants]);
+
   useEffect(() => {
     if (canvasRef.current) {
       init3DVisualization();
     }
-  }, [grants]);
+  }, [init3DVisualization]);
 
   const loadGrantsData = async () => {
     try {
@@ -125,50 +169,7 @@ export default function AIAnalytics() {
     return () => clearInterval(interval);
   };
 
-  const init3DVisualization = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = 400;
-    canvas.height = 300;
-
-    const animate = () => {
-      // Clear canvas
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw 3D-like data points
-      const time = Date.now() * 0.001;
-      for (let i = 0; i < grants.length; i++) {
-        const x = 200 + Math.sin(time + i) * 100;
-        const y = 150 + Math.cos(time + i * 0.5) * 80;
-        const size = Math.sin(time + i * 0.3) * 5 + 10;
-
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsl(${i * 30}, 70%, 60%)`;
-        ctx.fill();
-
-        // Add connecting lines
-        if (i > 0) {
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          const prevX = 200 + Math.sin(time + i - 1) * 100;
-          const prevY = 150 + Math.cos(time + (i - 1) * 0.5) * 80;
-          ctx.lineTo(prevX, prevY);
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-          ctx.stroke();
-        }
-      }
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    animate();
-  };
 
   const analyzeGrant = async (grant: Grant) => {
     setSelectedGrant(grant);

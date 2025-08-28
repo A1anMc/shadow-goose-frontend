@@ -132,3 +132,11 @@ security-report.json
 bandit-report.json
 node_modules/
 tsconfig.tsbuildinfo
+
+# Log files
+*.log
+logs/
+
+# Debug/Test files
+debug-*.tsx
+test-*.tsx

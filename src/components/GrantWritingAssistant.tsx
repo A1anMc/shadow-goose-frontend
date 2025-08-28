@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { aiWritingAssistant } from '../lib/ai-writing-assistant';
 
 interface GrantWritingAssistantProps {
@@ -21,14 +21,7 @@ export default function GrantWritingAssistant({
   const [writingTips, setWritingTips] = useState<string[]>([]);
   const [professionalTemplates, setProfessionalTemplates] = useState<any>(null);
 
-  useEffect(() => {
-    if (grant) {
-      loadWritingTips();
-      loadProfessionalTemplates();
-    }
-  }, [grant]);
-
-  const loadWritingTips = async () => {
+  const loadWritingTips = useCallback(async () => {
     const tips = [
       "Use specific, measurable objectives with clear timelines",
       "Include quantifiable outcomes and impact metrics",
@@ -42,16 +35,25 @@ export default function GrantWritingAssistant({
       "Demonstrate team expertise and qualifications"
     ];
     setWritingTips(tips);
-  };
+  }, []);
 
-  const loadProfessionalTemplates = async () => {
+  const loadProfessionalTemplates = useCallback(async () => {
     try {
       const templates = await aiWritingAssistant.getProfessionalTemplates(grant.category);
       setProfessionalTemplates(templates);
     } catch (error) {
       console.error('Error loading professional templates:', error);
     }
-  };
+  }, [grant.category]);
+
+  useEffect(() => {
+    if (grant) {
+      loadWritingTips();
+      loadProfessionalTemplates();
+    }
+  }, [grant, loadWritingTips, loadProfessionalTemplates]);
+
+
 
   const analyzeContent = async () => {
     if (!application[currentField]) return;

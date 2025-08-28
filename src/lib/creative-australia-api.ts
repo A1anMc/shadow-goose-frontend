@@ -1,357 +1,374 @@
-// Creative Australia API Integration
-// Senior Grants Operations Agent - Real Data Integration
+import { apiMonitor } from './api-monitor';
+import { monitorLogger } from './logger';
 
 export interface CreativeAustraliaGrant {
   id: string;
   title: string;
   description: string;
-  amount: number;
+  amount: {
+    min: number;
+    max: number;
+    currency: string;
+  };
   deadline: string;
   category: string;
-  organization: string;
-  eligibility_criteria: string[];
-  required_documents: string[];
-  success_score: number;
-  created_at: string;
-  updated_at: string;
-  data_source: 'creative_australia';
+  eligibility: string[];
+  location: string[];
+  industry: string[];
+  application_url: string;
+  contact_info: {
+    email: string;
+    phone: string;
+    website: string;
+  };
+  last_updated: string;
+  status: 'open' | 'closed' | 'upcoming';
+  tags: string[];
+  requirements: string[];
+  success_rate?: number;
 }
 
-export interface CreativeAustraliaAPIResponse {
+export interface CreativeAustraliaResponse {
   grants: CreativeAustraliaGrant[];
-  total_count: number;
-  last_updated: string;
-  api_version: string;
+  total: number;
+  page: number;
+  limit: number;
+  has_more: boolean;
+}
+
+export interface GrantSearchCriteria {
+  category?: string;
+  location?: string[];
+  amount_min?: number;
+  amount_max?: number;
+  deadline_after?: string;
+  deadline_before?: string;
+  industry?: string[];
+  keywords?: string[];
+  status?: 'open' | 'closed' | 'upcoming';
+  page?: number;
+  limit?: number;
 }
 
 class CreativeAustraliaAPIService {
-  private baseUrl = 'https://creative.gov.au/api/v1';
-  private apiKey: string;
+  private baseUrl = 'https://creativeaustralia.gov.au/api';
+  private apiKey: string | null = null;
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
-  private cacheTTL = 6 * 60 * 60 * 1000; // 6 hours
+  private readonly CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
   constructor() {
-    this.apiKey = process.env.NEXT_PUBLIC_CREATIVE_AUSTRALIA_API_KEY || '';
+    this.initializeAPI();
   }
 
-  private async makeRequest(endpoint: string, params: Record<string, any> = {}): Promise<any> {
-    const url = new URL(`${this.baseUrl}${endpoint}`);
-    
-    // Add API key
-    url.searchParams.append('api_key', this.apiKey);
-    
-    // Add parameters
-    Object.entries(params).forEach(([key, value]) => {
-      url.searchParams.append(key, value.toString());
-    });
+  private async initializeAPI(): Promise<void> {
+    try {
+      this.apiKey = process.env.CREATIVE_AUSTRALIA_API_KEY || null;
+      
+      if (!this.apiKey) {
+        monitorLogger.warn('Creative Australia API key not configured, using fallback data', 'initializeAPI');
+      } else {
+        monitorLogger.info('Creative Australia API initialized successfully', 'initializeAPI');
+      }
+    } catch (error) {
+      monitorLogger.error('Failed to initialize Creative Australia API', 'initializeAPI', error as Error);
+    }
+  }
+
+  private getHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if (this.apiKey) {
+      headers['Authorization'] = `Bearer ${this.apiKey}`;
+    }
+
+    return headers;
+  }
+
+  private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const cacheKey = `${endpoint}-${JSON.stringify(options)}`;
+
+    const cached = this.cache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+      monitorLogger.debug('Returning cached data', 'makeRequest', { endpoint });
+      return cached.data;
+    }
 
     try {
-      const response = await fetch(url.toString(), {
+      const response = await fetch(url, {
+        ...options,
         headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'SGE-Grants-System/2.0.0'
-        }
+          ...this.getHeaders(),
+          ...options.headers,
+        },
       });
 
       if (!response.ok) {
-        throw new Error(`Creative Australia API error: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      
+      this.cache.set(cacheKey, {
+        data,
+        timestamp: Date.now(),
+      });
+
+      monitorLogger.info('API request successful', 'makeRequest', { endpoint, status: response.status });
+      return data;
     } catch (error) {
-      console.error('Creative Australia API request failed:', error);
+      monitorLogger.error('API request failed', 'makeRequest', error as Error, { endpoint });
       throw error;
     }
   }
 
-  private getCacheKey(endpoint: string, params: Record<string, any>): string {
-    return `${endpoint}-${JSON.stringify(params)}`;
-  }
-
-  private isCacheValid(timestamp: number): boolean {
-    return Date.now() - timestamp < this.cacheTTL;
-  }
-
-  async getDocumentaryGrants(): Promise<CreativeAustraliaGrant[]> {
-    const cacheKey = this.getCacheKey('/grants', { category: 'documentary' });
-    const cached = this.cache.get(cacheKey);
-
-    if (cached && this.isCacheValid(cached.timestamp)) {
-      return cached.data;
-    }
-
+  async getGrants(criteria: GrantSearchCriteria = {}): Promise<CreativeAustraliaResponse> {
     try {
-      const response = await this.makeRequest('/grants', {
-        category: 'documentary',
-        status: 'open',
-        limit: 50
+      const apiData = await apiMonitor.getData('creative-australia-grants', { 
+        useFallback: true
       });
 
-      const grants = this.transformGrants(response.grants || []);
-      
-      this.cache.set(cacheKey, {
-        data: grants,
-        timestamp: Date.now()
-      });
-
-      return grants;
-    } catch (error) {
-      console.error('Failed to fetch Creative Australia documentary grants:', error);
-      return this.getFallbackDocumentaryGrants();
-    }
-  }
-
-  async getArtsCultureGrants(): Promise<CreativeAustraliaGrant[]> {
-    const cacheKey = this.getCacheKey('/grants', { category: 'arts_culture' });
-    const cached = this.cache.get(cacheKey);
-
-    if (cached && this.isCacheValid(cached.timestamp)) {
-      return cached.data;
-    }
-
-    try {
-      const response = await this.makeRequest('/grants', {
-        category: 'arts_culture',
-        status: 'open',
-        limit: 50
-      });
-
-      const grants = this.transformGrants(response.grants || []);
-      
-      this.cache.set(cacheKey, {
-        data: grants,
-        timestamp: Date.now()
-      });
-
-      return grants;
-    } catch (error) {
-      console.error('Failed to fetch Creative Australia arts grants:', error);
-      return this.getFallbackArtsGrants();
-    }
-  }
-
-  async getYouthGrants(): Promise<CreativeAustraliaGrant[]> {
-    const cacheKey = this.getCacheKey('/grants', { category: 'youth' });
-    const cached = this.cache.get(cacheKey);
-
-    if (cached && this.isCacheValid(cached.timestamp)) {
-      return cached.data;
-    }
-
-    try {
-      const response = await this.makeRequest('/grants', {
-        category: 'youth',
-        status: 'open',
-        limit: 50
-      });
-
-      const grants = this.transformGrants(response.grants || []);
-      
-      this.cache.set(cacheKey, {
-        data: grants,
-        timestamp: Date.now()
-      });
-
-      return grants;
-    } catch (error) {
-      console.error('Failed to fetch Creative Australia youth grants:', error);
-      return this.getFallbackYouthGrants();
-    }
-  }
-
-  private transformGrants(apiGrants: any[]): CreativeAustraliaGrant[] {
-    return apiGrants.map(grant => ({
-      id: `creative-australia-${grant.id}`,
-      title: grant.title,
-      description: grant.description,
-      amount: parseFloat(grant.amount) || 0,
-      deadline: grant.deadline,
-      category: grant.category,
-      organization: 'Creative Australia',
-      eligibility_criteria: grant.eligibility_criteria || [],
-      required_documents: grant.required_documents || [],
-      success_score: this.calculateSuccessScore(grant),
-      created_at: grant.created_at,
-      updated_at: grant.updated_at,
-      data_source: 'creative_australia'
-    }));
-  }
-
-  private calculateSuccessScore(grant: any): number {
-    // Calculate success probability based on grant characteristics
-    let score = 0.5; // Base score
-
-    // Amount suitability (SGE typically targets $10K-$100K)
-    const amount = parseFloat(grant.amount) || 0;
-    if (amount >= 10000 && amount <= 100000) {
-      score += 0.2;
-    } else if (amount >= 5000 && amount <= 150000) {
-      score += 0.1;
-    }
-
-    // Category alignment
-    const sgeCategories = ['documentary', 'arts_culture', 'youth', 'community'];
-    if (sgeCategories.includes(grant.category)) {
-      score += 0.15;
-    }
-
-    // Geographic focus
-    if (grant.geographic_scope?.includes('Victoria') || grant.geographic_scope?.includes('Australia')) {
-      score += 0.1;
-    }
-
-    // Deadline urgency (more time = higher success probability)
-    const daysUntilDeadline = this.calculateDaysUntilDeadline(grant.deadline);
-    if (daysUntilDeadline >= 60) {
-      score += 0.05;
-    }
-
-    return Math.min(score, 1.0);
-  }
-
-  private calculateDaysUntilDeadline(deadline: string): number {
-    const deadlineDate = new Date(deadline);
-    const now = new Date();
-    const diffTime = deadlineDate.getTime() - now.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }
-
-  // Fallback data for when API is unavailable
-  private getFallbackDocumentaryGrants(): CreativeAustraliaGrant[] {
-    return [
-      {
-        id: 'creative-australia-doc-dev-2024',
-        title: 'Creative Australia Documentary Development Grant',
-        description: 'Support for documentary development including research, scriptwriting, and pre-production. Perfect for SGE\'s documentary series on youth employment and community health.',
-        amount: 25000.00,
-        deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
-        category: 'documentary',
-        organization: 'Creative Australia',
-        eligibility_criteria: ['Australian organizations', 'Documentary filmmakers', 'Established track record'],
-        required_documents: ['Project proposal', 'Creative team CVs', 'Development timeline'],
-        success_score: 0.85,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'creative_australia'
-      },
-      {
-        id: 'creative-australia-doc-prod-2024',
-        title: 'Creative Australia Documentary Production Grant',
-        description: 'Funding for documentary production including filming, editing, and post-production work.',
-        amount: 50000.00,
-        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days - urgent
-        category: 'documentary',
-        organization: 'Creative Australia',
-        eligibility_criteria: ['Australian organizations', 'Documentary filmmakers', 'Production experience'],
-        required_documents: ['Production plan', 'Budget breakdown', 'Distribution strategy'],
-        success_score: 0.75,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'creative_australia'
-      },
-      {
-        id: 'creative-australia-doc-research-2024',
-        title: 'Creative Australia Documentary Research Grant',
-        description: 'Support for documentary research and development, including archival research and interviews.',
-        amount: 15000.00,
-        deadline: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(), // 21 days - soon
-        category: 'documentary',
-        organization: 'Creative Australia',
-        eligibility_criteria: ['Australian organizations', 'Researchers', 'Documentary projects'],
-        required_documents: ['Research proposal', 'Timeline', 'Expected outcomes'],
-        success_score: 0.90,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'creative_australia'
+      if (apiData && apiData.grants) {
+        monitorLogger.info('Retrieved grants from API monitor', 'getGrants', { count: apiData.grants.length });
+        return apiData as CreativeAustraliaResponse;
       }
-    ];
-  }
 
-  private getFallbackArtsGrants(): CreativeAustraliaGrant[] {
-    return [
-      {
-        id: 'creative-australia-arts-2024',
-        title: 'Creative Australia Arts Project Grant',
-        description: 'Funding for innovative arts projects that engage communities and tell important Australian stories.',
-        amount: 15000.00,
-        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(), // 60 days - normal
-        category: 'arts_culture',
-        organization: 'Creative Australia',
-        eligibility_criteria: ['Arts organizations', 'Community engagement focus', 'Innovative approach'],
-        required_documents: ['Project proposal', 'Community engagement plan', 'Budget breakdown'],
-        success_score: 0.75,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'creative_australia'
-      },
-      {
-        id: 'creative-australia-arts-urgent-2024',
-        title: 'Creative Australia Community Arts Initiative',
-        description: 'Urgent funding for community arts projects that address social issues and build community resilience.',
-        amount: 12000.00,
-        deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days - very urgent
-        category: 'arts_culture',
-        organization: 'Creative Australia',
-        eligibility_criteria: ['Community organizations', 'Social impact focus', 'Quick implementation'],
-        required_documents: ['Urgent project proposal', 'Community support letters', 'Quick start plan'],
-        success_score: 0.70,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'creative_australia'
-      }
-    ];
-  }
+      const queryParams = new URLSearchParams();
+      
+      if (criteria.category) queryParams.append('category', criteria.category);
+      if (criteria.location) queryParams.append('location', criteria.location.join(','));
+      if (criteria.amount_min) queryParams.append('amount_min', criteria.amount_min.toString());
+      if (criteria.amount_max) queryParams.append('amount_max', criteria.amount_max.toString());
+      if (criteria.deadline_after) queryParams.append('deadline_after', criteria.deadline_after);
+      if (criteria.deadline_before) queryParams.append('deadline_before', criteria.deadline_before);
+      if (criteria.industry) queryParams.append('industry', criteria.industry.join(','));
+      if (criteria.keywords) queryParams.append('keywords', criteria.keywords.join(','));
+      if (criteria.status) queryParams.append('status', criteria.status);
+      if (criteria.page) queryParams.append('page', criteria.page.toString());
+      if (criteria.limit) queryParams.append('limit', criteria.limit.toString());
 
-  private getFallbackYouthGrants(): CreativeAustraliaGrant[] {
-    return [
-      {
-        id: 'creative-australia-youth-2024',
-        title: 'Creative Australia Youth Arts Initiative',
-        description: 'Supporting youth-focused arts projects that empower young people and build community connections.',
-        amount: 20000.00,
-        deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days - soon
-        category: 'youth',
-        organization: 'Creative Australia',
-        eligibility_criteria: ['Youth-focused organizations', 'Community impact', 'Young artist involvement'],
-        required_documents: ['Youth engagement plan', 'Project timeline', 'Impact measurement strategy'],
-        success_score: 0.80,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'creative_australia'
-      },
-      {
-        id: 'creative-australia-youth-urgent-2024',
-        title: 'Creative Australia Youth Emergency Grant',
-        description: 'Emergency funding for youth programs that need immediate support to continue operations.',
-        amount: 8000.00,
-        deadline: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day - today
-        category: 'youth',
-        organization: 'Creative Australia',
-        eligibility_criteria: ['Youth organizations', 'Emergency situation', 'Immediate need'],
-        required_documents: ['Emergency request', 'Impact statement', 'Immediate action plan'],
-        success_score: 0.65,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'creative_australia'
-      }
-    ];
-  }
+      const endpoint = `/grants?${queryParams.toString()}`;
+      const response = await this.makeRequest<CreativeAustraliaResponse>(endpoint);
 
-  async getHealthStatus(): Promise<{ status: string; last_updated: string; api_version: string }> {
-    try {
-      const response = await this.makeRequest('/health');
+      monitorLogger.info('Retrieved grants from Creative Australia API', 'getGrants', { 
+        count: response.grants.length,
+        total: response.total 
+      });
+
+      return response;
+    } catch (error) {
+      monitorLogger.warn('Creative Australia API failed, using fallback data', 'getGrants');
+      
+      const fallbackGrants = await this.getFallbackGrants(criteria);
       return {
-        status: 'healthy',
-        last_updated: new Date().toISOString(),
-        api_version: response.api_version || '1.0'
-      };
-    } catch (error) {
-      return {
-        status: 'unhealthy',
-        last_updated: new Date().toISOString(),
-        api_version: 'unknown'
+        grants: fallbackGrants,
+        total: fallbackGrants.length,
+        page: 1,
+        limit: fallbackGrants.length,
+        has_more: false,
       };
     }
+  }
+
+  async getGrantById(id: string): Promise<CreativeAustraliaGrant | null> {
+    try {
+      const endpoint = `/grants/${id}`;
+      const grant = await this.makeRequest<CreativeAustraliaGrant>(endpoint);
+      
+      monitorLogger.info('Retrieved grant by ID', 'getGrantById', { id });
+      return grant;
+    } catch (error) {
+      monitorLogger.error('Failed to retrieve grant by ID', 'getGrantById', error as Error, { id });
+      return null;
+    }
+  }
+
+  async getCategories(): Promise<string[]> {
+    try {
+      const endpoint = '/categories';
+      const categories = await this.makeRequest<string[]>(endpoint);
+      
+      monitorLogger.info('Retrieved categories', 'getCategories', { count: categories.length });
+      return categories;
+    } catch (error) {
+      monitorLogger.warn('Failed to retrieve categories, using fallback', 'getCategories');
+      return this.getFallbackCategories();
+    }
+  }
+
+  async getIndustries(): Promise<string[]> {
+    try {
+      const endpoint = '/industries';
+      const industries = await this.makeRequest<string[]>(endpoint);
+      
+      monitorLogger.info('Retrieved industries', 'getIndustries', { count: industries.length });
+      return industries;
+    } catch (error) {
+      monitorLogger.warn('Failed to retrieve industries, using fallback', 'getIndustries');
+      return this.getFallbackIndustries();
+    }
+  }
+
+  async getLocations(): Promise<string[]> {
+    try {
+      const endpoint = '/locations';
+      const locations = await this.makeRequest<string[]>(endpoint);
+      
+      monitorLogger.info('Retrieved locations', 'getLocations', { count: locations.length });
+      return locations;
+    } catch (error) {
+      monitorLogger.warn('Failed to retrieve locations, using fallback', 'getLocations');
+      return this.getFallbackLocations();
+    }
+  }
+
+  private async getFallbackGrants(criteria: GrantSearchCriteria): Promise<CreativeAustraliaGrant[]> {
+    const fallbackGrants: CreativeAustraliaGrant[] = [
+      {
+        id: 'ca-001',
+        title: 'Creative Australia Arts Project Funding',
+        description: 'Support for innovative arts projects that engage communities and create cultural impact.',
+        amount: { min: 10000, max: 100000, currency: 'AUD' },
+        deadline: '2025-12-15',
+        category: 'Arts Project',
+        eligibility: ['Arts organizations', 'Individual artists', 'Community groups'],
+        location: ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'NT', 'ACT'],
+        industry: ['Arts', 'Culture', 'Community'],
+        application_url: 'https://creativeaustralia.gov.au/grants/arts-project',
+        contact_info: {
+          email: 'arts@creativeaustralia.gov.au',
+          phone: '+61 2 9215 9000',
+          website: 'https://creativeaustralia.gov.au'
+        },
+        last_updated: '2025-08-27',
+        status: 'open',
+        tags: ['arts', 'community', 'culture', 'innovation'],
+        requirements: ['Project proposal', 'Budget plan', 'Community engagement strategy'],
+        success_rate: 35
+      },
+      {
+        id: 'ca-002',
+        title: 'Indigenous Arts Development Grant',
+        description: 'Supporting Indigenous artists and cultural practitioners in developing their practice.',
+        amount: { min: 5000, max: 50000, currency: 'AUD' },
+        deadline: '2025-11-30',
+        category: 'Indigenous Arts',
+        eligibility: ['Indigenous artists', 'Indigenous organizations', 'Cultural practitioners'],
+        location: ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'NT', 'ACT'],
+        industry: ['Indigenous Arts', 'Culture', 'Heritage'],
+        application_url: 'https://creativeaustralia.gov.au/grants/indigenous-arts',
+        contact_info: {
+          email: 'indigenous@creativeaustralia.gov.au',
+          phone: '+61 2 9215 9000',
+          website: 'https://creativeaustralia.gov.au'
+        },
+        last_updated: '2025-08-26',
+        status: 'open',
+        tags: ['indigenous', 'arts', 'culture', 'development'],
+        requirements: ['Cultural consultation plan', 'Artist statement', 'Project timeline'],
+        success_rate: 40
+      },
+      {
+        id: 'ca-003',
+        title: 'Regional Arts Development Program',
+        description: 'Supporting arts and cultural development in regional and remote communities.',
+        amount: { min: 2000, max: 25000, currency: 'AUD' },
+        deadline: '2025-10-15',
+        category: 'Regional Arts',
+        eligibility: ['Regional organizations', 'Local councils', 'Community groups'],
+        location: ['Regional NSW', 'Regional VIC', 'Regional QLD', 'Regional WA', 'Regional SA', 'Regional TAS'],
+        industry: ['Regional Arts', 'Community Development', 'Culture'],
+        application_url: 'https://creativeaustralia.gov.au/grants/regional-arts',
+        contact_info: {
+          email: 'regional@creativeaustralia.gov.au',
+          phone: '+61 2 9215 9000',
+          website: 'https://creativeaustralia.gov.au'
+        },
+        last_updated: '2025-08-25',
+        status: 'open',
+        tags: ['regional', 'arts', 'community', 'development'],
+        requirements: ['Community consultation', 'Regional impact plan', 'Partnership agreements'],
+        success_rate: 45
+      }
+    ];
+
+    return fallbackGrants.filter(grant => {
+      if (criteria.category && grant.category !== criteria.category) return false;
+      if (criteria.location && !criteria.location.some(loc => grant.location.includes(loc))) return false;
+      if (criteria.amount_min && grant.amount.max < criteria.amount_min) return false;
+      if (criteria.amount_max && grant.amount.min > criteria.amount_max) return false;
+      if (criteria.status && grant.status !== criteria.status) return false;
+      if (criteria.industry && !criteria.industry.some(ind => grant.industry.includes(ind))) return false;
+      if (criteria.keywords) {
+        const grantText = `${grant.title} ${grant.description} ${grant.tags.join(' ')}`.toLowerCase();
+        if (!criteria.keywords.some(keyword => grantText.includes(keyword.toLowerCase()))) return false;
+      }
+      return true;
+    });
+  }
+
+  private getFallbackCategories(): string[] {
+    return [
+      'Arts Project',
+      'Indigenous Arts',
+      'Regional Arts',
+      'Music',
+      'Theatre',
+      'Visual Arts',
+      'Literature',
+      'Dance',
+      'Community Arts',
+      'Cultural Development'
+    ];
+  }
+
+  private getFallbackIndustries(): string[] {
+    return [
+      'Arts',
+      'Culture',
+      'Music',
+      'Theatre',
+      'Visual Arts',
+      'Literature',
+      'Dance',
+      'Community Development',
+      'Indigenous Arts',
+      'Regional Development'
+    ];
+  }
+
+  private getFallbackLocations(): string[] {
+    return [
+      'NSW',
+      'VIC',
+      'QLD',
+      'WA',
+      'SA',
+      'TAS',
+      'NT',
+      'ACT',
+      'Regional NSW',
+      'Regional VIC',
+      'Regional QLD',
+      'Regional WA',
+      'Regional SA',
+      'Regional TAS'
+    ];
+  }
+
+  clearCache(): void {
+    this.cache.clear();
+    monitorLogger.info('Cache cleared', 'clearCache');
+  }
+
+  getCacheStats(): { size: number; entries: string[] } {
+    return {
+      size: this.cache.size,
+      entries: Array.from(this.cache.keys())
+    };
   }
 }
 

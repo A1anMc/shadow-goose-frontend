@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getGrantsService } from '../lib/services/grants-service';
 import { ApplicationProgress, Collaborator, GrantQuestion, TeamAssignment } from '../lib/types/grants';
 
@@ -20,11 +20,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
   const [showCollaboratorModal, setShowCollaboratorModal] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<GrantQuestion | null>(null);
 
-  useEffect(() => {
-    loadProjectData();
-  }, [applicationId]);
-
-  const loadProjectData = async () => {
+  const loadProjectData = useCallback(async () => {
     try {
       setLoading(true);
       const grantsService = getGrantsService();
@@ -52,7 +48,13 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
     } finally {
       setLoading(false);
     }
-  };
+  }, [applicationId]);
+
+  useEffect(() => {
+    loadProjectData();
+  }, [loadProjectData]);
+
+
 
   const assignTeamMember = async (questionId: string, userId: number, role: string) => {
     try {

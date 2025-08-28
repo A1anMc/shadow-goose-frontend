@@ -35,7 +35,7 @@ export default function GrantsDashboard() {
 
   const grantService = useMemo(() => getGrantsService(), []);
 
-  const loadGrantsData = async () => {
+  const loadGrantsData = useCallback(async () => {
     try {
       setLoading(true);
       const grantsData = await grantService.getGrantsWithSource();
@@ -46,7 +46,7 @@ export default function GrantsDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [grantService]);
 
   const loadDashboardData = useCallback(async () => {
     try {

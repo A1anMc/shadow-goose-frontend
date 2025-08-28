@@ -1,299 +1,379 @@
-// Screen Australia API Integration
-// Senior Grants Operations Agent - Real Data Integration
+import { apiMonitor } from './api-monitor';
+import { monitorLogger } from './logger';
 
 export interface ScreenAustraliaGrant {
   id: string;
   title: string;
   description: string;
-  amount: number;
+  amount: {
+    min: number;
+    max: number;
+    currency: string;
+  };
   deadline: string;
   category: string;
-  organization: string;
-  eligibility_criteria: string[];
-  required_documents: string[];
-  success_score: number;
-  created_at: string;
-  updated_at: string;
-  data_source: 'screen_australia';
+  eligibility: string[];
+  location: string[];
+  industry: string[];
+  application_url: string;
+  contact_info: {
+    email: string;
+    phone: string;
+    website: string;
+  };
+  last_updated: string;
+  status: 'open' | 'closed' | 'upcoming';
+  tags: string[];
+  requirements: string[];
+  success_rate?: number;
 }
 
-export interface ScreenAustraliaAPIResponse {
-  funding_opportunities: ScreenAustraliaGrant[];
-  total_count: number;
-  last_updated: string;
-  api_version: string;
+export interface ScreenAustraliaResponse {
+  grants: ScreenAustraliaGrant[];
+  total: number;
+  page: number;
+  limit: number;
+  has_more: boolean;
+}
+
+export interface GrantSearchCriteria {
+  category?: string;
+  location?: string[];
+  amount_min?: number;
+  amount_max?: number;
+  deadline_after?: string;
+  deadline_before?: string;
+  industry?: string[];
+  keywords?: string[];
+  status?: 'open' | 'closed' | 'upcoming';
+  page?: number;
+  limit?: number;
 }
 
 class ScreenAustraliaAPIService {
-  private baseUrl = 'https://www.screenaustralia.gov.au/api/funding';
-  private apiKey: string;
+  private baseUrl = 'https://screen.australia.gov.au/api';
+  private apiKey: string | null = null;
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
-  private cacheTTL = 4 * 60 * 60 * 1000; // 4 hours (more frequent updates for film funding)
+  private readonly CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
   constructor() {
-    this.apiKey = process.env.NEXT_PUBLIC_SCREEN_AUSTRALIA_API_KEY || '';
+    this.initializeAPI();
   }
 
-  private async makeRequest(endpoint: string, params: Record<string, any> = {}): Promise<any> {
-    const url = new URL(`${this.baseUrl}${endpoint}`);
-    
-    // Add API key
-    url.searchParams.append('api_key', this.apiKey);
-    
-    // Add parameters
-    Object.entries(params).forEach(([key, value]) => {
-      url.searchParams.append(key, value.toString());
-    });
+  private async initializeAPI(): Promise<void> {
+    try {
+      // In a real implementation, this would be stored securely
+      this.apiKey = process.env.SCREEN_AUSTRALIA_API_KEY || null;
+      
+      if (!this.apiKey) {
+        monitorLogger.warn('Screen Australia API key not configured, using fallback data', 'initializeAPI');
+      } else {
+        monitorLogger.info('Screen Australia API initialized successfully', 'initializeAPI');
+      }
+    } catch (error) {
+      monitorLogger.error('Failed to initialize Screen Australia API', 'initializeAPI', error as Error);
+    }
+  }
+
+  private getHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if (this.apiKey) {
+      headers['Authorization'] = `Bearer ${this.apiKey}`;
+    }
+
+    return headers;
+  }
+
+  private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const cacheKey = `${endpoint}-${JSON.stringify(options)}`;
+
+    // Check cache first
+    const cached = this.cache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+      monitorLogger.debug('Returning cached data', 'makeRequest', { endpoint });
+      return cached.data;
+    }
 
     try {
-      const response = await fetch(url.toString(), {
+      const response = await fetch(url, {
+        ...options,
         headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'SGE-Grants-System/2.0.0'
-        }
+          ...this.getHeaders(),
+          ...options.headers,
+        },
       });
 
       if (!response.ok) {
-        throw new Error(`Screen Australia API error: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      
+      // Cache the response
+      this.cache.set(cacheKey, {
+        data,
+        timestamp: Date.now(),
+      });
+
+      monitorLogger.info('API request successful', 'makeRequest', { endpoint, status: response.status });
+      return data;
     } catch (error) {
-      console.error('Screen Australia API request failed:', error);
+      monitorLogger.error('API request failed', 'makeRequest', error as Error, { endpoint });
       throw error;
     }
   }
 
-  private getCacheKey(endpoint: string, params: Record<string, any>): string {
-    return `${endpoint}-${JSON.stringify(params)}`;
-  }
-
-  private isCacheValid(timestamp: number): boolean {
-    return Date.now() - timestamp < this.cacheTTL;
-  }
-
-  async getDocumentaryProductionGrants(): Promise<ScreenAustraliaGrant[]> {
-    const cacheKey = this.getCacheKey('/opportunities', { type: 'documentary_production' });
-    const cached = this.cache.get(cacheKey);
-
-    if (cached && this.isCacheValid(cached.timestamp)) {
-      return cached.data;
-    }
-
+  async getGrants(criteria: GrantSearchCriteria = {}): Promise<ScreenAustraliaResponse> {
     try {
-      const response = await this.makeRequest('/opportunities', {
-        type: 'documentary_production',
-        status: 'open',
-        limit: 30
+      // Try to get data from API monitor first
+      const apiData = await apiMonitor.getData('screen-australia-grants', { 
+        useFallback: true
       });
 
-      const grants = this.transformGrants(response.funding_opportunities || []);
-      
-      this.cache.set(cacheKey, {
-        data: grants,
-        timestamp: Date.now()
-      });
-
-      return grants;
-    } catch (error) {
-      console.error('Failed to fetch Screen Australia documentary production grants:', error);
-      return this.getFallbackDocumentaryProductionGrants();
-    }
-  }
-
-  async getDevelopmentGrants(): Promise<ScreenAustraliaGrant[]> {
-    const cacheKey = this.getCacheKey('/opportunities', { type: 'development' });
-    const cached = this.cache.get(cacheKey);
-
-    if (cached && this.isCacheValid(cached.timestamp)) {
-      return cached.data;
-    }
-
-    try {
-      const response = await this.makeRequest('/opportunities', {
-        type: 'development',
-        status: 'open',
-        limit: 30
-      });
-
-      const grants = this.transformGrants(response.funding_opportunities || []);
-      
-      this.cache.set(cacheKey, {
-        data: grants,
-        timestamp: Date.now()
-      });
-
-      return grants;
-    } catch (error) {
-      console.error('Failed to fetch Screen Australia development grants:', error);
-      return this.getFallbackDevelopmentGrants();
-    }
-  }
-
-  async getIndigenousGrants(): Promise<ScreenAustraliaGrant[]> {
-    const cacheKey = this.getCacheKey('/opportunities', { type: 'indigenous' });
-    const cached = this.cache.get(cacheKey);
-
-    if (cached && this.isCacheValid(cached.timestamp)) {
-      return cached.data;
-    }
-
-    try {
-      const response = await this.makeRequest('/opportunities', {
-        type: 'indigenous',
-        status: 'open',
-        limit: 30
-      });
-
-      const grants = this.transformGrants(response.funding_opportunities || []);
-      
-      this.cache.set(cacheKey, {
-        data: grants,
-        timestamp: Date.now()
-      });
-
-      return grants;
-    } catch (error) {
-      console.error('Failed to fetch Screen Australia indigenous grants:', error);
-      return this.getFallbackIndigenousGrants();
-    }
-  }
-
-  private transformGrants(apiGrants: any[]): ScreenAustraliaGrant[] {
-    return apiGrants.map(grant => ({
-      id: `screen-australia-${grant.id}`,
-      title: grant.title,
-      description: grant.description,
-      amount: parseFloat(grant.amount) || 0,
-      deadline: grant.deadline,
-      category: grant.category,
-      organization: 'Screen Australia',
-      eligibility_criteria: grant.eligibility_criteria || [],
-      required_documents: grant.required_documents || [],
-      success_score: this.calculateSuccessScore(grant),
-      created_at: grant.created_at,
-      updated_at: grant.updated_at,
-      data_source: 'screen_australia'
-    }));
-  }
-
-  private calculateSuccessScore(grant: any): number {
-    // Calculate success probability based on grant characteristics
-    let score = 0.5; // Base score
-
-    // Amount suitability (Screen Australia grants are typically larger)
-    const amount = parseFloat(grant.amount) || 0;
-    if (amount >= 50000 && amount <= 200000) {
-      score += 0.25;
-    } else if (amount >= 25000 && amount <= 300000) {
-      score += 0.15;
-    }
-
-    // Category alignment
-    const sgeCategories = ['documentary', 'development', 'indigenous', 'youth'];
-    if (sgeCategories.includes(grant.category)) {
-      score += 0.2;
-    }
-
-    // Geographic focus
-    if (grant.geographic_scope?.includes('Victoria') || grant.geographic_scope?.includes('Australia')) {
-      score += 0.15;
-    }
-
-    // Deadline urgency
-    const daysUntilDeadline = this.calculateDaysUntilDeadline(grant.deadline);
-    if (daysUntilDeadline >= 90) {
-      score += 0.1;
-    } else if (daysUntilDeadline >= 60) {
-      score += 0.05;
-    }
-
-    return Math.min(score, 1.0);
-  }
-
-  private calculateDaysUntilDeadline(deadline: string): number {
-    const deadlineDate = new Date(deadline);
-    const now = new Date();
-    const diffTime = deadlineDate.getTime() - now.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }
-
-  // Fallback data for when API is unavailable
-  private getFallbackDocumentaryProductionGrants(): ScreenAustraliaGrant[] {
-    return [
-      {
-        id: 'screen-australia-doc-prod-2024',
-        title: 'Screen Australia Documentary Production Funding',
-        description: 'Major funding for documentary production including feature-length and series. Ideal for SGE\'s major documentary projects on social impact and community development.',
-        amount: 100000.00,
-        deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-        category: 'documentary',
-        organization: 'Screen Australia',
-        eligibility_criteria: ['Australian production companies', 'Established filmmakers', 'Broadcaster commitment preferred'],
-        required_documents: ['Full production budget', 'Distribution strategy', 'Creative team profiles'],
-        success_score: 0.75,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'screen_australia'
+      if (apiData && apiData.grants) {
+        monitorLogger.info('Retrieved grants from API monitor', 'getGrants', { count: apiData.grants.length });
+        return apiData as ScreenAustraliaResponse;
       }
-    ];
-  }
 
-  private getFallbackDevelopmentGrants(): ScreenAustraliaGrant[] {
-    return [
-      {
-        id: 'screen-australia-dev-2024',
-        title: 'Screen Australia Development Funding',
-        description: 'Support for project development including script development, market research, and creative development.',
-        amount: 50000.00,
-        deadline: new Date(Date.now() + 75 * 24 * 60 * 60 * 1000).toISOString(),
-        category: 'development',
-        organization: 'Screen Australia',
-        eligibility_criteria: ['Australian screen practitioners', 'Strong creative team', 'Market potential'],
-        required_documents: ['Development plan', 'Creative team profiles', 'Market analysis'],
-        success_score: 0.70,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'screen_australia'
-      }
-    ];
-  }
+      // Fallback to direct API call
+      const queryParams = new URLSearchParams();
+      
+      if (criteria.category) queryParams.append('category', criteria.category);
+      if (criteria.location) queryParams.append('location', criteria.location.join(','));
+      if (criteria.amount_min) queryParams.append('amount_min', criteria.amount_min.toString());
+      if (criteria.amount_max) queryParams.append('amount_max', criteria.amount_max.toString());
+      if (criteria.deadline_after) queryParams.append('deadline_after', criteria.deadline_after);
+      if (criteria.deadline_before) queryParams.append('deadline_before', criteria.deadline_before);
+      if (criteria.industry) queryParams.append('industry', criteria.industry.join(','));
+      if (criteria.keywords) queryParams.append('keywords', criteria.keywords.join(','));
+      if (criteria.status) queryParams.append('status', criteria.status);
+      if (criteria.page) queryParams.append('page', criteria.page.toString());
+      if (criteria.limit) queryParams.append('limit', criteria.limit.toString());
 
-  private getFallbackIndigenousGrants(): ScreenAustraliaGrant[] {
-    return [
-      {
-        id: 'screen-australia-indigenous-2024',
-        title: 'Screen Australia Indigenous Funding',
-        description: 'Supporting Indigenous screen practitioners and stories that reflect Indigenous perspectives and experiences.',
-        amount: 75000.00,
-        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
-        category: 'indigenous',
-        organization: 'Screen Australia',
-        eligibility_criteria: ['Indigenous screen practitioners', 'Indigenous story focus', 'Cultural consultation'],
-        required_documents: ['Cultural consultation plan', 'Indigenous team involvement', 'Story development'],
-        success_score: 0.80,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        data_source: 'screen_australia'
-      }
-    ];
-  }
+      const endpoint = `/grants?${queryParams.toString()}`;
+      const response = await this.makeRequest<ScreenAustraliaResponse>(endpoint);
 
-  async getHealthStatus(): Promise<{ status: string; last_updated: string; api_version: string }> {
-    try {
-      const response = await this.makeRequest('/health');
+      monitorLogger.info('Retrieved grants from Screen Australia API', 'getGrants', { 
+        count: response.grants.length,
+        total: response.total 
+      });
+
+      return response;
+    } catch (error) {
+      monitorLogger.warn('Screen Australia API failed, using fallback data', 'getGrants');
+      
+      // Return fallback data
+      const fallbackGrants = await this.getFallbackGrants(criteria);
       return {
-        status: 'healthy',
-        last_updated: new Date().toISOString(),
-        api_version: response.api_version || '1.0'
-      };
-    } catch (error) {
-      return {
-        status: 'unhealthy',
-        last_updated: new Date().toISOString(),
-        api_version: 'unknown'
+        grants: fallbackGrants,
+        total: fallbackGrants.length,
+        page: 1,
+        limit: fallbackGrants.length,
+        has_more: false,
       };
     }
+  }
+
+  async getGrantById(id: string): Promise<ScreenAustraliaGrant | null> {
+    try {
+      const endpoint = `/grants/${id}`;
+      const grant = await this.makeRequest<ScreenAustraliaGrant>(endpoint);
+      
+      monitorLogger.info('Retrieved grant by ID', 'getGrantById', { id });
+      return grant;
+    } catch (error) {
+      monitorLogger.error('Failed to retrieve grant by ID', 'getGrantById', error as Error, { id });
+      return null;
+    }
+  }
+
+  async getCategories(): Promise<string[]> {
+    try {
+      const endpoint = '/categories';
+      const categories = await this.makeRequest<string[]>(endpoint);
+      
+      monitorLogger.info('Retrieved categories', 'getCategories', { count: categories.length });
+      return categories;
+    } catch (error) {
+      monitorLogger.warn('Failed to retrieve categories, using fallback', 'getCategories');
+      return this.getFallbackCategories();
+    }
+  }
+
+  async getIndustries(): Promise<string[]> {
+    try {
+      const endpoint = '/industries';
+      const industries = await this.makeRequest<string[]>(endpoint);
+      
+      monitorLogger.info('Retrieved industries', 'getIndustries', { count: industries.length });
+      return industries;
+    } catch (error) {
+      monitorLogger.warn('Failed to retrieve industries, using fallback', 'getIndustries');
+      return this.getFallbackIndustries();
+    }
+  }
+
+  async getLocations(): Promise<string[]> {
+    try {
+      const endpoint = '/locations';
+      const locations = await this.makeRequest<string[]>(endpoint);
+      
+      monitorLogger.info('Retrieved locations', 'getLocations', { count: locations.length });
+      return locations;
+    } catch (error) {
+      monitorLogger.warn('Failed to retrieve locations, using fallback', 'getLocations');
+      return this.getFallbackLocations();
+    }
+  }
+
+  private async getFallbackGrants(criteria: GrantSearchCriteria): Promise<ScreenAustraliaGrant[]> {
+    // Return realistic fallback data for Screen Australia grants
+    const fallbackGrants: ScreenAustraliaGrant[] = [
+      {
+        id: 'sa-001',
+        title: 'Screen Australia Feature Film Development',
+        description: 'Support for the development of feature films with strong commercial potential and cultural significance.',
+        amount: { min: 50000, max: 200000, currency: 'AUD' },
+        deadline: '2025-12-31',
+        category: 'Feature Film',
+        eligibility: ['Australian filmmakers', 'Production companies', 'Screenwriters'],
+        location: ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'NT', 'ACT'],
+        industry: ['Film', 'Entertainment', 'Media'],
+        application_url: 'https://screen.australia.gov.au/grants/feature-film-development',
+        contact_info: {
+          email: 'grants@screenaustralia.gov.au',
+          phone: '+61 2 8113 5800',
+          website: 'https://screen.australia.gov.au'
+        },
+        last_updated: '2025-08-27',
+        status: 'open',
+        tags: ['feature film', 'development', 'commercial'],
+        requirements: ['Detailed treatment', 'Budget breakdown', 'Market analysis'],
+        success_rate: 25
+      },
+      {
+        id: 'sa-002',
+        title: 'Documentary Production Funding',
+        description: 'Funding for documentary projects that explore Australian stories and perspectives.',
+        amount: { min: 25000, max: 150000, currency: 'AUD' },
+        deadline: '2025-11-15',
+        category: 'Documentary',
+        eligibility: ['Documentary filmmakers', 'Production companies'],
+        location: ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'NT', 'ACT'],
+        industry: ['Documentary', 'Media', 'Education'],
+        application_url: 'https://screen.australia.gov.au/grants/documentary-production',
+        contact_info: {
+          email: 'documentary@screenaustralia.gov.au',
+          phone: '+61 2 8113 5800',
+          website: 'https://screen.australia.gov.au'
+        },
+        last_updated: '2025-08-26',
+        status: 'open',
+        tags: ['documentary', 'Australian stories', 'production'],
+        requirements: ['Treatment', 'Research plan', 'Distribution strategy'],
+        success_rate: 30
+      },
+      {
+        id: 'sa-003',
+        title: 'Digital Media Innovation Grant',
+        description: 'Support for innovative digital media projects including VR, AR, and interactive content.',
+        amount: { min: 10000, max: 75000, currency: 'AUD' },
+        deadline: '2025-10-30',
+        category: 'Digital Media',
+        eligibility: ['Digital media creators', 'Technology companies', 'Content developers'],
+        location: ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'NT', 'ACT'],
+        industry: ['Digital Media', 'Technology', 'VR/AR'],
+        application_url: 'https://screen.australia.gov.au/grants/digital-media-innovation',
+        contact_info: {
+          email: 'digital@screenaustralia.gov.au',
+          phone: '+61 2 8113 5800',
+          website: 'https://screen.australia.gov.au'
+        },
+        last_updated: '2025-08-25',
+        status: 'open',
+        tags: ['digital media', 'innovation', 'VR', 'AR'],
+        requirements: ['Project proposal', 'Technical specifications', 'Market potential'],
+        success_rate: 20
+      }
+    ];
+
+    // Apply filters based on criteria
+    return fallbackGrants.filter(grant => {
+      if (criteria.category && grant.category !== criteria.category) return false;
+      if (criteria.location && !criteria.location.some(loc => grant.location.includes(loc))) return false;
+      if (criteria.amount_min && grant.amount.max < criteria.amount_min) return false;
+      if (criteria.amount_max && grant.amount.min > criteria.amount_max) return false;
+      if (criteria.status && grant.status !== criteria.status) return false;
+      if (criteria.industry && !criteria.industry.some(ind => grant.industry.includes(ind))) return false;
+      if (criteria.keywords) {
+        const grantText = `${grant.title} ${grant.description} ${grant.tags.join(' ')}`.toLowerCase();
+        if (!criteria.keywords.some(keyword => grantText.includes(keyword.toLowerCase()))) return false;
+      }
+      return true;
+    });
+  }
+
+  private getFallbackCategories(): string[] {
+    return [
+      'Feature Film',
+      'Documentary',
+      'Television',
+      'Digital Media',
+      'Short Film',
+      'Animation',
+      'Children\'s Content',
+      'Indigenous Content',
+      'Regional Content',
+      'International Co-production'
+    ];
+  }
+
+  private getFallbackIndustries(): string[] {
+    return [
+      'Film',
+      'Television',
+      'Digital Media',
+      'Animation',
+      'Documentary',
+      'Entertainment',
+      'Media',
+      'Technology',
+      'VR/AR',
+      'Content Creation'
+    ];
+  }
+
+  private getFallbackLocations(): string[] {
+    return [
+      'NSW',
+      'VIC',
+      'QLD',
+      'WA',
+      'SA',
+      'TAS',
+      'NT',
+      'ACT',
+      'National',
+      'International'
+    ];
+  }
+
+  // Cache management
+  clearCache(): void {
+    this.cache.clear();
+    monitorLogger.info('Cache cleared', 'clearCache');
+  }
+
+  getCacheStats(): { size: number; entries: string[] } {
+    return {
+      size: this.cache.size,
+      entries: Array.from(this.cache.keys())
+    };
   }
 }
 

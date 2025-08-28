@@ -1,5 +1,8 @@
 // Jest setup file
 import '@testing-library/jest-dom';
+
+// Polyfill fetch for Node.js environment
+global.fetch = require('node-fetch');
 global.console = {
   ...console,
   // Uncomment to ignore a specific log level

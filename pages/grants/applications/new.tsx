@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import GrantProjectManager from "../../../src/components/GrantProjectManager";
 import GrantWritingAssistant from "../../../src/components/GrantWritingAssistant";
 import { aiWritingAssistant } from "../../../src/lib/ai-writing-assistant";
@@ -89,26 +89,7 @@ export default function NewGrantApplication() {
   const [aiEnabled, setAiEnabled] = useState(true);
   const [smartSuggestions, setSmartSuggestions] = useState<Record<string, string[]>>({});
 
-  useEffect(() => {
-    if (grantId && typeof grantId === "string") {
-      loadGrantData(grantId);
-    }
-  }, [grantId]);
-
-  useEffect(() => {
-    // Calculate completion progress
-    const fields = Object.values(application);
-    const completedFields = fields.filter(field => field.trim().length > 0).length;
-    const progress = Math.round((completedFields / fields.length) * 100);
-    setCompletionProgress(progress);
-
-    // Generate writing tips based on grant type
-    if (grant) {
-      generateWritingTips();
-    }
-  }, [application, grant]);
-
-  const loadGrantData = async (id: string | number) => {
+  const loadGrantData = useCallback(async (id: string | number) => {
     try {
       setLoading(true);
       const grantsService = getGrantsService();
@@ -126,7 +107,42 @@ export default function NewGrantApplication() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  const generateWritingTips = useCallback(() => {
+    if (!grant) return;
+
+    const tips = [
+      "Use specific, measurable objectives with clear timelines",
+      "Include quantifiable outcomes and impact metrics",
+      "Demonstrate alignment with grant requirements",
+      "Show evidence of community need and support",
+      "Provide detailed budget breakdown with justification",
+      "Address potential risks and mitigation strategies",
+      "Explain how the project will be sustainable beyond funding"
+    ];
+
+    setWritingTips(tips);
+  }, [grant]);
+
+  useEffect(() => {
+    if (grantId && typeof grantId === "string") {
+      loadGrantData(grantId);
+    }
+  }, [grantId, loadGrantData]);
+
+  useEffect(() => {
+    // Calculate completion progress
+    const fields = Object.values(application);
+    const completedFields = fields.filter(field => field.trim().length > 0).length;
+    const progress = Math.round((completedFields / fields.length) * 100);
+    setCompletionProgress(progress);
+
+    // Generate writing tips based on grant type
+    if (grant) {
+      generateWritingTips();
+    }
+  }, [application, grant, generateWritingTips]);
 
   const prefillSmartSuggestions = (grantData: Grant) => {
     const category = grantData.category;
@@ -150,22 +166,6 @@ export default function NewGrantApplication() {
         sustainability: [template.sections.sustainability]
       });
     }
-  };
-
-  const generateWritingTips = () => {
-    if (!grant) return;
-
-    const tips = [
-      "Use specific, measurable objectives with clear timelines",
-      "Include quantifiable outcomes and impact metrics",
-      "Demonstrate alignment with grant requirements",
-      "Show evidence of community need and support",
-      "Provide detailed budget breakdown with justification",
-      "Address potential risks and mitigation strategies",
-      "Explain how the project will be sustainable beyond funding"
-    ];
-
-    setWritingTips(tips);
   };
 
   const applyTemplate = (templateKey: string) => {
