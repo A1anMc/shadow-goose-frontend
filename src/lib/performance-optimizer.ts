@@ -208,4 +208,5 @@ class PerformanceOptimizer {
 export const performanceOptimizer = new PerformanceOptimizer();
 
 // Export types
-export type { PerformanceMetrics, CacheEntry };
+export type { CacheEntry, PerformanceMetrics };
+

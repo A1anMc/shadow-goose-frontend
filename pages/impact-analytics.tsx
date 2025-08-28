@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { getBranding } from "../src/lib/branding";
 import { authService, User } from "../src/lib/auth";
 import { analyticsService, RealTimeMetric } from "../src/lib/analytics";
+import { impactMeasurementService } from "../src/lib/impact-measurement-service";
+import { SDG_GOALS, VICTORIAN_OUTCOMES, CEMP_PRINCIPLES } from "../src/lib/types/impact-frameworks";
 
 interface ImpactStory {
   id: string;
@@ -38,6 +40,8 @@ export default function ImpactAnalytics() {
     "overview" | "stories" | "metrics" | "analysis"
   >("overview");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [activeFramework, setActiveFramework] = useState<'SDG' | 'Victorian' | 'CEMP'>('SDG');
+  const [frameworkData, setFrameworkData] = useState<any>(null);
 
   useEffect(() => {
     // Check authentication
@@ -52,6 +56,10 @@ export default function ImpactAnalytics() {
     loadImpactAnalytics();
   }, [router]);
 
+  useEffect(() => {
+    loadFrameworkData();
+  }, [activeFramework]);
+
   const loadImpactAnalytics = async () => {
     try {
       setLoading(true);
@@ -62,6 +70,9 @@ export default function ImpactAnalytics() {
       ]);
 
       setMetrics(metricsData);
+
+      // Load framework data
+      loadFrameworkData();
 
       // Mock impact stories data
       setImpactStories([
@@ -181,6 +192,25 @@ export default function ImpactAnalytics() {
     }
   };
 
+  const loadFrameworkData = async () => {
+    try {
+      // Load framework data based on active framework
+      switch (activeFramework) {
+        case 'SDG':
+          setFrameworkData(SDG_GOALS);
+          break;
+        case 'Victorian':
+          setFrameworkData(VICTORIAN_OUTCOMES);
+          break;
+        case 'CEMP':
+          setFrameworkData(CEMP_PRINCIPLES);
+          break;
+      }
+    } catch (error) {
+      console.error('Error loading framework data:', error);
+    }
+  };
+
   const handleLogout = () => {
     authService.logout();
     router.push("/login");
@@ -295,12 +325,13 @@ export default function ImpactAnalytics() {
               { id: "stories", label: "Impact Stories" },
               { id: "metrics", label: "Impact Metrics" },
               { id: "analysis", label: "Deep Analysis" },
+              { id: "frameworks", label: "Frameworks" },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() =>
                   setActiveTab(
-                    tab.id as "overview" | "stories" | "metrics" | "analysis",
+                    tab.id as "overview" | "stories" | "metrics" | "analysis" | "frameworks",
                   )
                 }
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -730,6 +761,135 @@ export default function ImpactAnalytics() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Frameworks Tab */}
+        {activeTab === "frameworks" && (
+          <div className="space-y-6">
+            {/* Framework Selection */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex space-x-4 mb-6">
+                <button
+                  onClick={() => setActiveFramework('SDG')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    activeFramework === 'SDG'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Sustainable Development Goals (SDGs)
+                </button>
+                <button
+                  onClick={() => setActiveFramework('Victorian')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    activeFramework === 'Victorian'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Victorian Government Outcomes
+                </button>
+                <button
+                  onClick={() => setActiveFramework('CEMP')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    activeFramework === 'CEMP'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Community Engagement (CEMP)
+                </button>
+              </div>
+
+              {/* Framework Content */}
+              <div className="space-y-6">
+                {activeFramework === 'SDG' && (
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                      Sustainable Development Goals Alignment
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {frameworkData?.map((goal: any) => (
+                        <div key={goal.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <span className="text-2xl">{goal.icon}</span>
+                            <div>
+                              <h4 className="font-semibold text-gray-900">{goal.code}</h4>
+                              <p className="text-sm text-gray-600">{goal.title}</p>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-700 mb-3">{goal.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500">Targets: {goal.targets.length}</span>
+                            <span className="text-xs text-gray-500">Indicators: {goal.indicators.length}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeFramework === 'Victorian' && (
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                      Victorian Government Outcomes Framework
+                    </h3>
+                    <div className="space-y-4">
+                      {frameworkData?.map((outcome: any) => (
+                        <div key={outcome.id} className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-semibold text-gray-900">{outcome.code}</h4>
+                            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                              {outcome.department}
+                            </span>
+                          </div>
+                          <h5 className="font-medium text-gray-800 mb-1">{outcome.title}</h5>
+                          <p className="text-sm text-gray-600 mb-3">{outcome.description}</p>
+                          <div className="space-y-2">
+                            {outcome.indicators.map((indicator: any) => (
+                              <div key={indicator.id} className="text-sm text-gray-700">
+                                <span className="font-medium">{indicator.code}:</span> {indicator.description}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeFramework === 'CEMP' && (
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                      Community Engagement Measurement Protocol (CEMP)
+                    </h3>
+                    <div className="space-y-4">
+                      {frameworkData?.map((principle: any) => (
+                        <div key={principle.id} className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-semibold text-gray-900">{principle.code}</h4>
+                            <span className="text-sm text-gray-500 bg-blue-100 px-2 py-1 rounded">
+                              Weight: {principle.weight}/10
+                            </span>
+                          </div>
+                          <h5 className="font-medium text-gray-800 mb-1">{principle.title}</h5>
+                          <p className="text-sm text-gray-600 mb-3">{principle.description}</p>
+                          <div className="space-y-2">
+                            {principle.indicators.map((indicator: any) => (
+                              <div key={indicator.id} className="text-sm text-gray-700">
+                                <span className="font-medium">{indicator.code}:</span> {indicator.description}
+                                <span className="text-gray-500 ml-2">({indicator.unit})</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
