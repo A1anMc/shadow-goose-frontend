@@ -132,6 +132,12 @@ export default function Dashboard() {
                 >
                   New Project
                 </Link>
+                <Link
+                  href="/relationships"
+                  className="text-gray-600 hover:text-sg-primary transition-colors"
+                >
+                  Relationships
+                </Link>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
