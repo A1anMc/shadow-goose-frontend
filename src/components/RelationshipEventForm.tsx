@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { relationshipService } from '../lib/relationship-service';
 import {
-  RelationshipEventForm as EventFormData,
-  StakeholderProfile,
-  RelationshipTag,
-  InteractionQuality,
-  RelationshipStage,
-  StakeholderType,
-  StakeholderCategory,
-  PriorityLevel,
-  ContactDetails
+    ContactDetails,
+    RelationshipEventForm as EventFormData,
+    InteractionQuality,
+    PriorityLevel,
+    RelationshipStage,
+    RelationshipTag,
+    StakeholderProfile
 } from '../lib/types/relationship-types';
 
 interface RelationshipEventFormProps {
