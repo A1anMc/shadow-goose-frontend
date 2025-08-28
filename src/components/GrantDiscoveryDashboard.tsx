@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DiscoveryResult, grantDiscoveryEngine, GrantMatch, GrantMatchingCriteria } from '../lib/grant-discovery-engine';
 import { monitorLogger } from '../lib/logger';
 
