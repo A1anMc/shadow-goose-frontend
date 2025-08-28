@@ -78,14 +78,7 @@ jobs:
       - name: Parse coverage
         run: |
           if [ -f "cov/coverage.xml" ]; then
-            python - <<'PY'
-import xml.etree.ElementTree as ET, sys
-t=ET.parse('cov/coverage.xml').getroot()
-rate=float(t.attrib.get('line-rate', '0'))
-threshold=0.80
-print(f"backend coverage {rate:.2%} threshold {threshold:.0%}")
-sys.exit(0 if rate>=threshold else 1)
-PY
+            python scripts/parse_coverage.py
           else
             echo "No coverage file found - skipping backend coverage check"
           fi
