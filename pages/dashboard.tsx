@@ -118,7 +118,7 @@ export default function Dashboard() {
                   href="/impact-analytics"
                   className="text-gray-600 hover:text-sg-primary transition-colors"
                 >
-                  Impact Analytics
+                  🎯 Impact Analytics
                 </Link>
                 <Link
                   href="/teams"
