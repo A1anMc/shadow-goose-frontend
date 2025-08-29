@@ -3,13 +3,13 @@
  * Provides advanced mathematical capabilities for impact forecasting
  */
 
+import { MathematicalEngineConfig } from './interfaces';
 import { BayesCalculatorImpl } from './stubs/bayes-calculator';
-import { SensitivityAnalyzerImpl } from './stubs/sensitivity-analyzer';
-import { DecisionOptimizerImpl } from './stubs/decision-optimizer';
 import { CalibrationEngineImpl } from './stubs/calibration-engine';
 import { CausalAnalyzerImpl } from './stubs/causal-analyzer';
+import { DecisionOptimizerImpl } from './stubs/decision-optimizer';
 import { PortfolioOptimizerImpl } from './stubs/portfolio-optimizer';
-import { MathematicalEngineConfig } from './interfaces';
+import { SensitivityAnalyzerImpl } from './stubs/sensitivity-analyzer';
 
 export class MathematicalEngine {
   private bayesCalculator: BayesCalculatorImpl;
