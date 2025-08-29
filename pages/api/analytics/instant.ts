@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+import { logger } from '../../lib/logger';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -9,7 +10,7 @@ const pool = new Pool({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const { time_range = '24h' } = req.query;
+      const { _time_range = '24h' } = req.query;
       
       // Mock Instant Analytics data (replace with actual API integration)
       const mockData = {
@@ -54,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ data: mockData });
     } catch (error) {
-      console.error('Error fetching Instant Analytics data:', error);
+      logger.error('Error fetching Instant Analytics data', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else if (req.method === 'POST') {
@@ -82,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(201).json({ data: result.rows[0] });
     } catch (error) {
-      console.error('Error tracking Instant Analytics event:', error);
+      logger.error('Error tracking Instant Analytics event', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else {

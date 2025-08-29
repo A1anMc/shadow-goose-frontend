@@ -87,7 +87,7 @@ export default function AIAnalytics() {
       const grantsService = getGrantsService();
       const grantsData = await grantsService.getGrantsWithSource();
       setGrants(grantsData.data);
-    } catch (error) {
+    } catch (_error) {
       setError('Failed to load grants data');
     } finally {
       setLoading(false);
@@ -180,7 +180,7 @@ export default function AIAnalytics() {
 
       const analysisResult = await aiGrantAnalyzer.analyzeGrant(grant, userProfile);
       setAnalysis(analysisResult);
-    } catch (error) {
+    } catch (_error) {
       setError('AI analysis failed');
     } finally {
       setLoading(false);

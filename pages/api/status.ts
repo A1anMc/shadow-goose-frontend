@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).json(statusResponse);
   } catch (error) {
-    console.error('Status check error:', error);
+    logger.error('Status check error', { error: error instanceof Error ? error.message : String(error) });
     res.status(500).json({ 
       error: 'Internal server error',
       status: 'unhealthy',

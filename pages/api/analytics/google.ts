@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+import { logger } from '../../lib/logger';
 
-const pool = new Pool({
+const _pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
@@ -9,7 +10,7 @@ const pool = new Pool({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-      const { start_date, end_date, metrics } = req.body;
+      const { start_date, end_date, _metrics } = req.body;
       
       // Mock Google Analytics data (replace with actual API integration)
       const mockData = {
@@ -117,7 +118,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ data: mockData });
     } catch (error) {
-      console.error('Error fetching Google Analytics data:', error);
+      logger.error('Error fetching Google Analytics data', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else {
