@@ -1,4 +1,4 @@
-import { authLogger } from './logger';
+import { logger } from './logger';
 
 export interface User {
   id: number;
@@ -63,7 +63,7 @@ class AuthService {
         localStorage.setItem(this.tokenExpiryKey, expiryTime.toString());
       }
     } catch (error) {
-      authLogger.error('Failed to save token', 'saveToken', error as Error);
+      logger.error('Failed to save token', 'saveToken', error as Error);
     }
   }
 
@@ -74,7 +74,7 @@ class AuthService {
         localStorage.setItem(this.userKey, JSON.stringify(user));
       }
     } catch (error) {
-      authLogger.error('Failed to save user', 'saveUser', error as Error);
+      logger.error('Failed to save user', 'saveUser', error as Error);
     }
   }
 
@@ -87,7 +87,7 @@ class AuthService {
         localStorage.removeItem(this.tokenExpiryKey);
       }
     } catch (error) {
-      authLogger.error('Failed to logout', 'logout', error as Error);
+      logger.error('Failed to logout', 'logout', error as Error);
     }
   }
 
@@ -99,7 +99,7 @@ class AuthService {
         return userData ? JSON.parse(userData) : null;
       }
     } catch (error) {
-      authLogger.error('Failed to retrieve user data', 'getCurrentUser', error as Error);
+      logger.error('Failed to retrieve user data', 'getCurrentUser', error as Error);
     }
     return null;
   }
@@ -147,7 +147,7 @@ class AuthService {
         }
       }
     } catch (error) {
-      authLogger.error('Token expiry check failed', 'isTokenExpired', error as Error);
+      logger.error('Token expiry check failed', 'isTokenExpired', error as Error);
       return false;
     }
 
@@ -175,7 +175,7 @@ class AuthService {
 
     // Validate token format before making request
     if (!this.isValidTokenFormat(token)) {
-      authLogger.warn('Invalid token format detected, logging out user', 'authenticatedRequest');
+      logger.warn('Invalid token format detected, logging out user', 'authenticatedRequest');
       this.logout();
       throw new Error('Invalid authentication token. Please login again.');
     }
@@ -194,7 +194,7 @@ class AuthService {
 
       // Handle different error status codes properly
       if (response.status === 401) {
-        authLogger.info('Token expired or invalid, logging out user', 'authenticatedRequest');
+        logger.info('Token expired or invalid, logging out user', 'authenticatedRequest');
         this.logout();
         throw new Error('Authentication token expired. Please login again.');
       }

@@ -2,7 +2,7 @@
 // Provides graceful degradation strategies for various failure scenarios
 // Ensures system remains functional even when components fail
 
-import { errorLogger } from './logger';
+import { logger } from './logger';
 
 export interface RecoveryStrategy {
   name: string;
@@ -139,7 +139,7 @@ class ErrorRecoveryService {
       retryCount: 0
     };
 
-    errorLogger.info('Starting error recovery', 'attemptRecovery', {
+    logger.info('Starting error recovery', {
       service: context.service,
       operation: context.operation,
       errorMessage: error.message
@@ -149,7 +149,7 @@ class ErrorRecoveryService {
     const strategy = this.determineStrategy(error, recoveryContext);
 
     if (!strategy) {
-      errorLogger.warn('No recovery strategy found', 'attemptRecovery', {
+      logger.warn('No recovery strategy found', {
         service: context.service,
         operation: context.operation,
         errorType: error.constructor.name
@@ -203,7 +203,7 @@ class ErrorRecoveryService {
     const startTime = Date.now();
     let lastError: Error | undefined;
 
-    errorLogger.info('Executing recovery strategy', 'executeStrategy', {
+    logger.info('Executing recovery strategy', {
       strategy: strategy.name,
       service: context.service,
       operation: context.operation
@@ -225,7 +225,7 @@ class ErrorRecoveryService {
 
           this.addToHistory(recoveryResult);
 
-          errorLogger.info('Recovery successful', 'executeStrategy', {
+          logger.info('Recovery successful', {
             strategy: strategy.name,
             retryCount: attempt,
             recoveryTime: recoveryResult.recoveryTime
@@ -240,7 +240,7 @@ class ErrorRecoveryService {
         lastError = error as Error;
         context.retryCount = attempt;
 
-        errorLogger.warn('Recovery attempt failed', 'executeStrategy', {
+        logger.warn('Recovery attempt failed', {
           strategy: strategy.name,
           attempt: attempt + 1,
           maxRetries: strategy.maxRetries,
@@ -265,11 +265,11 @@ class ErrorRecoveryService {
 
     this.addToHistory(recoveryResult);
 
-    errorLogger.error('Recovery failed after all attempts', 'executeStrategy', lastError as Error, {
+    logger.error('Recovery failed after all attempts', {
       strategy: strategy.name,
       retryCount: strategy.maxRetries,
       recoveryTime: recoveryResult.recoveryTime
-    });
+    }, lastError as Error);
 
     return recoveryResult;
   }
@@ -409,7 +409,7 @@ class ErrorRecoveryService {
   // Clear recovery history
   clearHistory(): void {
     this.recoveryHistory = [];
-    errorLogger.info('Recovery history cleared', 'clearHistory');
+    logger.info('Recovery history cleared', 'clearHistory');
   }
 }
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { logger } from '../lib/logger';
 import { getGrantsService } from '../lib/services/grants-service';
 import { ApplicationProgress, Collaborator, GrantQuestion, TeamAssignment } from '../lib/types/grants';
 
@@ -44,7 +45,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
       setProgress(progressData);
       setAvailableTeamMembers(teamMembersData);
     } catch (error) {
-      console.error('Error loading project data:', error);
+      logger.error('Error loading project data', { error: error instanceof Error ? error.message : String(error) });
     } finally {
       setLoading(false);
     }
@@ -72,7 +73,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
         onUpdate();
       }
     } catch (error) {
-      console.error('Error assigning team member:', error);
+      logger.error('Error assigning team member', { error: error instanceof Error ? error.message : String(error) });
     }
   };
 
@@ -91,7 +92,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
         onUpdate();
       }
     } catch (error) {
-      console.error('Error inviting collaborator:', error);
+      logger.error('Error inviting collaborator', { error: error instanceof Error ? error.message : String(error) });
     }
   };
 
@@ -106,7 +107,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
         onUpdate();
       }
     } catch (error) {
-      console.error('Error updating question answer:', error);
+      logger.error('Error updating question answer', { error: error instanceof Error ? error.message : String(error) });
     }
   };
 

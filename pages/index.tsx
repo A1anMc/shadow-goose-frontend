@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { authService } from "../src/lib/auth";
 import { getBranding } from "../src/lib/branding";
+import { logger } from "../src/lib/logger";
 
 export default function Home() {
   const router = useRouter();
@@ -16,17 +17,17 @@ export default function Home() {
         await new Promise(resolve => setTimeout(resolve, 100));
 
         const isAuthenticated = authService.isAuthenticated();
-        console.log("Authentication check:", isAuthenticated);
+        logger.info("Authentication check", { isAuthenticated });
 
         if (isAuthenticated) {
-          console.log("Redirecting to dashboard...");
+          logger.info("Redirecting to dashboard");
           router.push("/dashboard");
         } else {
-          console.log("Redirecting to login...");
+          logger.info("Redirecting to login");
           router.push("/login");
         }
       } catch (error) {
-        console.error("Auth check error:", error);
+        logger.error("Auth check error", { error: error instanceof Error ? error.message : String(error) });
         setError("Authentication check failed. Please refresh the page.");
         // Fallback to login page
         router.push("/login");

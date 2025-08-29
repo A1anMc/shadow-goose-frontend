@@ -22,10 +22,9 @@ describe('RelationshipEventForm', () => {
   it('renders the form with all required fields', () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
@@ -41,14 +40,13 @@ describe('RelationshipEventForm', () => {
   it('allows adding discussion points', () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
-    const addButton = screen.getByText('Add Discussion Point');
+    const addButton = screen.getByText('+ Add Discussion Point');
     fireEvent.click(addButton);
 
     expect(screen.getByPlaceholderText(/enter discussion point/i)).toBeInTheDocument();
@@ -57,14 +55,13 @@ describe('RelationshipEventForm', () => {
   it('allows adding follow-up actions', () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
-    const addButton = screen.getByText('Add Follow-up Action');
+    const addButton = screen.getByText('+ Add Follow-up Action');
     fireEvent.click(addButton);
 
     expect(screen.getByPlaceholderText(/enter follow-up action/i)).toBeInTheDocument();
@@ -73,10 +70,9 @@ describe('RelationshipEventForm', () => {
   it('validates required fields on submit', async () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
@@ -92,22 +88,11 @@ describe('RelationshipEventForm', () => {
   });
 
   it('submits form with valid data', async () => {
-    const stakeholders = [
-      { id: 1, name: 'John Doe', organization: 'Test Corp' },
-      { id: 2, name: 'Jane Smith', organization: 'Test Inc' },
-    ];
-
-    const tags = [
-      { id: 1, name: 'Important', color: 'red' },
-      { id: 2, name: 'Follow-up', color: 'blue' },
-    ];
-
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={stakeholders}
-        tags={tags}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
@@ -147,10 +132,9 @@ describe('RelationshipEventForm', () => {
   it('handles form cancellation', () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
@@ -161,18 +145,11 @@ describe('RelationshipEventForm', () => {
   });
 
   it('allows selecting multiple tags', () => {
-    const tags = [
-      { id: 1, name: 'Important', color: 'red' },
-      { id: 2, name: 'Follow-up', color: 'blue' },
-      { id: 3, name: 'Urgent', color: 'yellow' },
-    ];
-
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={tags}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
@@ -194,10 +171,9 @@ describe('RelationshipEventForm', () => {
   it('updates health score display', () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
@@ -209,35 +185,31 @@ describe('RelationshipEventForm', () => {
     expect(healthScoreDisplay).toHaveTextContent('85');
   });
 
-  it('allows adding contact details', () => {
+  it('displays contact details fields', () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
-    const addContactButton = screen.getByText('Add Contact Detail');
-    fireEvent.click(addContactButton);
-
-    expect(screen.getByPlaceholderText(/contact name/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/contact email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/phone/i)).toBeInTheDocument();
   });
 
   it('removes discussion points when delete button is clicked', () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
     // Add a discussion point
-    const addButton = screen.getByText('Add Discussion Point');
+    const addButton = screen.getByText('+ Add Discussion Point');
     fireEvent.click(addButton);
 
     const discussionInput = screen.getByPlaceholderText(/enter discussion point/i);
@@ -253,18 +225,13 @@ describe('RelationshipEventForm', () => {
   it('validates email format in contact details', async () => {
     render(
       <RelationshipEventForm
-        onSubmit={mockOnSubmit}
-        onCancel={mockOnCancel}
-        stakeholders={[]}
-        tags={[]}
+        isOpen={true}
+        onClose={mockOnCancel}
+        onSuccess={mockOnSubmit}
       />
     );
 
-    // Add contact detail
-    const addContactButton = screen.getByText('Add Contact Detail');
-    fireEvent.click(addContactButton);
-
-    const emailInput = screen.getByPlaceholderText(/contact email/i);
+    const emailInput = screen.getByLabelText(/email/i);
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
 
     const submitButton = screen.getByText('Log Event');

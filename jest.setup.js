@@ -2,7 +2,11 @@
 import '@testing-library/jest-dom';
 
 // Polyfill fetch for Node.js environment
-global.fetch = require('node-fetch');
+global.fetch = () => Promise.resolve({
+  ok: true,
+  json: () => Promise.resolve({}),
+  text: () => Promise.resolve(''),
+});
 global.console = {
   ...console,
   // Uncomment to ignore a specific log level

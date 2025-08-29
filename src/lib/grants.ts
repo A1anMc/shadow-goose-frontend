@@ -6,7 +6,7 @@ import { externalGrantsService } from './external-grants-service';
 import { fallbackAPI } from './fallback-api';
 import { liveDataMonitor } from './live-data-monitor';
 import { liveDataValidator } from './live-data-validator';
-import { grantsLogger } from './logger';
+import { logger } from './logger';
 import { successRateMonitor } from './success-rate-monitor';
 
 // Import standardized types
@@ -93,14 +93,14 @@ export class GrantService {
    * Get grants with comprehensive API monitoring and fallback system
    */
   async getGrants(): Promise<Grant[]> {
-    grantsLogger.info('Starting grants fetch with API monitoring', 'getGrants');
+    logger.info('Starting grants fetch with API monitoring', 'getGrants');
 
     try {
       // Use API monitor to get data with fallback
       const apiData = await apiMonitor.getData('grants', { useFallback: true });
 
       if (apiData && apiData.grants) {
-        grantsLogger.info('Successfully fetched grants from API monitor', 'getGrants', {
+        logger.info('Successfully fetched grants from API monitor', {
           grantCount: apiData.grants.length,
           dataSource: apiData.data_source || 'api'
         });
@@ -109,10 +109,10 @@ export class GrantService {
       }
 
       // If API monitor fails, use fallback API
-      grantsLogger.warn('API monitor failed, using fallback API', 'getGrants');
+      logger.warn('API monitor failed, using fallback API', 'getGrants');
       const fallbackData = await fallbackAPI.getRealGrants();
 
-      grantsLogger.info('Successfully fetched grants from fallback API', 'getGrants', {
+      logger.info('Successfully fetched grants from fallback API', {
         grantCount: fallbackData.grants.length,
         dataSource: fallbackData.data_source
       });

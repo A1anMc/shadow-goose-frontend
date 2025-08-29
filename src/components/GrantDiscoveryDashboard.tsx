@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DiscoveryResult, grantDiscoveryEngine, GrantMatch, GrantMatchingCriteria } from '../lib/grant-discovery-engine';
-import { monitorLogger } from '../lib/logger';
+import { logger } from '../lib/logger';
 
 interface GrantDiscoveryDashboardProps {
   className?: string;
@@ -41,7 +41,7 @@ export default function GrantDiscoveryDashboard({ className = '' }: GrantDiscove
       setIndustries(industriesData);
       setLocations(locationsData);
     } catch (error) {
-      monitorLogger.error('Failed to load filter options', 'loadFilterOptions', error as Error);
+      logger.error('Failed to load filter options', 'loadFilterOptions', error as Error);
     }
   };
 
@@ -52,13 +52,13 @@ export default function GrantDiscoveryDashboard({ className = '' }: GrantDiscove
     try {
       const result = await grantDiscoveryEngine.discoverGrants(searchCriteria);
       setDiscoveryResult(result);
-      monitorLogger.info('Grant discovery search completed', 'handleSearch', {
+      logger.info('Grant discovery search completed', {
         matchesFound: result.matches.length,
         searchTime: result.searchTime
       });
     } catch (error) {
       setError('Failed to search for grants. Please try again.');
-      monitorLogger.error('Grant discovery search failed', 'handleSearch', error as Error);
+      logger.error('Grant discovery search failed', 'handleSearch', error as Error);
     } finally {
       setIsLoading(false);
     }

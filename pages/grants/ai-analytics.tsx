@@ -18,14 +18,15 @@ export default function AIAnalytics() {
     successRate: 0,
   });
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
+    const currentRef = animationRef.current;
     loadGrantsData();
     startRealTimeUpdates();
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
+      if (currentRef) {
+        cancelAnimationFrame(currentRef);
       }
     };
   }, []);
@@ -87,7 +88,6 @@ export default function AIAnalytics() {
       const grantsData = await grantsService.getGrantsWithSource();
       setGrants(grantsData.data);
     } catch (error) {
-      console.error('Error loading grants:', error);
       setError('Failed to load grants data');
     } finally {
       setLoading(false);

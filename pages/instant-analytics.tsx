@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { getBranding } from "../src/lib/branding";
-import { authService, User } from "../src/lib/auth";
+import { useEffect, useState } from "react";
 import { analyticsService, RealTimeMetric } from "../src/lib/analytics";
+import { authService, User } from "../src/lib/auth";
+import { getBranding } from "../src/lib/branding";
 
 export default function InstantAnalytics() {
   const router = useRouter();
   const branding = getBranding();
   const [user, setUser] = useState<User | null>(null);
-  const [metrics, setMetrics] = useState<RealTimeMetric[]>([]);
+  const [metrics, setMetrics] = useState<RealTimeMetric | null>(null);
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [selectedTimeframe, setSelectedTimeframe] = useState<
@@ -69,8 +69,8 @@ export default function InstantAnalytics() {
   };
 
   const getMetricStatus = (metric: RealTimeMetric) => {
-    // const value = metric.value;
-    const change = metric.changePercent;
+    // Use conversion_rate as the change indicator
+    const change = metric.conversion_rate * 100;
 
     if (change > 5) return "excellent";
     if (change > 0) return "good";
@@ -93,7 +93,7 @@ export default function InstantAnalytics() {
     }
   };
 
-  if (loading && metrics.length === 0) {
+  if (loading && metrics === null) {
     return (
       <div className="min-h-screen bg-sg-background flex items-center justify-center">
         <div className="text-center">
@@ -204,47 +204,63 @@ export default function InstantAnalytics() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         {/* Instant Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {metrics.map((metric) => (
-            <div
-              key={metric.id}
-              className={`bg-white p-6 rounded-lg shadow-sm border-2 transition-all duration-300 hover:shadow-md ${getStatusColor(getMetricStatus(metric))}`}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">{metric.name}</h3>
-                <div className="flex items-center space-x-2">
-                  <span className="text-2xl">{getTrendIcon(metric.trend)}</span>
-                  <span
-                    className={`text-sm font-medium ${getTrendColor(metric.trend, metric.changePercent)}`}
-                  >
-                    {metric.changePercent >= 0 ? "+" : ""}
-                    {metric.changePercent}%
-                  </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {metrics && (
+            <>
+              <div className="bg-white p-6 rounded-lg shadow-sm border-2 transition-all duration-300 hover:shadow-md">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Active Users</h3>
+                </div>
+                <div className="mb-4">
+                  <p className="text-3xl font-bold">
+                    {metrics.active_users.toLocaleString()}
+                  </p>
+                  <p className="text-sm opacity-75">
+                    Current active users
+                  </p>
                 </div>
               </div>
-
-              <div className="mb-4">
-                <p className="text-3xl font-bold">
-                  {metric.value.toLocaleString()} {metric.unit}
-                </p>
-                <p className="text-sm opacity-75">
-                  {metric.changePercent >= 0 ? "Increased" : "Decreased"} from
-                  last period
-                </p>
+              <div className="bg-white p-6 rounded-lg shadow-sm border-2 transition-all duration-300 hover:shadow-md">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Page Views</h3>
+                </div>
+                <div className="mb-4">
+                  <p className="text-3xl font-bold">
+                    {metrics.page_views.toLocaleString()}
+                  </p>
+                  <p className="text-sm opacity-75">
+                    Total page views
+                  </p>
+                </div>
               </div>
-
-              <div className="flex items-center justify-between text-xs">
-                <span>
-                  Updated: {new Date(metric.lastUpdated).toLocaleTimeString()}
-                </span>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(getMetricStatus(metric))}`}
-                >
-                  {getMetricStatus(metric).replace("-", " ").toUpperCase()}
-                </span>
+              <div className="bg-white p-6 rounded-lg shadow-sm border-2 transition-all duration-300 hover:shadow-md">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Conversion Rate</h3>
+                </div>
+                <div className="mb-4">
+                  <p className="text-3xl font-bold">
+                    {(metrics.conversion_rate * 100).toFixed(1)}%
+                  </p>
+                  <p className="text-sm opacity-75">
+                    Success rate
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+              <div className="bg-white p-6 rounded-lg shadow-sm border-2 transition-all duration-300 hover:shadow-md">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Avg Session</h3>
+                </div>
+                <div className="mb-4">
+                  <p className="text-3xl font-bold">
+                    {Math.round(metrics.average_session_duration / 60)}m
+                  </p>
+                  <p className="text-sm opacity-75">
+                    Average session duration
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Real-Time Activity Feed */}
@@ -256,31 +272,58 @@ export default function InstantAnalytics() {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              {metrics.slice(0, 5).map((metric, index) => (
-                <div
-                  key={index}
-                  className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
-                >
-                  <div
-                    className={`w-3 h-3 rounded-full ${getTrendColor(metric.trend, metric.changePercent).replace("text-", "bg-")}`}
-                  ></div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{metric.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {metric.value.toLocaleString()} {metric.unit}
-                      <span
-                        className={`ml-2 ${getTrendColor(metric.trend, metric.changePercent)}`}
-                      >
-                        ({metric.changePercent >= 0 ? "+" : ""}
-                        {metric.changePercent}%)
-                      </span>
-                    </p>
+              {metrics && (
+                <>
+                  <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">Active Users</p>
+                      <p className="text-sm text-gray-600">
+                        {metrics.active_users.toLocaleString()} users
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {new Date().toLocaleTimeString()}
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(metric.lastUpdated).toLocaleTimeString()}
+                  <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">Page Views</p>
+                      <p className="text-sm text-gray-600">
+                        {metrics.page_views.toLocaleString()} views
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {new Date().toLocaleTimeString()}
+                    </div>
                   </div>
-                </div>
-              ))}
+                  <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">Conversion Rate</p>
+                      <p className="text-sm text-gray-600">
+                        {(metrics.conversion_rate * 100).toFixed(1)}%
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {new Date().toLocaleTimeString()}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">Avg Session</p>
+                      <p className="text-sm text-gray-600">
+                        {Math.round(metrics.average_session_duration / 60)}m
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {new Date().toLocaleTimeString()}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

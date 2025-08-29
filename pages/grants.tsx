@@ -89,7 +89,7 @@ export default function Grants() {
 
   // Enhanced filtering and sorting
   const filteredAndSortedGrants = useMemo(() => {
-    let filtered = grants.filter(grant => {
+    const filtered = grants.filter(grant => {
       // Category filter
       if (searchFilters.category && grant.category !== searchFilters.category) {
         return false;

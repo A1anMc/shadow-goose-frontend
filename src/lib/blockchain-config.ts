@@ -2,7 +2,7 @@
 // Manages blockchain tracker selection and configuration
 // Allows switching between original and bypass versions to avoid TypeScript issues
 
-import { monitorLogger } from './logger';
+import { logger } from './logger';
 
 export interface BlockchainTrackerConfig {
   useBypass: boolean;           // Use bypass version instead of original
@@ -46,13 +46,13 @@ class BlockchainConfigService {
       // Always start with bypass to avoid TypeScript issues
       this.currentTracker = 'bypass';
       
-      monitorLogger.info('Blockchain configuration initialized', 'initializeTracker', {
+      logger.info('Blockchain configuration initialized', {
         tracker: this.currentTracker,
         config: this.config
       });
 
     } catch (error) {
-      monitorLogger.error('Failed to initialize blockchain configuration', 'initializeTracker', error as Error);
+      logger.error('Failed to initialize blockchain configuration', 'initializeTracker', error as Error);
       this.currentTracker = 'bypass'; // Fallback to bypass
     }
   }
@@ -70,7 +70,7 @@ class BlockchainConfigService {
           const { blockchainTracker } = require('./blockchain-tracker');
           return blockchainTracker;
         } catch (error) {
-          monitorLogger.warn('Original blockchain tracker not available, using bypass', 'getBlockchainTracker', {
+          logger.warn('Original blockchain tracker not available, using bypass', {
             error: error instanceof Error ? error.message : 'Unknown error'
           });
           this.switchToBypass();
@@ -79,7 +79,7 @@ class BlockchainConfigService {
         }
       }
     } catch (error) {
-      monitorLogger.error('Failed to get blockchain tracker', 'getBlockchainTracker', error as Error);
+      logger.error('Failed to get blockchain tracker', 'getBlockchainTracker', error as Error);
       // Return a mock tracker to prevent system crashes
       return this.getMockTracker();
     }
@@ -89,7 +89,7 @@ class BlockchainConfigService {
   switchToBypass(): void {
     this.currentTracker = 'bypass';
     this.errorCount = 0;
-    monitorLogger.info('Switched to blockchain bypass tracker', 'switchToBypass');
+    logger.info('Switched to blockchain bypass tracker', 'switchToBypass');
   }
 
   // Switch to original tracker (if available)
@@ -99,9 +99,9 @@ class BlockchainConfigService {
       const { blockchainTracker } = require('./blockchain-tracker');
       this.currentTracker = 'original';
       this.errorCount = 0;
-      monitorLogger.info('Switched to original blockchain tracker', 'switchToOriginal');
+      logger.info('Switched to original blockchain tracker', 'switchToOriginal');
     } catch (error) {
-      monitorLogger.warn('Original blockchain tracker not available, staying with bypass', 'switchToOriginal', {
+      logger.warn('Original blockchain tracker not available, staying with bypass', {
         error: error instanceof Error ? error.message : 'Unknown error'
       });
       this.currentTracker = 'bypass';
@@ -111,10 +111,10 @@ class BlockchainConfigService {
   // Handle blockchain tracker errors
   handleError(error: Error): void {
     this.errorCount++;
-    monitorLogger.error('Blockchain tracker error', 'handleError', error, {
+    logger.error('Blockchain tracker error', {
       errorCount: this.errorCount,
       currentTracker: this.currentTracker
-    });
+    }, error);
 
     if (this.config.autoSwitchOnError && this.errorCount >= this.maxErrors) {
       if (this.currentTracker === 'original') {
@@ -161,13 +161,13 @@ class BlockchainConfigService {
   // Update configuration
   updateConfig(newConfig: Partial<BlockchainTrackerConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    monitorLogger.info('Updated blockchain configuration', 'updateConfig', newConfig);
+    logger.info('Updated blockchain configuration', newConfig);
   }
 
   // Reset error count
   resetErrorCount(): void {
     this.errorCount = 0;
-    monitorLogger.info('Blockchain error count reset', 'resetErrorCount');
+    logger.info('Blockchain error count reset', 'resetErrorCount');
   }
 
   // Check if blockchain is enabled

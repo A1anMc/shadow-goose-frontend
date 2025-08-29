@@ -2,7 +2,7 @@
 // Provides real, production-quality data when external APIs are unavailable
 // Ensures system never shows test or fake data
 
-import { monitorLogger } from './logger';
+import { logger } from './logger';
 
 export interface FallbackAPIConfig {
   enableRealData: boolean;
@@ -100,7 +100,7 @@ class FallbackAPIService {
   }
 
   private initializeRealData(): void {
-    monitorLogger.info('Initializing fallback API with real data', 'initializeRealData');
+    logger.info('Initializing fallback API with real data', 'initializeRealData');
 
     // Initialize with real, production-quality data
     this.loadRealGrantsData();
@@ -121,7 +121,7 @@ class FallbackAPIService {
     const cached = this.dataCache.get(cacheKey);
 
     if (cached && Date.now() - cached.timestamp < this.config.maxDataAge) {
-      monitorLogger.info('Using cached real grants data', 'getRealGrants', {
+      logger.info('Using cached real grants data', {
         dataAge: Date.now() - cached.timestamp,
         grantCount: cached.data.grants.length
       });
@@ -513,7 +513,7 @@ class FallbackAPIService {
 
   // Refresh real data
   private async refreshRealData(): Promise<void> {
-    monitorLogger.info('Refreshing fallback API real data', 'refreshRealData');
+    logger.info('Refreshing fallback API real data', 'refreshRealData');
 
     try {
       // Clear old cache
@@ -526,13 +526,13 @@ class FallbackAPIService {
 
       this.lastSyncTime = Date.now();
 
-      monitorLogger.info('Successfully refreshed fallback API data', 'refreshRealData', {
+      logger.info('Successfully refreshed fallback API data', {
         lastSyncTime: this.lastSyncTime,
         cacheSize: this.dataCache.size
       });
 
     } catch (error) {
-      monitorLogger.error('Failed to refresh fallback API data', 'refreshRealData', error as Error);
+      logger.error('Failed to refresh fallback API data', 'refreshRealData', error as Error);
     }
   }
 
@@ -564,13 +564,13 @@ class FallbackAPIService {
   // Update configuration
   updateConfig(newConfig: Partial<FallbackAPIConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    monitorLogger.info('Updated fallback API configuration', 'updateConfig', newConfig);
+    logger.info('Updated fallback API configuration', newConfig);
   }
 
   // Clear cache
   clearCache(): void {
     this.dataCache.clear();
-    monitorLogger.info('Cleared fallback API cache', 'clearCache');
+    logger.info('Cleared fallback API cache', 'clearCache');
   }
 
   // Get cache statistics

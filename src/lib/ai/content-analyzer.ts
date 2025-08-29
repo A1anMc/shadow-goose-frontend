@@ -1,7 +1,7 @@
 // AI Content Analyzer Service
 // Handles grant content analysis and quality assessment
 
-import { aiLogger } from '../logger';
+import { logger } from '../logger';
 import { AIWritingConfig, ContentAnalysisResult } from './types';
 
 export class AIContentAnalyzer {
@@ -21,7 +21,7 @@ export class AIContentAnalyzer {
 
   // Enhanced content analysis for grant applications
   async analyzeGrantContent(content: string, grantRequirements: any): Promise<ContentAnalysisResult> {
-    aiLogger.info('Starting grant content analysis', 'analyzeGrantContent', { contentLength: content.length });
+    logger.info('Starting grant content analysis', { contentLength: content.length });
 
     try {
       const systemPrompt = this.buildAnalysisSystemPrompt();
@@ -65,7 +65,7 @@ export class AIContentAnalyzer {
         compliance_issues: this.extractComplianceIssues(analysis)
       };
 
-      aiLogger.info('Content analysis completed successfully', 'analyzeGrantContent', {
+      logger.info('Content analysis completed successfully', {
         overallScore: result.overall_score,
         feedbackCount: result.feedback.length
       });
@@ -73,7 +73,7 @@ export class AIContentAnalyzer {
       return result;
 
     } catch (error) {
-      aiLogger.error('Content analysis failed', 'analyzeGrantContent', error as Error, { contentLength: content.length });
+      logger.error('Content analysis failed', { contentLength: content.length }, error as Error);
 
       // Return fallback analysis
       return {
@@ -139,7 +139,7 @@ COMPLIANCE:
       if (persuasivenessMatch) scores.persuasiveness = parseInt(persuasivenessMatch[1]);
 
     } catch (error) {
-      aiLogger.warn('Failed to parse analysis scores', 'parseAnalysisScores', { error: (error as Error).message });
+      logger.warn('Failed to parse analysis scores', { error: (error as Error).message });
     }
 
     return scores;
@@ -157,7 +157,7 @@ COMPLIANCE:
         .filter(line => line.length > 0);
 
     } catch (error) {
-      aiLogger.warn('Failed to extract feedback', 'extractFeedback', { error: (error as Error).message });
+      logger.warn('Failed to extract feedback', { error: (error as Error).message });
       return [];
     }
   }
@@ -174,7 +174,7 @@ COMPLIANCE:
         .filter(line => line.length > 0);
 
     } catch (error) {
-      aiLogger.warn('Failed to extract suggestions', 'extractSuggestions', { error: (error as Error).message });
+      logger.warn('Failed to extract suggestions', { error: (error as Error).message });
       return [];
     }
   }
@@ -191,7 +191,7 @@ COMPLIANCE:
         .filter(line => line.length > 0);
 
     } catch (error) {
-      aiLogger.warn('Failed to extract compliance issues', 'extractComplianceIssues', { error: (error as Error).message });
+      logger.warn('Failed to extract compliance issues', { error: (error as Error).message });
       return [];
     }
   }

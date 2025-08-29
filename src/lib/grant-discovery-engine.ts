@@ -1,6 +1,6 @@
 import { creativeAustraliaAPI, CreativeAustraliaGrant } from './creative-australia-api';
 import { fallbackAPI } from './fallback-api';
-import { monitorLogger } from './logger';
+import { logger } from './logger';
 import { screenAustraliaAPI, ScreenAustraliaGrant } from './screen-australia-api';
 
 export interface GrantMatchingCriteria {
@@ -78,12 +78,12 @@ class GrantDiscoveryEngine {
   };
 
   constructor() {
-    monitorLogger.info('Grant Discovery Engine initialized', 'constructor');
+    logger.info('Grant Discovery Engine initialized', 'constructor');
   }
 
   async discoverGrants(criteria: GrantMatchingCriteria): Promise<DiscoveryResult> {
     const startTime = Date.now();
-    monitorLogger.info('Starting grant discovery', 'discoverGrants', { criteria });
+    logger.info('Starting grant discovery', { criteria });
 
     try {
       // Fetch grants from all sources
@@ -117,7 +117,7 @@ class GrantDiscoveryEngine {
       const searchTime = Date.now() - startTime;
       const sources = this.getActiveSources(screenGrants, creativeGrants, fallbackGrants);
 
-      monitorLogger.info('Grant discovery completed', 'discoverGrants', {
+      logger.info('Grant discovery completed', {
         totalFound: allGrants.length,
         matchesFound: matches.length,
         searchTime,
@@ -132,7 +132,7 @@ class GrantDiscoveryEngine {
         sources
       };
     } catch (error) {
-      monitorLogger.error('Grant discovery failed', 'discoverGrants', error as Error);
+      logger.error('Grant discovery failed', 'discoverGrants', error as Error);
       throw error;
     }
   }
@@ -150,7 +150,7 @@ class GrantDiscoveryEngine {
       });
       return response.grants;
     } catch (error) {
-      monitorLogger.warn('Failed to fetch Screen Australia grants', 'fetchScreenAustraliaGrants');
+      logger.warn('Failed to fetch Screen Australia grants', 'fetchScreenAustraliaGrants');
       return [];
     }
   }
@@ -168,7 +168,7 @@ class GrantDiscoveryEngine {
       });
       return response.grants;
     } catch (error) {
-      monitorLogger.warn('Failed to fetch Creative Australia grants', 'fetchCreativeAustraliaGrants');
+      logger.warn('Failed to fetch Creative Australia grants', 'fetchCreativeAustraliaGrants');
       return [];
     }
   }
@@ -178,7 +178,7 @@ class GrantDiscoveryEngine {
       const grants = await fallbackAPI.getRealGrants();
       return grants.grants || [];
     } catch (error) {
-      monitorLogger.warn('Failed to fetch fallback grants', 'fetchFallbackGrants');
+      logger.warn('Failed to fetch fallback grants', 'fetchFallbackGrants');
       return [];
     }
   }
@@ -474,7 +474,7 @@ class GrantDiscoveryEngine {
         return grant ? this.unifyFallbackGrants([grant])[0] : null;
       }
     } catch (error) {
-      monitorLogger.error('Failed to get grant by ID', 'getGrantById', error as Error, { id });
+      logger.error('Failed to get grant by ID', { id }, error as Error);
       return null;
     }
   }
@@ -498,7 +498,7 @@ class GrantDiscoveryEngine {
       
       return Array.from(categories).sort();
     } catch (error) {
-      monitorLogger.error('Failed to get categories', 'getCategories', error as Error);
+      logger.error('Failed to get categories', 'getCategories', error as Error);
       return [];
     }
   }
@@ -522,7 +522,7 @@ class GrantDiscoveryEngine {
       
       return Array.from(industries).sort();
     } catch (error) {
-      monitorLogger.error('Failed to get industries', 'getIndustries', error as Error);
+      logger.error('Failed to get industries', 'getIndustries', error as Error);
       return [];
     }
   }
@@ -546,7 +546,7 @@ class GrantDiscoveryEngine {
       
       return Array.from(locations).sort();
     } catch (error) {
-      monitorLogger.error('Failed to get locations', 'getLocations', error as Error);
+      logger.error('Failed to get locations', 'getLocations', error as Error);
       return [];
     }
   }

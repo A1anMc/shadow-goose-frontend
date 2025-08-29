@@ -2,7 +2,7 @@
 // Provides blockchain functionality with improved error handling and TypeScript compliance
 // Alternative to the problematic blockchain-tracker.ts
 
-import { monitorLogger } from './logger';
+import { logger } from './logger';
 
 export interface BlockchainRecord {
   block_number: number;
@@ -73,7 +73,7 @@ class BlockchainTrackerBypass {
 
   private initializeBlockchain(): void {
     try {
-      monitorLogger.info('Initializing blockchain tracker bypass', 'initializeBlockchain');
+      logger.info('Initializing blockchain tracker bypass', 'initializeBlockchain');
       
       // Initialize with genesis block
       const genesisBlock: BlockchainRecord = {
@@ -88,13 +88,13 @@ class BlockchainTrackerBypass {
       this.chain.push(genesisBlock);
       this.initialized = true;
 
-      monitorLogger.info('Blockchain tracker bypass initialized successfully', 'initializeBlockchain', {
+      logger.info('Blockchain tracker bypass initialized successfully', {
         chainLength: this.chain.length,
         config: this.config
       });
 
     } catch (error) {
-      monitorLogger.error('Failed to initialize blockchain tracker bypass', 'initializeBlockchain', error as Error);
+      logger.error('Failed to initialize blockchain tracker bypass', 'initializeBlockchain', error as Error);
       this.initialized = false;
     }
   }
@@ -136,7 +136,7 @@ class BlockchainTrackerBypass {
       // Emit blockchain event
       this.emitBlockchainEvent('BlockAdded', newBlock);
 
-      monitorLogger.info('Block added to blockchain', 'addBlock', {
+      logger.info('Block added to blockchain', {
         blockNumber: newBlock.block_number,
         applicationId,
         hash: hash.substring(0, 8) + '...'
@@ -145,10 +145,10 @@ class BlockchainTrackerBypass {
       return newBlock;
 
     } catch (error) {
-      monitorLogger.error('Failed to add block to blockchain', 'addBlock', error as Error, {
+      logger.error('Failed to add block to blockchain', {
         applicationId,
         dataKeys: Object.keys(data || {})
-      });
+      }, error as Error);
       throw error;
     }
   }
@@ -162,7 +162,7 @@ class BlockchainTrackerBypass {
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     } catch (error) {
-      monitorLogger.error('Failed to calculate hash', 'calculateHash', error as Error);
+      logger.error('Failed to calculate hash', 'calculateHash', error as Error);
       // Fallback to simple hash
       return this.generateHash(data);
     }
@@ -205,7 +205,7 @@ class BlockchainTrackerBypass {
             issues.push(`Block ${i}: Hash integrity check failed`);
           }
         }).catch((error) => {
-          monitorLogger.error('Hash verification failed', 'verifyChainIntegrity', error as Error);
+          logger.error('Hash verification failed', 'verifyChainIntegrity', error as Error);
           issues.push(`Block ${i}: Hash verification error`);
         });
       }
@@ -216,7 +216,7 @@ class BlockchainTrackerBypass {
       };
 
     } catch (error) {
-      monitorLogger.error('Chain integrity verification failed', 'verifyChainIntegrity', error as Error);
+      logger.error('Chain integrity verification failed', 'verifyChainIntegrity', error as Error);
       return {
         isValid: false,
         issues: ['Chain integrity verification error']
@@ -259,7 +259,7 @@ class BlockchainTrackerBypass {
       };
 
     } catch (error) {
-      monitorLogger.error('Failed to get blockchain stats', 'getBlockchainStats', error as Error);
+      logger.error('Failed to get blockchain stats', 'getBlockchainStats', error as Error);
       return {
         totalBlocks: 0,
         totalApplications: 0,
@@ -314,7 +314,7 @@ class BlockchainTrackerBypass {
       // Emit transaction event
       this.emitBlockchainEvent('TransactionExecuted', transaction);
 
-      monitorLogger.info('Smart contract function executed', 'executeSmartContractFunction', {
+      logger.info('Smart contract function executed', {
         contractId,
         functionName,
         txHash: txHash.substring(0, 8) + '...'
@@ -323,7 +323,7 @@ class BlockchainTrackerBypass {
       return transaction;
 
     } catch (error) {
-      monitorLogger.error('Failed to execute smart contract function', 'executeSmartContractFunction', error as Error);
+      logger.error('Failed to execute smart contract function', 'executeSmartContractFunction', error as Error);
       throw error;
     }
   }
@@ -333,7 +333,7 @@ class BlockchainTrackerBypass {
     try {
       return this.chain.slice(-limit).reverse();
     } catch (error) {
-      monitorLogger.error('Failed to get blockchain feed', 'getBlockchainFeed', error as Error);
+      logger.error('Failed to get blockchain feed', 'getBlockchainFeed', error as Error);
       return [];
     }
   }
@@ -358,11 +358,11 @@ class BlockchainTrackerBypass {
         try {
           listener(data);
         } catch (error) {
-          monitorLogger.error('Event listener error', 'emitBlockchainEvent', error as Error);
+          logger.error('Event listener error', 'emitBlockchainEvent', error as Error);
         }
       });
     } catch (error) {
-      monitorLogger.error('Failed to emit blockchain event', 'emitBlockchainEvent', error as Error);
+      logger.error('Failed to emit blockchain event', 'emitBlockchainEvent', error as Error);
     }
   }
 
@@ -373,7 +373,7 @@ class BlockchainTrackerBypass {
       listeners.push(listener);
       this.eventListeners.set(eventType, listeners);
     } catch (error) {
-      monitorLogger.error('Failed to add event listener', 'addEventListener', error as Error);
+      logger.error('Failed to add event listener', 'addEventListener', error as Error);
     }
   }
 
@@ -387,7 +387,7 @@ class BlockchainTrackerBypass {
         this.eventListeners.set(eventType, listeners);
       }
     } catch (error) {
-      monitorLogger.error('Failed to remove event listener', 'removeEventListener', error as Error);
+      logger.error('Failed to remove event listener', 'removeEventListener', error as Error);
     }
   }
 
@@ -399,7 +399,7 @@ class BlockchainTrackerBypass {
   // Update configuration
   updateConfig(newConfig: Partial<BlockchainConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    monitorLogger.info('Updated blockchain configuration', 'updateConfig', newConfig);
+    logger.info('Updated blockchain configuration', newConfig);
   }
 
   // Check if blockchain is initialized
@@ -417,9 +417,9 @@ class BlockchainTrackerBypass {
     try {
       this.chain = [];
       this.initializeBlockchain();
-      monitorLogger.info('Blockchain cleared and reinitialized', 'clearBlockchain');
+      logger.info('Blockchain cleared and reinitialized', 'clearBlockchain');
     } catch (error) {
-      monitorLogger.error('Failed to clear blockchain', 'clearBlockchain', error as Error);
+      logger.error('Failed to clear blockchain', 'clearBlockchain', error as Error);
     }
   }
 }

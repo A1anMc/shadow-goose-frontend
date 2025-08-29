@@ -1,7 +1,7 @@
 import { apiMonitor } from './api-monitor';
 import { authService } from './auth';
 import { fallbackAPI } from './fallback-api';
-import { projectsLogger } from './logger';
+import { logger } from './logger';
 
 export interface SGEProject {
   id: number;
@@ -74,14 +74,14 @@ class SGEProjectService {
 
   // Get all SGE projects with comprehensive API monitoring and fallback
   async getProjects(): Promise<SGEProject[]> {
-    projectsLogger.info('Starting projects fetch with API monitoring', 'getProjects');
+    logger.info('Starting projects fetch with API monitoring', 'getProjects');
 
     try {
       // Use API monitor to get data with fallback
       const data = await apiMonitor.getData('projects', { useFallback: true });
 
       if (data && data.projects) {
-        projectsLogger.info('Successfully fetched projects from API monitor', 'getProjects', {
+        logger.info('Successfully fetched projects from API monitor', {
           projectCount: data.projects.length,
           dataSource: data.data_source || 'api'
         });
@@ -101,10 +101,10 @@ class SGEProjectService {
       }
 
       // If API monitor fails, use fallback API
-      projectsLogger.warn('API monitor failed, using fallback API', 'getProjects');
+      logger.warn('API monitor failed, using fallback API', 'getProjects');
       const fallbackData = await fallbackAPI.getRealProjects();
 
-      projectsLogger.info('Successfully fetched projects from fallback API', 'getProjects', {
+      logger.info('Successfully fetched projects from fallback API', {
         projectCount: fallbackData.projects.length,
         dataSource: fallbackData.data_source
       });
@@ -121,7 +121,7 @@ class SGEProjectService {
 
       return Array.from(this.localProjects.values());
     } catch (error) {
-      projectsLogger.error('Failed to fetch projects, using local projects', 'getProjects', error as Error);
+      logger.error('Failed to fetch projects, using local projects', 'getProjects', error as Error);
       return Array.from(this.localProjects.values());
     }
   }

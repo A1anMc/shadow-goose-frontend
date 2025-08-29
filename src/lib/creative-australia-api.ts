@@ -1,5 +1,5 @@
 import { apiMonitor } from './api-monitor';
-import { monitorLogger } from './logger';
+import { logger } from './logger';
 
 export interface CreativeAustraliaGrant {
   id: string;
@@ -65,12 +65,12 @@ class CreativeAustraliaAPIService {
       this.apiKey = process.env.CREATIVE_AUSTRALIA_API_KEY || null;
       
       if (!this.apiKey) {
-        monitorLogger.warn('Creative Australia API key not configured, using fallback data', 'initializeAPI');
+        logger.warn('Creative Australia API key not configured, using fallback data', 'initializeAPI');
       } else {
-        monitorLogger.info('Creative Australia API initialized successfully', 'initializeAPI');
+        logger.info('Creative Australia API initialized successfully', 'initializeAPI');
       }
     } catch (error) {
-      monitorLogger.error('Failed to initialize Creative Australia API', 'initializeAPI', error as Error);
+      logger.error('Failed to initialize Creative Australia API', 'initializeAPI', error as Error);
     }
   }
 
@@ -93,7 +93,7 @@ class CreativeAustraliaAPIService {
 
     const cached = this.cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      monitorLogger.debug('Returning cached data', 'makeRequest', { endpoint });
+      logger.debug('Returning cached data', { endpoint });
       return cached.data;
     }
 
@@ -117,10 +117,10 @@ class CreativeAustraliaAPIService {
         timestamp: Date.now(),
       });
 
-      monitorLogger.info('API request successful', 'makeRequest', { endpoint, status: response.status });
+      logger.info('API request successful', { endpoint, status: response.status });
       return data;
     } catch (error) {
-      monitorLogger.error('API request failed', 'makeRequest', error as Error, { endpoint });
+      logger.error('API request failed', { endpoint }, error as Error);
       throw error;
     }
   }
@@ -132,7 +132,7 @@ class CreativeAustraliaAPIService {
       });
 
       if (apiData && apiData.grants) {
-        monitorLogger.info('Retrieved grants from API monitor', 'getGrants', { count: apiData.grants.length });
+        logger.info('Retrieved grants from API monitor', { count: apiData.grants.length });
         return apiData as CreativeAustraliaResponse;
       }
 
@@ -153,14 +153,14 @@ class CreativeAustraliaAPIService {
       const endpoint = `/grants?${queryParams.toString()}`;
       const response = await this.makeRequest<CreativeAustraliaResponse>(endpoint);
 
-      monitorLogger.info('Retrieved grants from Creative Australia API', 'getGrants', { 
+            logger.info('Retrieved grants from Creative Australia API', {
         count: response.grants.length,
-        total: response.total 
+        total: response.total
       });
 
       return response;
     } catch (error) {
-      monitorLogger.warn('Creative Australia API failed, using fallback data', 'getGrants');
+      logger.warn('Creative Australia API failed, using fallback data', 'getGrants');
       
       const fallbackGrants = await this.getFallbackGrants(criteria);
       return {
@@ -178,10 +178,10 @@ class CreativeAustraliaAPIService {
       const endpoint = `/grants/${id}`;
       const grant = await this.makeRequest<CreativeAustraliaGrant>(endpoint);
       
-      monitorLogger.info('Retrieved grant by ID', 'getGrantById', { id });
+      logger.info('Retrieved grant by ID', { id });
       return grant;
     } catch (error) {
-      monitorLogger.error('Failed to retrieve grant by ID', 'getGrantById', error as Error, { id });
+      logger.error('Failed to retrieve grant by ID', { id }, error as Error);
       return null;
     }
   }
@@ -191,10 +191,10 @@ class CreativeAustraliaAPIService {
       const endpoint = '/categories';
       const categories = await this.makeRequest<string[]>(endpoint);
       
-      monitorLogger.info('Retrieved categories', 'getCategories', { count: categories.length });
+      logger.info('Retrieved categories', { count: categories.length });
       return categories;
     } catch (error) {
-      monitorLogger.warn('Failed to retrieve categories, using fallback', 'getCategories');
+      logger.warn('Failed to retrieve categories, using fallback', 'getCategories');
       return this.getFallbackCategories();
     }
   }
@@ -204,10 +204,10 @@ class CreativeAustraliaAPIService {
       const endpoint = '/industries';
       const industries = await this.makeRequest<string[]>(endpoint);
       
-      monitorLogger.info('Retrieved industries', 'getIndustries', { count: industries.length });
+      logger.info('Retrieved industries', { count: industries.length });
       return industries;
     } catch (error) {
-      monitorLogger.warn('Failed to retrieve industries, using fallback', 'getIndustries');
+      logger.warn('Failed to retrieve industries, using fallback', 'getIndustries');
       return this.getFallbackIndustries();
     }
   }
@@ -217,10 +217,10 @@ class CreativeAustraliaAPIService {
       const endpoint = '/locations';
       const locations = await this.makeRequest<string[]>(endpoint);
       
-      monitorLogger.info('Retrieved locations', 'getLocations', { count: locations.length });
+      logger.info('Retrieved locations', { count: locations.length });
       return locations;
     } catch (error) {
-      monitorLogger.warn('Failed to retrieve locations, using fallback', 'getLocations');
+      logger.warn('Failed to retrieve locations, using fallback', 'getLocations');
       return this.getFallbackLocations();
     }
   }
@@ -361,7 +361,7 @@ class CreativeAustraliaAPIService {
 
   clearCache(): void {
     this.cache.clear();
-    monitorLogger.info('Cache cleared', 'clearCache');
+    logger.info('Cache cleared', 'clearCache');
   }
 
   getCacheStats(): { size: number; entries: string[] } {

@@ -1,7 +1,7 @@
 // AI Writing Templates Service
 // Handles professional grant writing templates and guidelines
 
-import { aiLogger } from '../logger';
+import { logger } from '../logger';
 import { AITemplate, TemplateCollection } from './types';
 
 export class AITemplateService {
@@ -142,12 +142,12 @@ export class AITemplateService {
     const collection = this.templateCollections.get(grantCategory);
 
     if (collection) {
-      aiLogger.info('Retrieved professional templates', 'getProfessionalTemplates', { grantCategory, templateCount: collection.templates.length });
+      logger.info('Retrieved professional templates', { grantCategory, templateCount: collection.templates.length });
       return collection;
     }
 
     // Return default collection if category not found
-    aiLogger.warn('No templates found for category, using defaults', 'getProfessionalTemplates', { grantCategory });
+    logger.warn('No templates found for category, using defaults', { grantCategory });
     return {
       templates: [],
       writing_guidelines: [
@@ -168,7 +168,7 @@ export class AITemplateService {
   // Add new template
   addTemplate(template: AITemplate): void {
     this.templates.push(template);
-    aiLogger.info('Added new template', 'addTemplate', { templateId: template.id, category: template.category });
+    logger.info('Added new template', { templateId: template.id, category: template.category });
   }
 
   // Update template usage count
@@ -176,7 +176,7 @@ export class AITemplateService {
     const template = this.getTemplateById(templateId);
     if (template) {
       template.usage_count++;
-      aiLogger.debug('Incremented template usage count', 'incrementUsageCount', { templateId, newCount: template.usage_count });
+      logger.debug('Incremented template usage count', { templateId, newCount: template.usage_count });
     }
   }
 

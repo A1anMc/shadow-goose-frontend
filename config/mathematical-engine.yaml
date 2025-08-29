@@ -1,0 +1,57 @@
+mathematical_engine:
+  bayes:
+    enabled: false  # Phase 2
+    default_priors:
+      beta_binomial:
+        alpha: 1.0
+        beta: 1.0
+      gamma_poisson:
+        shape: 1.0
+        rate: 1.0
+      normal_normal:
+        mean: 0.0
+        variance: 1.0
+    hierarchical:
+      enabled: false
+      partial_pooling: true
+  
+  sensitivity:
+    enabled: false  # Phase 2
+    sobol:
+      sample_size: 1000
+      confidence_level: 0.95
+    tornado:
+      variation_percentages: [10, 20, 30]
+      baseline_value: 100
+  
+  decision:
+    enabled: false  # Phase 2
+    evpi:
+      enabled: false
+      monte_carlo_samples: 10000
+    pareto:
+      enabled: false
+      objectives: ['people', 'planet', 'profit', 'risk']
+  
+  calibration:
+    enabled: false  # Phase 2
+    brier_score:
+      enabled: false
+    reliability_curves:
+      enabled: false
+      bins: 10
+  
+  causal:
+    enabled: false  # Phase 2
+    dags:
+      enabled: false
+    backdoor_adjustment:
+      enabled: false
+  
+  portfolio:
+    enabled: false  # Phase 2
+    knapsack:
+      enabled: false
+    mean_cvar:
+      enabled: false
+      confidence_level: 0.95

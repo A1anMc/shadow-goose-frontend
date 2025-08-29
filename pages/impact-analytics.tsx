@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { getBranding } from "../src/lib/branding";
-import { authService, User } from "../src/lib/auth";
+import { useEffect, useState } from "react";
 import { analyticsService, RealTimeMetric } from "../src/lib/analytics";
-import { impactMeasurementService } from "../src/lib/impact-measurement-service";
-import { SDG_GOALS, VICTORIAN_OUTCOMES, CEMP_PRINCIPLES } from "../src/lib/types/impact-frameworks";
+import { authService, User } from "../src/lib/auth";
+import { getBranding } from "../src/lib/branding";
+import { CEMP_PRINCIPLES, SDG_GOALS, VICTORIAN_OUTCOMES } from "../src/lib/types/impact-frameworks";
 
 interface ImpactStory {
   id: string;
@@ -37,7 +36,7 @@ export default function ImpactAnalytics() {
   const [impactMetrics, setImpactMetrics] = useState<ImpactMetric[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    "overview" | "stories" | "metrics" | "analysis"
+    "overview" | "stories" | "metrics" | "analysis" | "frameworks"
   >("overview");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activeFramework, setActiveFramework] = useState<'SDG' | 'Victorian' | 'CEMP'>('SDG');
@@ -69,7 +68,7 @@ export default function ImpactAnalytics() {
         analyticsService.getRealTimeMetrics(),
       ]);
 
-      setMetrics(metricsData);
+      setMetrics([metricsData]);
 
       // Load framework data
       loadFrameworkData();

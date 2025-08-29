@@ -69,7 +69,7 @@ class GrantsDataPipeline {
       ]);
 
       // Combine and transform all grants
-      let allGrants: UnifiedGrant[] = [];
+      const allGrants: UnifiedGrant[] = [];
 
       if (creativeAustraliaGrants.status === 'fulfilled') {
         allGrants.push(...creativeAustraliaGrants.value);

@@ -3,7 +3,7 @@
 // Ensures 100% uptime with real data fallbacks
 
 import { configService } from './config';
-import { monitorLogger } from './logger';
+import { logger } from './logger';
 
 export interface APIEndpoint {
   name: string;
@@ -169,7 +169,7 @@ class APIMonitor {
 
   addEndpoint(endpoint: APIEndpoint): void {
     this.endpoints.set(endpoint.name, endpoint);
-    monitorLogger.info('Added API endpoint for monitoring', 'addEndpoint', {
+    logger.info('Added API endpoint for monitoring', {
       name: endpoint.name,
       url: endpoint.url
     });
@@ -178,12 +178,12 @@ class APIMonitor {
   // Start monitoring all endpoints
   startMonitoring(): void {
     if (this.monitoringActive) {
-      monitorLogger.warn('API monitoring already running', 'startMonitoring');
+      logger.warn('API monitoring already running', 'startMonitoring');
       return;
     }
 
     this.monitoringActive = true;
-    monitorLogger.info('Starting API monitoring', 'startMonitoring', {
+    logger.info('Starting API monitoring', {
       endpointCount: this.endpoints.size,
       checkInterval: this.config.checkInterval
     });
@@ -204,7 +204,7 @@ class APIMonitor {
       this.monitoringInterval = undefined;
     }
     this.monitoringActive = false;
-    monitorLogger.info('Stopped API monitoring', 'stopMonitoring');
+    logger.info('Stopped API monitoring', 'stopMonitoring');
   }
 
   // Perform health check on all endpoints
@@ -255,19 +255,19 @@ class APIMonitor {
 
     // Log health status
     if (status === 'unhealthy') {
-      monitorLogger.error('API endpoint unhealthy', 'checkEndpointHealth', new Error(error || 'Unknown error'), {
+      logger.error('API endpoint unhealthy', {
         endpoint: endpoint.name,
         url: endpoint.url,
         responseTime
-      });
+      }, new Error(error || 'Unknown error'));
     } else if (status === 'degraded') {
-      monitorLogger.warn('API endpoint degraded', 'checkEndpointHealth', {
+      logger.warn('API endpoint degraded', {
         endpoint: endpoint.name,
         responseTime,
         threshold: this.config.healthThreshold
       });
     } else {
-      monitorLogger.debug('API endpoint healthy', 'checkEndpointHealth', {
+      logger.debug('API endpoint healthy', {
         endpoint: endpoint.name,
         responseTime
       });
@@ -339,7 +339,7 @@ class APIMonitor {
       }
 
     } catch (error) {
-      monitorLogger.warn('Primary endpoint failed, using fallback', 'getData', {
+      logger.warn('Primary endpoint failed, using fallback', {
         endpoint: endpointName,
         error: error instanceof Error ? error.message : 'Unknown error'
       });
@@ -383,7 +383,7 @@ class APIMonitor {
     const cached = this.fallbackCache.get(endpointName);
 
     if (cached && new Date() < new Date(cached.expiresAt)) {
-      monitorLogger.info('Using cached fallback data', 'getCachedData', {
+      logger.info('Using cached fallback data', {
         endpoint: endpointName,
         source: cached.source,
         quality: cached.quality
@@ -459,7 +459,7 @@ class APIMonitor {
           return transformedData;
         }
       } catch (error) {
-        monitorLogger.warn('External source failed', 'getExternalGrantsData', {
+        logger.warn('External source failed', {
           source,
           error: error instanceof Error ? error.message : 'Unknown error'
         });
@@ -746,7 +746,7 @@ class APIMonitor {
 
     this.fallbackCache.set(endpointName, fallbackData);
 
-    monitorLogger.info('Cached data for fallback', 'cacheData', {
+    logger.info('Cached data for fallback', {
       endpoint: endpointName,
       source,
       quality: fallbackData.quality,
@@ -789,11 +789,11 @@ class APIMonitor {
 
     // Log report
     if (report.unhealthyEndpoints > 0) {
-      monitorLogger.error('API health report - unhealthy endpoints detected', 'generateHealthReport', new Error('Unhealthy endpoints'), report);
+      logger.error('API health report - unhealthy endpoints detected', report, new Error('Unhealthy endpoints'));
     } else if (report.degradedEndpoints > 0) {
-      monitorLogger.warn('API health report - degraded endpoints detected', 'generateHealthReport', report);
+      logger.warn('API health report - degraded endpoints detected', report);
     } else {
-      monitorLogger.info('API health report - all endpoints healthy', 'generateHealthReport', report);
+      logger.info('API health report - all endpoints healthy', report);
     }
   }
 
@@ -832,7 +832,7 @@ class APIMonitor {
 
   updateConfig(newConfig: Partial<APIMonitoringConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    monitorLogger.info('Updated API monitoring configuration', 'updateConfig', newConfig);
+    logger.info('Updated API monitoring configuration', newConfig);
   }
 }
 

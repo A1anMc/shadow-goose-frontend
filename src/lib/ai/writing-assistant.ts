@@ -1,7 +1,7 @@
 // AI Writing Assistant - Main Service
 // Orchestrates AI writing functionality using modular services
 
-import { aiLogger } from '../logger';
+import { logger } from '../logger';
 import { aiContentAnalyzer } from './content-analyzer';
 import { aiTemplateService } from './templates';
 import { AIWritingConfig, AIWritingPrompt, AIWritingResponse, GrantContentRequest } from './types';
@@ -24,7 +24,7 @@ export class AIWritingAssistant {
 
   // Generate grant application content
   async generateGrantContent(request: GrantContentRequest): Promise<AIWritingResponse> {
-    aiLogger.info('Starting grant content generation', 'generateGrantContent', {
+    logger.info('Starting grant content generation', {
       section: request.section,
       grantName: request.grant_context.name
     });
@@ -111,13 +111,13 @@ export class AIWritingAssistant {
           result.quality_score
         );
       } catch (error) {
-        aiLogger.warn('Failed to track success metrics', 'generateGrantContent', { error: (error as Error).message });
+        logger.warn('Failed to track success metrics', { error: (error as Error).message });
       }
 
       // Store in history
       this.addToHistory(request.section, result);
 
-      aiLogger.info('Grant content generated successfully', 'generateGrantContent', {
+      logger.info('Grant content generated successfully', {
         wordCount: result.word_count,
         qualityScore: result.quality_score,
         generationTime: Date.now() - startTime
@@ -126,10 +126,10 @@ export class AIWritingAssistant {
       return result;
 
     } catch (error) {
-      aiLogger.error('Grant content generation failed', 'generateGrantContent', error as Error, {
+      logger.error('Grant content generation failed', {
         section: request.section,
         grantName: request.grant_context.name
-      });
+      }, error as Error);
 
       return this.getFallbackResponse(request);
     }
@@ -137,7 +137,7 @@ export class AIWritingAssistant {
 
   // Enhanced grant content generation with professional standards
   async generateProfessionalGrantContent(prompt: GrantContentRequest): Promise<AIWritingResponse> {
-    aiLogger.info('Starting professional grant content generation', 'generateProfessionalGrantContent', {
+    logger.info('Starting professional grant content generation', {
       section: prompt.section,
       grantName: prompt.grant_context.name
     });
@@ -164,7 +164,7 @@ export class AIWritingAssistant {
       // Apply professional enhancements
       result.content = this.applyProfessionalEnhancements(result.content, templates);
 
-      aiLogger.info('Professional grant content generated successfully', 'generateProfessionalGrantContent', {
+      logger.info('Professional grant content generated successfully', {
         wordCount: result.word_count,
         qualityScore: result.quality_score
       });
@@ -172,7 +172,7 @@ export class AIWritingAssistant {
       return result;
 
     } catch (error) {
-      aiLogger.error('Professional grant content generation failed', 'generateProfessionalGrantContent', error as Error);
+      logger.error('Professional grant content generation failed', 'generateProfessionalGrantContent', error as Error);
       return this.getFallbackResponse(prompt);
     }
   }
@@ -205,7 +205,7 @@ export class AIWritingAssistant {
       this.writingHistory.clear();
     }
 
-    aiLogger.info('Writing history cleared', 'clearWritingHistory', { section });
+    logger.info('Writing history cleared', { section });
   }
 
   private buildSystemPrompt(prompt: AIWritingPrompt): string {
@@ -292,7 +292,7 @@ Generate professional, compelling content that builds upon the existing content 
   }
 
   private getFallbackResponse(request: GrantContentRequest): AIWritingResponse {
-    aiLogger.warn('Using fallback response', 'getFallbackResponse', { section: request.section });
+    logger.warn('Using fallback response', { section: request.section });
 
     return {
       content: `This is a fallback response for the ${request.section} section. Please try again or contact support if the issue persists.`,

@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiMonitor } from '../lib/api-monitor';
 import { fallbackAPI } from '../lib/fallback-api';
-import { monitorLogger } from '../lib/logger';
+import { logger } from '../lib/logger';
 
 interface APIHealthStatus {
   endpoint: string;
@@ -74,7 +74,7 @@ const APIMonitoringDashboard: React.FC = () => {
 
       setLastUpdate(new Date());
     } catch (error) {
-      monitorLogger.error('Failed to update dashboard', 'updateDashboard', error as Error);
+      logger.error('Failed to update dashboard', 'updateDashboard', error as Error);
     }
   };
 

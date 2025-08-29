@@ -4,20 +4,21 @@
  */
 
 import {
-  SDG_GOALS,
-  VICTORIAN_OUTCOMES,
-  CEMP_PRINCIPLES,
-  ProjectImpactMapping,
-  SDGMapping,
-  VictorianMapping,
-  CEMPMapping,
-  ImpactMeasurement,
-  ImpactStory,
-  ImpactReport,
-  TripleBottomLine,
-  SDGSummary,
-  VictorianSummary,
-  CEMPSummary
+    CEMP_PRINCIPLES,
+    CEMPMapping,
+    CEMPSummary,
+    ImpactMeasurement,
+    ImpactReport,
+    ImpactStory,
+    ProjectImpactMapping,
+    SDG_GOALS,
+    SDGGoal,
+    SDGMapping,
+    SDGSummary,
+    TripleBottomLine,
+    VICTORIAN_OUTCOMES,
+    VictorianMapping,
+    VictorianSummary
 } from './types/impact-frameworks';
 
 export class ImpactMeasurementService {
@@ -595,7 +596,7 @@ export class ImpactMeasurementService {
     
     const topContributingGoals = uniqueGoals
       .map(goalId => SDG_GOALS.find(g => g.id === goalId))
-      .filter(Boolean)
+      .filter((goal): goal is SDGGoal => goal !== undefined)
       .slice(0, 5);
 
     return {

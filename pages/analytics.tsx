@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { getBranding } from "../src/lib/branding";
-import { authService, User } from "../src/lib/auth";
+import { useEffect, useState } from "react";
 import {
-  DataSource,
-  PredictiveModel,
-  RealTimeMetric,
-  analyticsService,
+    analyticsService,
+    DataSource,
+    PredictiveModel,
+    RealTimeMetric,
 } from "../src/lib/analytics";
+import { authService, User } from "../src/lib/auth";
+import { getBranding } from "../src/lib/branding";
 
 export default function Analytics() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function Analytics() {
   const [predictiveModels, setPredictiveModels] = useState<PredictiveModel[]>(
     [],
   );
-  const [realTimeMetrics, setRealTimeMetrics] = useState<RealTimeMetric[]>([]);
+  const [realTimeMetrics, setRealTimeMetrics] = useState<RealTimeMetric | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
     "overview" | "models" | "sources" | "metrics"
@@ -76,16 +76,7 @@ export default function Analytics() {
     }
   };
 
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case "up":
-        return "↗️";
-      case "down":
-        return "↘️";
-      default:
-        return "→";
-    }
-  };
+  // Trend icon function removed - unused
 
   if (loading) {
     return (
@@ -195,7 +186,7 @@ export default function Analytics() {
                   Real-Time Metrics
                 </h3>
                 <p className="text-3xl font-bold text-sg-primary">
-                  {realTimeMetrics.length}
+                  {realTimeMetrics ? "4" : "0"}
                 </p>
                 <p className="text-sm text-gray-600">Active metrics</p>
               </div>
@@ -404,37 +395,59 @@ export default function Analytics() {
         {/* Real-Time Metrics Tab */}
         {activeTab === "metrics" && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {realTimeMetrics.map((metric) => (
-                <div
-                  key={metric.id}
-                  className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {metric.name}
-                    </h3>
-                    <span className="text-2xl">
-                      {getTrendIcon(metric.trend)}
-                    </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {realTimeMetrics && (
+                <>
+                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Active Users
+                      </h3>
+                    </div>
+                    <div className="mb-4">
+                      <p className="text-3xl font-bold text-sg-primary">
+                        {realTimeMetrics.active_users}
+                      </p>
+                    </div>
                   </div>
-                  <div className="mb-4">
-                    <p className="text-3xl font-bold text-sg-primary">
-                      {metric.value} {metric.unit}
-                    </p>
-                    <p
-                      className={`text-sm ${metric.changePercent >= 0 ? "text-green-600" : "text-red-600"}`}
-                    >
-                      {metric.changePercent >= 0 ? "+" : ""}
-                      {metric.changePercent}% from last period
-                    </p>
+                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Page Views
+                      </h3>
+                    </div>
+                    <div className="mb-4">
+                      <p className="text-3xl font-bold text-sg-primary">
+                        {realTimeMetrics.page_views}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-500">
-                    Last updated:{" "}
-                    {new Date(metric.lastUpdated).toLocaleString()}
+                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Conversion Rate
+                      </h3>
+                    </div>
+                    <div className="mb-4">
+                      <p className="text-3xl font-bold text-sg-primary">
+                        {(realTimeMetrics.conversion_rate * 100).toFixed(1)}%
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Avg Session
+                      </h3>
+                    </div>
+                    <div className="mb-4">
+                      <p className="text-3xl font-bold text-sg-primary">
+                        {Math.round(realTimeMetrics.average_session_duration / 60)}m
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
