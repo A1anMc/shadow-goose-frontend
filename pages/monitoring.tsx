@@ -8,7 +8,8 @@ import { authService } from '../src/lib/auth';
 
 export default function MonitoringPage() {
   const router = useRouter();
-  const [user] = useState<any>(null);
+  // User state for future authentication integration
+  const [_user] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

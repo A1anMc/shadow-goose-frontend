@@ -15,7 +15,7 @@ export function initializeMonitoring() {
       // Check if grant discovery engine is working
       // This is a placeholder - in a real implementation, you'd check actual functionality
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   });
@@ -25,7 +25,7 @@ export function initializeMonitoring() {
       // Check if authentication service is working
       // This is a placeholder - in a real implementation, you'd check actual functionality
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   });
@@ -35,7 +35,7 @@ export function initializeMonitoring() {
       // Check if analytics service is working
       // This is a placeholder - in a real implementation, you'd check actual functionality
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   });

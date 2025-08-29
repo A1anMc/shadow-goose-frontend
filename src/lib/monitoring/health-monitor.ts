@@ -244,38 +244,38 @@ class HealthMonitor {
 // Export singleton instance
 export const healthMonitor = new HealthMonitor();
 
-// Default health checks
-export const defaultHealthChecks = {
-  // Database connectivity check
-  database: async (): Promise<boolean> => {
-    try {
-      // This would check database connectivity
-      // For now, return true as placeholder
-      return true;
-    } catch (error) {
-      return false;
-    }
-  },
+  // Default health checks
+  export const defaultHealthChecks = {
+    // Database connectivity check
+    database: async (): Promise<boolean> => {
+      try {
+        // This would check database connectivity
+        // For now, return true as placeholder
+        return true;
+      } catch (_error) {
+        return false;
+      }
+    },
 
-  // API health check
-  api: async (): Promise<boolean> => {
-    try {
-      // This would check API endpoints
-      // For now, return true as placeholder
-      return true;
-    } catch (error) {
-      return false;
-    }
-  },
+      // API health check
+    api: async (): Promise<boolean> => {
+      try {
+        // This would check API endpoints
+        // For now, return true as placeholder
+        return true;
+      } catch (_error) {
+        return false;
+      }
+    },
 
-  // External services check
-  externalServices: async (): Promise<boolean> => {
-    try {
-      // This would check external API dependencies
-      // For now, return true as placeholder
-      return true;
-    } catch (error) {
-      return false;
+      // External services check
+    externalServices: async (): Promise<boolean> => {
+      try {
+        // This would check external API dependencies
+        // For now, return true as placeholder
+        return true;
+      } catch (_error) {
+        return false;
+      }
     }
-  }
 };

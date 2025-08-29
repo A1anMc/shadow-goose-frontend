@@ -19,7 +19,7 @@ class PerformanceMiddleware {
   // Middleware function
   middleware(handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>) {
     const self = this;
-    return async (req: NextApiRequest, res: NextApiResponse) => {
+    return async (_req: NextApiRequest, res: NextApiResponse) => {
       const startTime = Date.now();
       const originalSend = res.send;
       const originalJson = res.json;
@@ -147,9 +147,9 @@ class PerformanceMiddleware {
 // Export singleton instance
 export const performanceMiddleware = new PerformanceMiddleware();
 
-// Helper function to wrap API handlers
-export function withPerformanceMonitoring(
-  handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>
-) {
-  return performanceMiddleware.middleware(handler);
-}
+  // Helper function to wrap API handlers
+  export function withPerformanceMonitoring(
+    handler: (_req: NextApiRequest, res: NextApiResponse) => Promise<void>
+  ) {
+    return performanceMiddleware.middleware(handler);
+  }
