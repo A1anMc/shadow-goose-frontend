@@ -40,6 +40,7 @@ export function initializeMonitoring() {
     }
   });
 
+  // Keep console.log for monitoring initialization
   console.log('✅ Monitoring system initialized successfully');
 }
 

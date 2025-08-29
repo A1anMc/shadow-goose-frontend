@@ -115,6 +115,7 @@ class PerformanceMiddleware {
 
     // Log slow requests or errors
     if (responseTime > 2000 || statusCode >= 400 || error) {
+      // Keep console.warn for performance alerts
       console.warn('Performance Alert:', performanceData);
     }
   }

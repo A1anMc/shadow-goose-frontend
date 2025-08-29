@@ -227,11 +227,15 @@ class HealthMonitor {
       service: 'health-monitor'
     };
 
+    // Use structured logging for monitoring system
     if (level === 'error') {
+      // Keep console.error for critical monitoring issues
       console.error('Health Monitor Error:', logEntry);
     } else if (level === 'warn') {
+      // Keep console.warn for monitoring warnings
       console.warn('Health Monitor Warning:', logEntry);
     } else {
+      // Keep console.log for monitoring info
       console.log('Health Monitor Info:', logEntry);
     }
   }

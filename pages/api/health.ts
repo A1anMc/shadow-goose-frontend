@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { healthMonitor, defaultHealthChecks } from '../../src/lib/monitoring/health-monitor';
+import { healthMonitor } from '../../src/lib/monitoring/health-monitor';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
