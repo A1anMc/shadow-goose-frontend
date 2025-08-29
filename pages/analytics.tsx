@@ -8,6 +8,7 @@ import {
 } from "../src/lib/analytics";
 import { authService, User } from "../src/lib/auth";
 import { getBranding } from "../src/lib/branding";
+import { logger } from "../src/lib/logger";
 
 export default function Analytics() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export default function Analytics() {
       setPredictiveModels(modelsData);
       setRealTimeMetrics(metricsData);
     } catch (error) {
-      console.error("Error loading analytics data:", error);
+      logger.error("Error loading analytics data", { error: error instanceof Error ? error.message : String(error) });
     } finally {
       setLoading(false);
     }

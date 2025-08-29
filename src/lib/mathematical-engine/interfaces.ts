@@ -4,40 +4,40 @@
  */
 
 export interface BayesCalculator {
-  update(prior: any, data: any): Promise<any>;
-  calculateCredibleInterval(posterior: any, confidence: number): Promise<any>;
-  hierarchicalUpdate(priors: any[], data: any[]): Promise<any>;
+  update(_prior: any, _data: any): Promise<any>;
+  calculateCredibleInterval(_posterior: any, _confidence: number): Promise<any>;
+  hierarchicalUpdate(_priors: any[], _data: any[]): Promise<any>;
 }
 
 export interface SensitivityAnalyzer {
-  analyze(model: any): Promise<any>;
-  calculateSobolIndices(model: any): Promise<any>;
-  generateTornadoChart(model: any): Promise<any>;
+  analyze(_model: any): Promise<any>;
+  calculateSobolIndices(_model: any): Promise<any>;
+  generateTornadoChart(_model: any): Promise<any>;
 }
 
 export interface DecisionOptimizer {
-  optimize(decisions: any[]): Promise<any>;
-  calculateEVPI(decisions: any[]): Promise<number>;
-  calculateEVSI(decisions: any[], sampleSize: number): Promise<number>;
-  findParetoFrontier(objectives: any[]): Promise<any>;
+  optimize(_decisions: any[]): Promise<any>;
+  calculateEVPI(_decisions: any[]): Promise<number>;
+  calculateEVSI(_decisions: any[], _sampleSize: number): Promise<number>;
+  findParetoFrontier(_objectives: any[]): Promise<any>;
 }
 
 export interface CalibrationEngine {
-  calibrate(forecast: any): Promise<any>;
-  calculateBrierScore(forecasts: number[], outcomes: number[]): Promise<number>;
-  generateReliabilityCurve(forecasts: number[], outcomes: number[]): Promise<any>;
+  calibrate(_forecast: any): Promise<any>;
+  calculateBrierScore(_forecasts: number[], _outcomes: number[]): Promise<number>;
+  generateReliabilityCurve(_forecasts: number[], _outcomes: number[]): Promise<any>;
 }
 
 export interface CausalAnalyzer {
-  analyze(data: any): Promise<any>;
-  buildDAG(variables: any[]): Promise<any>;
-  calculateCausalEffect(dag: any, data: any): Promise<any>;
+  analyze(_data: any): Promise<any>;
+  buildDAG(_variables: any[]): Promise<any>;
+  calculateCausalEffect(_dag: any, _data: any): Promise<any>;
 }
 
 export interface PortfolioOptimizer {
-  optimize(projects: any[]): Promise<any>;
-  knapsackOptimization(projects: any[], budget: number): Promise<any[]>;
-  meanCVaROptimization(projects: any[], riskTolerance: number): Promise<any>;
+  optimize(_projects: any[]): Promise<any>;
+  knapsackOptimization(_projects: any[], _budget: number): Promise<any[]>;
+  meanCVaROptimization(_projects: any[], _riskTolerance: number): Promise<any>;
 }
 
 export interface MathematicalEngineConfig {

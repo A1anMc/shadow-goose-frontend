@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { aiWritingAssistant } from '../lib/ai-writing-assistant';
+import { logger } from '../lib/logger';
 
 interface GrantWritingAssistantProps {
   grant: any;
@@ -42,7 +43,7 @@ export default function GrantWritingAssistant({
       const templates = await aiWritingAssistant.getProfessionalTemplates(grant.category);
       setProfessionalTemplates(templates);
     } catch (error) {
-      console.error('Error loading professional templates:', error);
+      logger.error('Error loading professional templates', { error: error instanceof Error ? error.message : String(error) });
     }
   }, [grant.category]);
 
@@ -71,7 +72,7 @@ export default function GrantWritingAssistant({
       );
       setAnalysis(contentAnalysis);
     } catch (error) {
-      console.error('Error analyzing content:', error);
+      logger.error('Error analyzing content', { error: error instanceof Error ? error.message : String(error) });
     } finally {
       setAnalyzing(false);
     }
@@ -98,7 +99,7 @@ export default function GrantWritingAssistant({
 
       onContentUpdate(currentField, enhancedContent.content);
     } catch (error) {
-      console.error('Error enhancing content:', error);
+      logger.error('Error enhancing content', { error: error instanceof Error ? error.message : String(error) });
     } finally {
       setEnhancing(false);
     }

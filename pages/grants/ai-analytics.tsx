@@ -8,10 +8,10 @@ import {
 export default function AIAnalytics() {
   const [grants, setGrants] = useState<Grant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
   const [analysis, setAnalysis] = useState<GrantAnalysisResult | null>(null);
-  const [realTimeData, setRealTimeData] = useState({
+  const [_realTimeData, setRealTimeData] = useState({
     activeUsers: 0,
     applicationsStarted: 0,
     aiPredictions: 0,

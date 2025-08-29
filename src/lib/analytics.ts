@@ -69,6 +69,8 @@ export interface GeneratedReport {
   data: Record<string, any>;
 }
 
+import { logger } from './logger';
+
 class PredictiveAnalyticsService {
   private get baseUrl() {
     return process.env.NEXT_PUBLIC_API_URL || '';
@@ -99,7 +101,7 @@ class PredictiveAnalyticsService {
       const data = await response.json();
       return data.models || [];
     } catch (error) {
-      console.error('Error fetching predictive models:', error);
+      logger.error('Error fetching predictive models', { error: error instanceof Error ? error.message : String(error) });
       return [];
     }
   }
@@ -124,7 +126,7 @@ class PredictiveAnalyticsService {
         average_session_duration: 0,
       };
     } catch (error) {
-      console.error('Error fetching real-time metrics:', error);
+      logger.error('Error fetching real-time metrics', { error: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -145,7 +147,7 @@ class PredictiveAnalyticsService {
         largest_contentful_paint: 0,
       };
     } catch (error) {
-      console.error('Error fetching performance metrics:', error);
+      logger.error('Error fetching performance metrics', { error: error instanceof Error ? error.message : String(error) });
       return {
         load_time: 0,
         bundle_size: 0,
@@ -170,7 +172,7 @@ class PredictiveAnalyticsService {
         drop_off_points: [],
       };
     } catch (error) {
-      console.error('Error fetching user behavior:', error);
+      logger.error('Error fetching user behavior', { error: error instanceof Error ? error.message : String(error) });
       return {
         top_pages: [],
         user_journey: [],
@@ -193,7 +195,7 @@ class PredictiveAnalyticsService {
       const data = await response.json();
       return { success: data.success || false };
     } catch (error) {
-      console.error('Error tracking event:', error);
+      logger.error('Error tracking event', { error: error instanceof Error ? error.message : String(error) });
       return { success: false };
     }
   }
@@ -213,7 +215,7 @@ class PredictiveAnalyticsService {
         drop_offs: [],
       };
     } catch (error) {
-      console.error('Error fetching conversion funnel:', error);
+      logger.error('Error fetching conversion funnel', { error: error instanceof Error ? error.message : String(error) });
       return {
         stages: [],
         conversion_rates: [],
@@ -233,7 +235,7 @@ class PredictiveAnalyticsService {
       const data = await response.json();
       return data.data || [];
     } catch (error) {
-      console.error('Error fetching custom reports:', error);
+      logger.error('Error fetching custom reports', { error: error instanceof Error ? error.message : String(error) });
       return [];
     }
   }
