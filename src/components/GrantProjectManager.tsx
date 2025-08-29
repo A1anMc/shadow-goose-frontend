@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { logger } from '../lib/logger';
 import { getGrantsService } from '../lib/services/grants-service';
 import { ApplicationProgress, Collaborator, GrantQuestion, TeamAssignment } from '../lib/types/grants';
@@ -215,8 +215,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
               <div>
                 <h3 className="font-semibold text-gray-900 mb-4">Recent Activity</h3>
                 <div className="space-y-3">
-                  {questions
-                    .filter(q => q.last_updated)
+                  {questions?.filter(q => q.last_updated)
                     .sort((a, b) => new Date(b.last_updated!).getTime() - new Date(a.last_updated!).getTime())
                     .slice(0, 5)
                     .map(question => (
@@ -238,8 +237,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
               <div>
                 <h3 className="font-semibold text-gray-900 mb-4">Upcoming Deadlines</h3>
                 <div className="space-y-3">
-                  {questions
-                    .filter(q => q.status === 'pending' || q.status === 'in_progress')
+                  {questions?.filter(q => q.status === 'pending' || q.status === 'in_progress')
                     .slice(0, 5)
                     .map(question => (
                       <div key={question.id} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
@@ -278,7 +276,7 @@ export default function GrantProjectManager({ applicationId, grant, onUpdate }: 
             </div>
 
             <div className="space-y-4">
-              {questions.map(question => (
+              {questions?.map(question => (
                 <div key={question.id} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">

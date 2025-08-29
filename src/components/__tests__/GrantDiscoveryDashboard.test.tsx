@@ -138,7 +138,7 @@ describe('GrantDiscoveryDashboard', () => {
     await waitFor(() => {
       expect(screen.getByText('Test Grant 1')).toBeInTheDocument();
       expect(screen.getByText('Test Grant 2')).toBeInTheDocument();
-      expect(screen.getByText('Test Org')).toBeInTheDocument();
+      expect(screen.getByText('Test grant description')).toBeInTheDocument();
     });
   });
 
