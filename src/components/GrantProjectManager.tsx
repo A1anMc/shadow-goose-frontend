@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { logger } from '../lib/logger';
 import { getGrantsService } from '../lib/services/grants-service';
 import { ApplicationProgress, Collaborator, GrantQuestion, TeamAssignment } from '../lib/types/grants';
