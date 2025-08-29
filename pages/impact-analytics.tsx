@@ -53,10 +53,12 @@ export default function ImpactAnalytics() {
 
     // Load impact analytics data
     loadImpactAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   useEffect(() => {
     loadFrameworkData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFramework]);
 
   const loadImpactAnalytics = async () => {

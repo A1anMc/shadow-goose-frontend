@@ -23,6 +23,7 @@
     "deploy": "npm run verify-all && git add . && git commit --no-verify -m \"🚀 Auto-deploy $(date)\" && git push origin main && npm run monitor"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.12",
     "@types/node-fetch": "^2.6.13",
     "@types/pg": "^8.15.5",
     "autoprefixer": "^10.4.21",
