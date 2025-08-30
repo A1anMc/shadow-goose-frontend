@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { getBranding } from "../src/lib/branding";
+import { useEffect, useState } from "react";
 import { authService, LoginCredentials } from "../src/lib/auth";
+import { getBranding } from "../src/lib/branding";
 
 export default function Login() {
   const router = useRouter();
