@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+import { logger } from '../../lib/logger';
 
 // Database connection
 const pool = new Pool({
@@ -52,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ data: result.rows[0] });
     } catch (error) {
-      console.error('Error fetching project mapping:', error);
+      logger.error('Error fetching project mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else if (req.method === 'POST') {
@@ -83,7 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(201).json({ data: result.rows[0] });
     } catch (error) {
-      console.error('Error creating project mapping:', error);
+      logger.error('Error creating project mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else if (req.method === 'PUT') {
@@ -119,7 +120,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ data: result.rows[0] });
     } catch (error) {
-      console.error('Error updating project mapping:', error);
+      logger.error('Error updating project mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else {

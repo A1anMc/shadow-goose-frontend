@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+import { logger } from '../../lib/logger';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -40,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const result = await pool.query(query, [project_id]);
       res.status(200).json({ data: result.rows });
     } catch (error) {
-      console.error('Error fetching SDG mappings:', error);
+      logger.error('Error fetching SDG mappings', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else if (req.method === 'POST') {
@@ -91,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(201).json({ data: result.rows[0] });
     } catch (error) {
-      console.error('Error creating SDG mapping:', error);
+      logger.error('Error creating SDG mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else if (req.method === 'PUT') {
@@ -127,7 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ data: result.rows[0] });
     } catch (error) {
-      console.error('Error updating SDG mapping:', error);
+      logger.error('Error updating SDG mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else if (req.method === 'DELETE') {
@@ -147,7 +148,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ data: result.rows[0] });
     } catch (error) {
-      console.error('Error deleting SDG mapping:', error);
+      logger.error('Error deleting SDG mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
     }
   } else {

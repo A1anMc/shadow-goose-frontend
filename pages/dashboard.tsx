@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { authService } from "../src/lib/auth";
 import { getBranding } from "../src/lib/branding";
+import { logger } from "../src/lib/logger";
 import { SGEProject, sgeProjectService } from "../src/lib/projects";
 
 // Production-ready dashboard with enhanced analytics and UI/UX
@@ -49,9 +50,9 @@ export default function Dashboard() {
         setStats(statsData);
         setProjects(projectsData);
         setIsLoading(false);
-      } catch (error) {
-        console.error("Dashboard loading error:", error);
-        setError(
+          } catch (error) {
+      logger.error("Dashboard loading error", { error: error instanceof Error ? error.message : String(error) });
+      setError(
           error instanceof Error
             ? error.message
             : "Failed to load dashboard data",

@@ -8,7 +8,7 @@ import {
 } from "../../src/lib/types/grants";
 
 export default function GrantsAnalytics() {
-  const branding = getBranding();
+  const _branding = getBranding();
 
   const [applications, setApplications] = useState<GrantApplication[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);

@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 export interface WebSocketMessage {
   type: 'project_update' | 'okr_update' | 'grant_update' | 'notification' | 'ping';
   data: any;
@@ -42,7 +44,7 @@ class WebSocketService {
     try {
       const token = localStorage.getItem('sge_auth_token');
       if (!token) {
-        console.log('No auth token, skipping WebSocket connection');
+        logger.info('No auth token, skipping WebSocket connection');
         return;
       }
 
@@ -51,7 +53,7 @@ class WebSocketService {
       this.ws = new WebSocket(`${wsUrl}?token=${token}`);
 
       this.ws.onopen = () => {
-        console.log('WebSocket connected');
+        logger.info('WebSocket connected');
         this.isConnected = true;
         this.reconnectAttempts = 0;
         this.startHeartbeat();
@@ -62,12 +64,12 @@ class WebSocketService {
           const message: WebSocketMessage = JSON.parse(event.data);
           this.handleMessage(message);
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          logger.error('Error parsing WebSocket message', { error: error instanceof Error ? error.message : String(error) });
         }
       };
 
       this.ws.onclose = (event) => {
-        console.log('WebSocket disconnected:', event.code, event.reason);
+        logger.info('WebSocket disconnected', { code: event.code, reason: event.reason });
         this.isConnected = false;
         this.stopHeartbeat();
 
@@ -77,11 +79,11 @@ class WebSocketService {
       };
 
       this.ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        logger.error('WebSocket error', { error: error instanceof Error ? error.message : String(error) });
       };
 
     } catch (error) {
-      console.error('Error connecting to WebSocket:', error);
+      logger.error('Error connecting to WebSocket', { error: error instanceof Error ? error.message : String(error) });
       this.scheduleReconnect();
     }
   }
@@ -89,7 +91,7 @@ class WebSocketService {
   private scheduleReconnect() {
     this.reconnectAttempts++;
     const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
-    console.log(`Scheduling WebSocket reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
+    logger.info(`Scheduling WebSocket reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
 
     setTimeout(() => {
       this.connect();
@@ -126,7 +128,7 @@ class WebSocketService {
       };
       this.ws.send(JSON.stringify(fullMessage));
     } else {
-      console.warn('WebSocket not connected, message not sent:', message);
+      logger.warn('WebSocket not connected, message not sent', { message });
     }
   }
 

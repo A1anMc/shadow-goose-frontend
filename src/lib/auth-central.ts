@@ -3,6 +3,7 @@
 // This prevents authentication inconsistencies and makes the system secure and maintainable
 
 import { configService } from './config';
+import { logger } from './logger';
 
 export interface User {
   id: number;
@@ -75,7 +76,7 @@ class CentralAuthService {
         }
       }
     } catch (error) {
-      console.error('Failed to initialize auth from storage:', error);
+      logger.error('Failed to initialize auth from storage', { error: error instanceof Error ? error.message : String(error) });
       this.clearAuth();
     }
   }
@@ -104,7 +105,7 @@ class CentralAuthService {
 
       return data;
     } catch (error) {
-      console.error('Login failed:', error);
+      logger.error('Login failed', { error: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -123,7 +124,7 @@ class CentralAuthService {
 
       return !!response.access_token;
     } catch (error) {
-      console.error('Auto-login failed:', error);
+      logger.error('Auto-login failed', { error: error instanceof Error ? error.message : String(error) });
       return false;
     }
   }
@@ -183,7 +184,7 @@ class CentralAuthService {
 
     // If we get a 401 (Unauthorized), the token might be expired
     if (response.status === 401) {
-      console.log('Token expired, logging out user');
+      logger.info('Token expired, logging out user');
       this.logout();
       throw new Error('Authentication token expired. Please login again.');
     }
@@ -197,7 +198,7 @@ class CentralAuthService {
       const response = await this.authenticatedRequest(`${configService.getApiUrl()}/auth/user`);
       return response.ok;
     } catch (error) {
-      console.error('Token validation failed:', error);
+      logger.error('Token validation failed', { error: error instanceof Error ? error.message : String(error) });
       return false;
     }
   }
@@ -214,7 +215,7 @@ class CentralAuthService {
         return userData;
       }
     } catch (error) {
-      console.error('Failed to refresh user data:', error);
+      logger.error('Failed to refresh user data', { error: error instanceof Error ? error.message : String(error) });
     }
 
     return null;
@@ -258,7 +259,7 @@ class CentralAuthService {
         localStorage.setItem(configService.getTokenExpiryKey(), expiry.toString());
       }
     } catch (error) {
-      console.error('Failed to save auth to storage:', error);
+      logger.error('Failed to save auth to storage', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -268,7 +269,7 @@ class CentralAuthService {
         localStorage.setItem(configService.getUserDataKey(), JSON.stringify(user));
       }
     } catch (error) {
-      console.error('Failed to save user to storage:', error);
+      logger.error('Failed to save user to storage', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -280,7 +281,7 @@ class CentralAuthService {
         localStorage.removeItem(configService.getTokenExpiryKey());
       }
     } catch (error) {
-      console.error('Failed to clear auth from storage:', error);
+      logger.error('Failed to clear auth from storage', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 

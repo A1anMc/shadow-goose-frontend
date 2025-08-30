@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import SuccessRateDashboard from '../src/components/SuccessRateDashboard';
 import { getGrantsService } from '../src/lib/services/grants-service';
 import { Grant } from '../src/lib/types/grants';
+import { logger } from '../src/lib/logger';
 
 interface PipelineStats {
   total_grants: number;
@@ -41,7 +42,7 @@ export default function GrantsDashboard() {
       const grantsData = await grantService.getGrantsWithSource();
       setGrants(grantsData.data);
     } catch (error) {
-      console.error('Error loading grants:', error);
+      logger.error('Error loading grants', { error: error instanceof Error ? error.message : String(error) });
       setError('Failed to load grants data');
     } finally {
       setLoading(false);

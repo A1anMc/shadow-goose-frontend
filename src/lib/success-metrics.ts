@@ -1,5 +1,6 @@
 // Success Metrics Tracking System
 // Senior Grants Operations Agent - Real Data Integration
+import { logger } from './logger';
 
 export interface GrantSuccessMetrics {
   // Discovery Metrics
@@ -220,7 +221,7 @@ class SuccessMetricsTracker {
       existingUsage.push(aiUsage);
       localStorage.setItem('sge_ai_writing_usage', JSON.stringify(existingUsage));
     } catch (error) {
-      console.error('Failed to track AI writing usage:', error);
+      logger.error('Failed to track AI writing usage', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -240,7 +241,7 @@ class SuccessMetricsTracker {
       existingImprovements.push(improvement);
       localStorage.setItem('sge_quality_improvements', JSON.stringify(existingImprovements));
     } catch (error) {
-      console.error('Failed to track quality improvement:', error);
+      logger.error('Failed to track quality improvement', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -275,7 +276,7 @@ class SuccessMetricsTracker {
         quality_improvement_average: qualityImprovementAverage
       };
     } catch (error) {
-      console.error('Failed to get AI writing success metrics:', error);
+      logger.error('Failed to get AI writing success metrics', { error: error instanceof Error ? error.message : String(error) });
       return {
         total_ai_usage: 0,
         average_quality_score: 0,
@@ -461,7 +462,7 @@ class SuccessMetricsTracker {
       localStorage.setItem('sge_application_metrics', JSON.stringify(this.applicationMetrics));
       localStorage.setItem('sge_performance_metrics', JSON.stringify(this.performanceMetrics));
     } catch (error) {
-      console.error('Failed to save metrics:', error);
+      logger.error('Failed to save metrics', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -481,7 +482,7 @@ class SuccessMetricsTracker {
         this.performanceMetrics = JSON.parse(savedPerformanceMetrics);
       }
     } catch (error) {
-      console.error('Failed to load metrics:', error);
+      logger.error('Failed to load metrics', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -515,7 +516,7 @@ class SuccessMetricsTracker {
       localStorage.removeItem('sge_ai_writing_usage');
       localStorage.removeItem('sge_quality_improvements');
     } catch (error) {
-      console.error('Failed to clear AI writing metrics:', error);
+      logger.error('Failed to clear AI writing metrics', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 }

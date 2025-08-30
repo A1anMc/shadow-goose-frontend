@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { authService } from '../src/lib/auth';
 import { getBranding } from '../src/lib/branding';
+import { logger } from '../src/lib/logger';
 import { relationshipService } from '../src/lib/relationship-service';
 import {
     PriorityLevel,
@@ -47,7 +48,7 @@ export default function RelationshipsDashboard() {
         }
         setIsLoading(false);
       } catch (error) {
-        console.error('Dashboard loading error:', error);
+        logger.error('Dashboard loading error', { error: error instanceof Error ? error.message : String(error) });
         setError(error instanceof Error ? error.message : 'Failed to load dashboard data');
         setIsLoading(false);
       }
