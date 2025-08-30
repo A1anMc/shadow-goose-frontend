@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 // Predictive Analytics Engine
 // Advanced ML-powered predictions and forecasting
 
@@ -170,7 +172,7 @@ class PredictiveAnalyticsEngine {
       };
 
     } catch (error) {
-      console.error('Prediction failed:', error);
+      logger.error('Prediction failed:', error);
       return this.getFallbackPrediction(grantData);
     }
   }

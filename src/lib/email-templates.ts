@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 // Email Templates for Grant Applications
 // Professional email templates for various grant application scenarios
 
@@ -368,7 +370,7 @@ class EmailTemplateService {
       }
 
       // Here you would integrate with your email service (SendGrid, AWS SES, etc.)
-      console.log('Sending email:', {
+      logger.info('Sending email:', {
         to: emailData.to,
         subject: rendered.subject,
         body: rendered.body,
@@ -385,7 +387,7 @@ class EmailTemplateService {
 
       return true;
     } catch (error) {
-      console.error('Error sending email:', error);
+      logger.error('Error sending email:', error);
       return false;
     }
   }

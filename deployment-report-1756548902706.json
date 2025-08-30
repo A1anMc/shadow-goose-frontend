@@ -1,0 +1,13 @@
+{
+  "success": false,
+  "failures": [
+    "NPM Version Check: NPM version 11.3.0 is below required 9.0.0",
+    "Test Coverage: Test coverage 9% is below required 80%",
+    "Build Performance: Build time 94.44s exceeds limit 30s",
+    "Bundle Size Analysis: Bundle size 1879KB exceeds limit 500KB",
+    "Environment Configuration: Missing environment variables: NEXT_PUBLIC_API_URL, NEXT_PUBLIC_CLIENT"
+  ],
+  "warnings": [],
+  "duration": 148.288,
+  "timestamp": "2025-08-30T10:15:02.700Z"
+}

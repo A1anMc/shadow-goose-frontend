@@ -4,6 +4,8 @@
 import { centralAuthService } from '../auth-central';
 import { configService } from '../config';
 import { handleApiError } from '../error-handler';
+
+import { logger } from '../logger';
 import {
     SGEApplication,
     SGEBusinessMetrics,
@@ -47,7 +49,7 @@ export class SGEGrantsService {
       const data = await response.json();
       return data.grants || [];
     } catch (error) {
-      console.error('Error fetching SGE grants:', error);
+      logger.error('Error fetching SGE grants:', error);
       handleApiError(error, 'SGEGrantsService.getSGEGrants');
       return [];
     }
@@ -60,7 +62,7 @@ export class SGEGrantsService {
       const matches = await sgeMLService.findSGEGrantMatches(grants);
       return matches;
     } catch (error) {
-      console.error('Error getting SGE grant matches:', error);
+      logger.error('Error getting SGE grant matches:', error);
       handleApiError(error, 'SGEGrantsService.getSGEGrantMatches');
       return [];
     }
@@ -87,7 +89,7 @@ export class SGEGrantsService {
       const data = await response.json();
       return data.grants || [];
     } catch (error) {
-      console.error('Error searching SGE grants:', error);
+      logger.error('Error searching SGE grants:', error);
       handleApiError(error, 'SGEGrantsService.searchSGEGrants');
       return [];
     }
@@ -116,7 +118,7 @@ export class SGEGrantsService {
       const data = await response.json();
       return data.grant || null;
     } catch (error) {
-      console.error('Error fetching SGE grant by ID:', error);
+      logger.error('Error fetching SGE grant by ID:', error);
       handleApiError(error, 'SGEGrantsService.getSGEGrantById');
       return null;
     }
@@ -142,7 +144,7 @@ export class SGEGrantsService {
       const data = await response.json();
       return data.applications || [];
     } catch (error) {
-      console.error('Error fetching SGE applications:', error);
+      logger.error('Error fetching SGE applications:', error);
       handleApiError(error, 'SGEGrantsService.getSGEApplications');
       return [];
     }
@@ -171,7 +173,7 @@ export class SGEGrantsService {
       const data = await response.json();
       return data.application || null;
     } catch (error) {
-      console.error('Error fetching SGE application by ID:', error);
+      logger.error('Error fetching SGE application by ID:', error);
       handleApiError(error, 'SGEGrantsService.getSGEApplicationById');
       return null;
     }
@@ -198,7 +200,7 @@ export class SGEGrantsService {
       const data = await response.json();
       return data.application || null;
     } catch (error) {
-      console.error('Error creating SGE application:', error);
+      logger.error('Error creating SGE application:', error);
       handleApiError(error, 'SGEGrantsService.createSGEApplication');
       return null;
     }
@@ -225,7 +227,7 @@ export class SGEGrantsService {
       const data = await response.json();
       return data.application || null;
     } catch (error) {
-      console.error('Error updating SGE application:', error);
+      logger.error('Error updating SGE application:', error);
       handleApiError(error, 'SGEGrantsService.updateSGEApplication');
       return null;
     }
@@ -238,7 +240,7 @@ export class SGEGrantsService {
       const metrics = await sgeMLService.analyzeSGEBusinessMetrics(applications);
       return metrics;
     } catch (error) {
-      console.error('Error getting SGE business metrics:', error);
+      logger.error('Error getting SGE business metrics:', error);
       handleApiError(error, 'SGEGrantsService.getSGEBusinessMetrics');
       return null;
     }
@@ -300,7 +302,7 @@ export class SGEGrantsService {
 
       return dashboardData;
     } catch (error) {
-      console.error('Error getting SGE dashboard data:', error);
+      logger.error('Error getting SGE dashboard data:', error);
       handleApiError(error, 'SGEGrantsService.getSGEDashboardData');
       return null;
     }
@@ -312,7 +314,7 @@ export class SGEGrantsService {
       const matches = await this.getSGEGrantMatches();
       return matches.filter(match => match.match_score > 0.7); // Only high-quality matches
     } catch (error) {
-      console.error('Error getting SGE grant recommendations:', error);
+      logger.error('Error getting SGE grant recommendations:', error);
       handleApiError(error, 'SGEGrantsService.getSGEGrantRecommendations');
       return [];
     }
@@ -338,7 +340,7 @@ export class SGEGrantsService {
 
       return true;
     } catch (error) {
-      console.error('Error updating SGE grant status:', error);
+      logger.error('Error updating SGE grant status:', error);
       handleApiError(error, 'SGEGrantsService.updateSGEGrantStatus');
       return false;
     }
@@ -379,7 +381,7 @@ export class SGEGrantsService {
 
       return stats;
     } catch (error) {
-      console.error('Error getting SGE grant stats:', error);
+      logger.error('Error getting SGE grant stats:', error);
       handleApiError(error, 'SGEGrantsService.getSGEGrantStats');
       return {};
     }

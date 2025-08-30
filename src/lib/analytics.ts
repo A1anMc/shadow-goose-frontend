@@ -86,7 +86,7 @@ class PredictiveAnalyticsService {
       const data = await response.json();
       return data.sources || [];
     } catch (error) {
-      console.error('Error fetching data sources:', error);
+      logger.error('Error fetching data sources:', error);
       return [];
     }
   }
@@ -258,7 +258,7 @@ class PredictiveAnalyticsService {
         data: {},
       };
     } catch (error) {
-      console.error('Error generating report:', error);
+      logger.error('Error generating report:', error);
       return {
         id: '',
         generated_at: new Date().toISOString(),

@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getBranding } from "../../../src/lib/branding";
 import { getGrantsService } from "../../../src/lib/services/grants-service";
+
+import { logger } from '../../../src/lib/logger';
 import {
     Grant,
     GrantAnswer,
@@ -52,7 +54,7 @@ export default function GrantApplicationDetail() {
       setAnswers(answersData || []);
       setComments(commentsData || []);
     } catch (error) {
-      console.error("Error loading application:", error);
+      logger.error("Error loading application:", error);
       setError("Failed to load application data");
     } finally {
       setLoading(false);
@@ -75,7 +77,7 @@ export default function GrantApplicationDetail() {
         setNewAnswer("");
       }
     } catch (error) {
-      console.error("Error saving answer:", error);
+      logger.error("Error saving answer:", error);
       setError("Failed to save answer");
     } finally {
       setSaving(false);
@@ -98,7 +100,7 @@ export default function GrantApplicationDetail() {
         setNewComment("");
       }
     } catch (error) {
-      console.error("Error adding comment:", error);
+      logger.error("Error adding comment:", error);
       setError("Failed to add comment");
     } finally {
       setSaving(false);
@@ -119,7 +121,7 @@ export default function GrantApplicationDetail() {
         alert("Application submitted successfully!");
       }
     } catch (error) {
-      console.error("Error submitting application:", error);
+      logger.error("Error submitting application:", error);
       setError("Failed to submit application");
     } finally {
       setSubmitting(false);

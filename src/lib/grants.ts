@@ -147,7 +147,7 @@ export class GrantService {
       const validation = await liveDataValidator.validateData(responseData, `${this.baseUrl}/api/grants`);
 
       if (!validation.isValid) {
-        console.warn('Data validation failed, but proceeding with grants:', validation.errors);
+        logger.warn('Data validation failed, but proceeding with grants:', validation.errors);
         // throw new Error(`CRITICAL: Invalid or non-live data received: ${validation.errors.join(', ')}`);
       }
 
@@ -159,7 +159,7 @@ export class GrantService {
         if (result.success) {
           externalGrants.push(...result.grants);
         } else {
-          console.warn(`External source ${result.source} failed:`, result.errors);
+          logger.warn(`External source ${result.source} failed:`, result.errors);
         }
       });
 
@@ -180,7 +180,7 @@ export class GrantService {
 
       return allGrants;
     } catch (error) {
-      console.error('Error fetching grants:', error);
+      logger.error('Error fetching grants:', error);
 
       // Update monitoring with failed API call
       liveDataMonitor.emit('api-call-failed', {
@@ -213,7 +213,7 @@ export class GrantService {
       dataSource: 'api'
     };
     } catch (error) {
-      console.error('Error fetching grants with source:', error);
+      logger.error('Error fetching grants with source:', error);
       return {
         grants: [],
         dataSource: 'fallback'
@@ -262,7 +262,7 @@ export class GrantService {
         dataSource: 'api'
       };
     } catch (error) {
-      console.error('Error searching grants:', error);
+      logger.error('Error searching grants:', error);
       return {
         grants: [],
         dataSource: 'fallback'
@@ -315,7 +315,7 @@ export class GrantService {
           throw new Error('Authentication required');
           }
         } catch (error) {
-          console.error('Authentication failed:', error);
+          logger.error('Authentication failed:', error);
         throw new Error('Authentication required. Please login.');
       }
       }

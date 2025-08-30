@@ -4,6 +4,8 @@
 import { creativeAustraliaAPI, CreativeAustraliaGrant } from './creative-australia-api';
 import { screenAustraliaAPI, ScreenAustraliaGrant } from './screen-australia-api';
 
+
+import { logger } from './logger';
 export interface UnifiedGrant {
   id: string;
   title: string;
@@ -93,7 +95,7 @@ class GrantsDataPipeline {
 
       return processedGrants;
     } catch (error) {
-      console.error('Failed to fetch all grants:', error);
+      logger.error('Failed to fetch all grants:', error);
       return this.getFallbackGrants();
     }
   }
@@ -103,7 +105,7 @@ class GrantsDataPipeline {
       const response = await creativeAustraliaAPI.getGrants();
       return this.transformCreativeAustraliaGrants(response.grants);
     } catch (error) {
-      console.error('Failed to fetch Creative Australia grants:', error);
+      logger.error('Failed to fetch Creative Australia grants:', error);
       return [];
     }
   }
@@ -113,7 +115,7 @@ class GrantsDataPipeline {
       const response = await screenAustraliaAPI.getGrants();
       return this.transformScreenAustraliaGrants(response.grants);
     } catch (error) {
-      console.error('Failed to fetch Screen Australia grants:', error);
+      logger.error('Failed to fetch Screen Australia grants:', error);
       return [];
     }
   }
@@ -308,7 +310,7 @@ class GrantsDataPipeline {
       const allGrants = await this.getAllGrants();
       return allGrants.find(grant => grant.id === id) || null;
     } catch (error) {
-      console.error('Error fetching grant by ID:', error);
+      logger.error('Error fetching grant by ID:', error);
       // Try fallback grants if pipeline fails
       const fallbackGrants = this.getFallbackGrants();
       return fallbackGrants.find(grant => grant.id === id) || null;

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { sgeGrantDiscoveryEngine } from '../../src/lib/services/sge-grant-discovery';
 import { SGEGrant, SGEGrantDiscoveryResult, SGESearchFilters } from '../../src/lib/types/sge-types';
 
+
+import { logger } from '../../src/lib/logger';
 const SGEGrantsDiscovery: React.FC = () => {
   const router = useRouter();
   const [discoveryResult, setDiscoveryResult] = useState<SGEGrantDiscoveryResult | null>(null);
@@ -26,7 +28,7 @@ const SGEGrantsDiscovery: React.FC = () => {
       setGrants(discovery.grants);
     } catch (err) {
       setError('Failed to load grants');
-      console.error('Error loading grants:', err);
+      logger.error('Error loading grants:', err);
     } finally {
       setLoading(false);
     }
@@ -39,7 +41,7 @@ const SGEGrantsDiscovery: React.FC = () => {
       setGrants(filteredGrants);
     } catch (err) {
       setError('Failed to apply filters');
-      console.error('Error applying filters:', err);
+      logger.error('Error applying filters:', err);
     } finally {
       setLoading(false);
     }

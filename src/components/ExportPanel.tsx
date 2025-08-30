@@ -2,6 +2,8 @@ import { useState } from "react";
 import { exportService } from "../lib/export";
 import { excelService } from "../lib/excel";
 
+
+import { logger } from '../lib/logger';
 interface ExportPanelProps {
   data: any;
   dataType: "dashboard" | "projects" | "okrs" | "grants" | "custom";
@@ -36,7 +38,7 @@ export default function ExportPanel({
 
       onExport?.();
     } catch (error) {
-      console.error("Export failed:", error);
+      logger.error("Export failed:", error);
       alert("Export failed. Please try again.");
     } finally {
       setExporting(false);

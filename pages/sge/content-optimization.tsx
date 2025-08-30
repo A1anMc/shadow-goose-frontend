@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { sgeMLService } from '../../src/lib/services/sge-ml-service';
 import { SGEEnhancedStory } from '../../src/lib/types/sge-types';
 
+
+import { logger } from '../../src/lib/logger';
 const SGEContentOptimization: React.FC = () => {
   const router = useRouter();
   const [originalContent, setOriginalContent] = useState('');
@@ -38,7 +40,7 @@ const SGEContentOptimization: React.FC = () => {
       setOptimizedContent(enhanced);
     } catch (err) {
       setError('Failed to optimize content');
-      console.error('Error optimizing content:', err);
+      logger.error('Error optimizing content:', err);
     } finally {
       setLoading(false);
     }

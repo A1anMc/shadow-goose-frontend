@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
-import { logger } from '../../lib/logger';
+import { logger } from '../../../src/lib/logger';
 
 // Database connection
 const pool = new Pool({

@@ -1,7 +1,8 @@
-import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import React from 'react';
+import ErrorBoundary from './ErrorBoundary';
 import NotificationBell from './NotificationBell';
 
 interface LayoutProps {
@@ -22,7 +23,7 @@ export default function Layout({ children, title = 'Grant Management System', de
   ];
 
   return (
-    <>
+    <ErrorBoundary componentName="Layout" showDetails={process.env.NODE_ENV === 'development'}>
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
@@ -140,6 +141,6 @@ export default function Layout({ children, title = 'Grant Management System', de
           </div>
         </footer>
       </div>
-    </>
+    </ErrorBoundary>
   );
 }

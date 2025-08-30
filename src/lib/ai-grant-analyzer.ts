@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 // Advanced AI Grant Analyzer
 // Machine Learning-powered grant analysis and optimization
 
@@ -73,7 +75,7 @@ class AIGrantAnalyzer {
 
       return analysis;
     } catch (error) {
-      console.error('AI Grant Analysis failed:', error);
+      logger.error('AI Grant Analysis failed:', error);
       return this.getFallbackAnalysis(grantData);
     }
   }

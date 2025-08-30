@@ -4,6 +4,8 @@ import { analyticsService, RealTimeMetric } from "../src/lib/analytics";
 import { authService, User } from "../src/lib/auth";
 import { getBranding } from "../src/lib/branding";
 
+
+import { logger } from '../src/lib/logger';
 export default function InstantAnalytics() {
   const router = useRouter();
   const branding = getBranding();
@@ -40,7 +42,7 @@ export default function InstantAnalytics() {
       const metricsData = await analyticsService.getRealTimeMetrics();
       setMetrics(metricsData);
     } catch (error) {
-      console.error("Error loading instant analytics:", error);
+      logger.error("Error loading instant analytics:", error);
     } finally {
       setLoading(false);
     }

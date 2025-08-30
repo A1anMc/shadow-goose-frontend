@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 /**
  * Live Data Monitor - Real-time Data Availability System
  * Ensures 100% live data availability with intelligent failover
@@ -93,7 +95,7 @@ export class LiveDataMonitor {
     if (this.isMonitoring) return;
 
     this.isMonitoring = true;
-    console.log('🚀 Starting Live Data Monitor...');
+    logger.info('🚀 Starting Live Data Monitor...');
 
     // Initial health check
     this.performHealthCheck();
@@ -122,7 +124,7 @@ export class LiveDataMonitor {
       clearInterval(this.healthCheckInterval);
     }
 
-    console.log('⏹️ Stopping Live Data Monitor...');
+    logger.info('⏹️ Stopping Live Data Monitor...');
     this.emit('monitoring-stopped', { timestamp: new Date() });
   }
 
@@ -339,7 +341,7 @@ export class LiveDataMonitor {
    * Trigger automatic failover to backup sources
    */
   private triggerFailover(): void {
-    console.warn('🚨 CRITICAL: No healthy primary sources. Triggering failover...');
+    logger.warn('🚨 CRITICAL: No healthy primary sources. Triggering failover...');
 
     this.createAlert('critical', 'system',
       'All primary data sources offline. Switching to backup sources.'
@@ -420,7 +422,7 @@ export class LiveDataMonitor {
    * Force refresh of all data sources
    */
   private async forceDataRefresh(): Promise<void> {
-    console.log('🔄 Forcing data source refresh...');
+    logger.info('🔄 Forcing data source refresh...');
 
     // Clear any cached data
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -499,7 +501,7 @@ export class LiveDataMonitor {
       try {
         callback(data);
       } catch (error) {
-        console.error(`Error in event listener for ${event}:`, error);
+        logger.error(`Error in event listener for ${event}:`, error);
       }
     });
   }

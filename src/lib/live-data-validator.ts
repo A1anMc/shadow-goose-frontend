@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 /**
  * Live Data Validator - Ensures 100% Live Data Usage
  * Prevents fallback to test data and maintains data integrity
@@ -267,7 +269,7 @@ export class LiveDataValidator {
    * Block fallback data usage
    */
   private blockFallbackUsage(validation: DataValidationResult): void {
-    console.error('🚨 CRITICAL: Blocking fallback data usage', validation);
+    logger.error('🚨 CRITICAL: Blocking fallback data usage', validation);
 
     // Create critical alert
     this.createCriticalAlert(validation);
@@ -287,7 +289,7 @@ export class LiveDataValidator {
    * Force refresh to get live data
    */
   private async forceLiveDataRefresh(): Promise<void> {
-    console.log('🔄 Forcing live data refresh...');
+    logger.info('🔄 Forcing live data refresh...');
 
     // Clear cached data
     this.clearCachedData();
@@ -296,14 +298,14 @@ export class LiveDataValidator {
     try {
       const liveData = await this.fetchLiveData();
       if (liveData) {
-        console.log('✅ Live data refresh successful');
+        logger.info('✅ Live data refresh successful');
         this.emit('live-data-refreshed', { timestamp: new Date() });
       } else {
-        console.error('❌ Live data refresh failed');
+        logger.error('❌ Live data refresh failed');
         this.emit('live-data-refresh-failed', { timestamp: new Date() });
       }
     } catch (error) {
-      console.error('❌ Live data refresh error:', error);
+      logger.error('❌ Live data refresh error:', error);
       this.emit('live-data-refresh-error', {
         timestamp: new Date(),
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -340,7 +342,7 @@ export class LiveDataValidator {
           }
         }
       } catch (error) {
-        console.warn(`Failed to fetch from ${source}:`, error);
+        logger.warn(`Failed to fetch from ${source}:`, error);
       }
     }
 
@@ -446,7 +448,7 @@ export class LiveDataValidator {
    */
   public setFallbackBlocking(enabled: boolean): void {
     this.isBlockingFallback = enabled;
-    console.log(`Fallback blocking ${enabled ? 'enabled' : 'disabled'}`);
+    logger.info(`Fallback blocking ${enabled ? 'enabled' : 'disabled'}`);
   }
 
   /**
@@ -467,7 +469,7 @@ export class LiveDataValidator {
       try {
         callback(data);
       } catch (error) {
-        console.error(`Error in event listener for ${event}:`, error);
+        logger.error(`Error in event listener for ${event}:`, error);
       }
     });
   }
@@ -497,7 +499,7 @@ if (typeof window !== 'undefined') {
         const data = JSON.parse(cachedData);
         liveDataValidator.validateData(data, 'cached');
       } catch (error) {
-        console.warn('Failed to validate cached data:', error);
+        logger.warn('Failed to validate cached data:', error);
       }
     }
   }, 60000); // Every minute

@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SuccessRateDashboard from '../src/components/SuccessRateDashboard';
+import { logger } from '../src/lib/logger';
 import { getGrantsService } from '../src/lib/services/grants-service';
 import { Grant } from '../src/lib/types/grants';
-import { logger } from '../src/lib/logger';
 
 interface PipelineStats {
   total_grants: number;

@@ -5,6 +5,8 @@ import { getBranding } from "../../src/lib/branding";
 import { ExternalGrantSource, externalGrantsService } from "../../src/lib/external-grants-service";
 import { getGrantsService } from "../../src/lib/services/grants-service";
 
+
+import { logger } from '../../src/lib/logger';
 export default function ExternalGrantSources() {
   const router = useRouter();
   const branding = getBranding();
@@ -37,7 +39,7 @@ export default function ExternalGrantSources() {
         setStats(statsData);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error loading external sources:", error);
+        logger.error("Error loading external sources:", error);
         setError(error instanceof Error ? error.message : "Failed to load external sources");
         setIsLoading(false);
       }
@@ -53,7 +55,7 @@ export default function ExternalGrantSources() {
         source.id === sourceId ? { ...source, enabled } : source
       ));
     } catch (error) {
-      console.error("Error toggling source:", error);
+      logger.error("Error toggling source:", error);
     }
   };
 
@@ -68,10 +70,10 @@ export default function ExternalGrantSources() {
             : source
         ));
       } else {
-        console.error(`Failed to sync ${sourceId}:`, result.errors);
+        logger.error(`Failed to sync ${sourceId}:`, result.errors);
       }
     } catch (error) {
-      console.error("Error syncing source:", error);
+      logger.error("Error syncing source:", error);
     }
   };
 

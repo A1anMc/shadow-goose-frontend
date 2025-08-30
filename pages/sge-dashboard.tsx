@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { sgeGrantsService } from '../src/lib/services/sge-grants-service';
 import { SGEDashboardData } from '../src/lib/types/sge-types';
 
+
+import { logger } from '../src/lib/logger';
 const SGEDashboard: React.FC = () => {
   const router = useRouter();
   const [dashboardData, setDashboardData] = useState<SGEDashboardData | null>(null);
@@ -20,7 +22,7 @@ const SGEDashboard: React.FC = () => {
       setDashboardData(data);
     } catch (err) {
       setError('Failed to load dashboard data');
-      console.error('Error loading dashboard data:', err);
+      logger.error('Error loading dashboard data:', err);
     } finally {
       setLoading(false);
     }

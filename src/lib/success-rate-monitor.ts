@@ -3,6 +3,8 @@
  * Tracks success rates for backend fixes, API calls, and system performance
  */
 
+import { logger } from './logger';
+
 export interface SuccessMetric {
   id: string;
   category: 'backend' | 'api' | 'frontend' | 'data' | 'user' | 'system';
@@ -194,7 +196,7 @@ export class SuccessRateMonitor {
     if (this.isMonitoring) return;
 
     this.isMonitoring = true;
-    console.log('🚀 Starting Success Rate Monitor...');
+    logger.info('🚀 Starting Success Rate Monitor...');
 
     // Initial assessment
     this.performSuccessAssessment();
@@ -218,7 +220,7 @@ export class SuccessRateMonitor {
       clearInterval(this.monitoringInterval);
     }
 
-    console.log('⏹️ Stopping Success Rate Monitor...');
+    logger.info('⏹️ Stopping Success Rate Monitor...');
     this.emit('monitoring-stopped', { timestamp: new Date() });
   }
 
@@ -251,7 +253,7 @@ export class SuccessRateMonitor {
       });
 
     } catch (error) {
-      console.error('Error in success assessment:', error);
+      logger.error('Error in success assessment:', error);
       this.createAlert('critical', 'system', `Success assessment failed: ${error}`);
     }
   }
@@ -271,7 +273,7 @@ export class SuccessRateMonitor {
       this.updateMetric('system-uptime', backendMetrics.uptime);
 
     } catch (error) {
-      console.error('Error assessing backend health:', error);
+      logger.error('Error assessing backend health:', error);
       this.updateMetric('backend-api-success', 0);
     }
   }
@@ -352,7 +354,7 @@ export class SuccessRateMonitor {
       this.updateMetric('data-quality-score', dataQualityScore);
 
     } catch (error) {
-      console.error('Error assessing data quality:', error);
+      logger.error('Error assessing data quality:', error);
       this.updateMetric('live-data-success', 0);
       this.updateMetric('data-quality-score', 0);
     }
@@ -416,7 +418,7 @@ export class SuccessRateMonitor {
       this.updateMetric('system-uptime', performanceMetrics.uptime);
 
     } catch (error) {
-      console.error('Error assessing system performance:', error);
+      logger.error('Error assessing system performance:', error);
     }
   }
 
@@ -447,7 +449,7 @@ export class SuccessRateMonitor {
       this.updateMetric('feature-adoption', featureAdoption);
 
     } catch (error) {
-      console.error('Error assessing user experience:', error);
+      logger.error('Error assessing user experience:', error);
     }
   }
 
@@ -652,7 +654,7 @@ export class SuccessRateMonitor {
       try {
         callback(data);
       } catch (error) {
-        console.error(`Error in event listener for ${event}:`, error);
+        logger.error(`Error in event listener for ${event}:`, error);
       }
     });
   }
@@ -686,7 +688,7 @@ export class SuccessRateMonitor {
             }
           }
         } catch (error) {
-          console.error('Authentication failed:', error);
+          logger.error('Authentication failed:', error);
         }
       }
       

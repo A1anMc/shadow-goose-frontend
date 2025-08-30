@@ -4,6 +4,8 @@
 import { SGEGrant, SGEProfile, SGEGrantMatch, SGESearchFilters } from '../types/sge-types';
 import { sgeMLService } from './sge-ml-service';
 
+
+import { logger } from '../logger';
 export interface SGEGrantSource {
   id: string;
   name: string;
@@ -63,7 +65,7 @@ export class SGEGrantDiscoveryEngine {
           totalFound += sourceGrants.length;
           sourcesSearched++;
         } catch (error) {
-          console.error(`Error searching source ${source.name}:`, error);
+          logger.error(`Error searching source ${source.name}:`, error);
         }
       }
 
@@ -105,7 +107,7 @@ export class SGEGrantDiscoveryEngine {
         nextRefresh: new Date(Date.now() + this.config.refreshInterval * 60 * 1000).toISOString()
       };
     } catch (error) {
-      console.error('Error in grant discovery:', error);
+      logger.error('Error in grant discovery:', error);
       throw error;
     }
   }
@@ -267,7 +269,7 @@ export class SGEGrantDiscoveryEngine {
 
         matchedGrants.push(enhancedGrant);
       } catch (error) {
-        console.error(`Error applying ML matching to grant ${grant.id}:`, error);
+        logger.error(`Error applying ML matching to grant ${grant.id}:`, error);
         // Add grant without ML enhancements
         matchedGrants.push(grant);
       }
@@ -409,7 +411,7 @@ export class SGEGrantDiscoveryEngine {
         (b.sge_alignment_score || 0) - (a.sge_alignment_score || 0)
       );
     } catch (error) {
-      console.error('Error searching grants:', error);
+      logger.error('Error searching grants:', error);
       return [];
     }
   }

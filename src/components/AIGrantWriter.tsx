@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { aiWritingAssistant } from '../lib/ai-writing-assistant';
 
+
+import { logger } from '../lib/logger';
 interface AIGrantWriterProps {
   grantContext: {
     name: string;
@@ -57,7 +59,7 @@ export default function AIGrantWriter({
       setSuggestion(response.content);
       setShowSuggestion(true);
     } catch (error) {
-      console.error('Error generating content:', error);
+      logger.error('Error generating content:', error);
       setSuggestion('Unable to generate content at this time. Please try again.');
       setShowSuggestion(true);
     } finally {

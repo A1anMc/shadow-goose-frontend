@@ -5,6 +5,8 @@ import { authService, User } from "../src/lib/auth";
 import { getBranding } from "../src/lib/branding";
 import { CEMP_PRINCIPLES, SDG_GOALS, VICTORIAN_OUTCOMES } from "../src/lib/types/impact-frameworks";
 
+
+import { logger } from '../src/lib/logger';
 interface ImpactStory {
   id: string;
   title: string;
@@ -187,7 +189,7 @@ export default function ImpactAnalytics() {
         },
       ]);
     } catch (error) {
-      console.error("Error loading impact analytics:", error);
+      logger.error("Error loading impact analytics:", error);
     } finally {
       setLoading(false);
     }
@@ -208,7 +210,7 @@ export default function ImpactAnalytics() {
           break;
       }
     } catch (error) {
-      console.error('Error loading framework data:', error);
+      logger.error('Error loading framework data:', error);
     }
   };
 

@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 
 export interface OKR {
   id: number;
@@ -289,7 +291,7 @@ class OKRService {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching OKRs:', error);
+      logger.error('Error fetching OKRs:', error);
       // Return SGE strategic OKRs as fallback
       return this.getSGEStrategicOKRs();
     }
@@ -310,7 +312,7 @@ class OKRService {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching OKR:', error);
+      logger.error('Error fetching OKR:', error);
       return null;
     }
   }
@@ -331,7 +333,7 @@ class OKRService {
       const data = await response.json();
       return data.okrs || [];
     } catch (error) {
-      console.error('Error fetching project OKRs:', error);
+      logger.error('Error fetching project OKRs:', error);
       return this.getSGEStrategicOKRs();
     }
   }
@@ -354,7 +356,7 @@ class OKRService {
 
       return await response.json();
     } catch (error) {
-      console.error('Error creating OKR:', error);
+      logger.error('Error creating OKR:', error);
       return null;
     }
   }
@@ -377,7 +379,7 @@ class OKRService {
 
       return await response.json();
     } catch (error) {
-      console.error('Error updating OKR:', error);
+      logger.error('Error updating OKR:', error);
       return null;
     }
   }
@@ -400,7 +402,7 @@ class OKRService {
 
       return await response.json();
     } catch (error) {
-      console.error('Error updating key result:', error);
+      logger.error('Error updating key result:', error);
       return null;
     }
   }
@@ -469,7 +471,7 @@ class OKRService {
 
       return response.ok;
     } catch (error) {
-      console.error('Error deleting OKR:', error);
+      logger.error('Error deleting OKR:', error);
       return false;
     }
   }

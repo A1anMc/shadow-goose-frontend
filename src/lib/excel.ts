@@ -1,6 +1,8 @@
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
+
+import { logger } from './logger';
 export interface ExcelData {
   sheetName: string;
   data: any[];
@@ -59,7 +61,7 @@ class ExcelService {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       saveAs(blob, filename);
     } catch (error) {
-      console.error('Error exporting to Excel:', error);
+      logger.error('Error exporting to Excel:', error);
       throw new Error('Failed to export to Excel');
     }
   }
@@ -328,7 +330,7 @@ class ExcelService {
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       saveAs(blob, filename || `sge-export-${Date.now()}.csv`);
     } catch (error) {
-      console.error('Error exporting to CSV:', error);
+      logger.error('Error exporting to CSV:', error);
       throw new Error('Failed to export to CSV');
     }
   }

@@ -5,6 +5,8 @@ import { getBranding } from "../src/lib/branding";
 import { getGrantsService } from "../src/lib/services/grants-service";
 import { Grant, GrantSearchFilters } from "../src/lib/types/grants";
 
+
+import { logger } from '../src/lib/logger';
 export default function BulletproofGrants() {
   const router = useRouter();
   const branding = getBranding();
@@ -29,7 +31,7 @@ export default function BulletproofGrants() {
       setLoading(true);
       setError(null);
 
-      console.log('🚀 Loading grants with bulletproof service...');
+      logger.info('🚀 Loading grants with bulletproof service...');
       const grantsService = getGrantsService();
       const result = await grantsService.getGrantsWithSource();
 
@@ -39,7 +41,7 @@ export default function BulletproofGrants() {
       setLastUpdated(result.timestamp);
       setErrors(result.errors);
 
-      console.log(`✅ Grants loaded successfully!`, {
+      logger.info(`✅ Grants loaded successfully!`, {
         count: result.data.length,
         source: result.source,
         reliability: result.reliability,
@@ -47,7 +49,7 @@ export default function BulletproofGrants() {
       });
 
     } catch (error) {
-      console.error('💥 Unexpected error in bulletproof grants:', error);
+      logger.error('💥 Unexpected error in bulletproof grants:', error);
       setError('Unexpected error occurred');
     } finally {
       setLoading(false);
@@ -65,7 +67,7 @@ export default function BulletproofGrants() {
       setLastUpdated(result.timestamp);
       setErrors(result.errors);
     } catch (error) {
-      console.error('Search error:', error);
+      logger.error('Search error:', error);
       setError('Search failed');
     } finally {
       setLoading(false);

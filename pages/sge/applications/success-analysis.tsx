@@ -4,6 +4,8 @@ import { sgeSuccessPredictionEngine } from '../../../src/lib/services/sge-succes
 import { sgeGrantsService } from '../../../src/lib/services/sge-grants-service';
 import { SGEApplication, SGEGrant, SGESuccessAnalysis } from '../../../src/lib/types/sge-types';
 
+
+import { logger } from '../../../src/lib/logger';
 const SGESuccessAnalysisPage: React.FC = () => {
   const router = useRouter();
   const [applications, setApplications] = useState<SGEApplication[]>([]);
@@ -29,7 +31,7 @@ const SGESuccessAnalysisPage: React.FC = () => {
       setGrants(grantsData);
     } catch (err) {
       setError('Failed to load data');
-      console.error('Error loading data:', err);
+      logger.error('Error loading data:', err);
     } finally {
       setLoading(false);
     }
@@ -47,7 +49,7 @@ const SGESuccessAnalysisPage: React.FC = () => {
       setSuccessAnalysis(analysis);
     } catch (err) {
       setError('Failed to analyze success');
-      console.error('Error analyzing success:', err);
+      logger.error('Error analyzing success:', err);
     } finally {
       setLoading(false);
     }

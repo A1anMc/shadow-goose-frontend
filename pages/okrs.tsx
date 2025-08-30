@@ -4,6 +4,8 @@ import { getBranding } from "../src/lib/branding";
 import { okrService, OKR } from "../src/lib/okrs";
 import { authService } from "../src/lib/auth";
 
+
+import { logger } from '../src/lib/logger';
 export default function OKRs() {
   const router = useRouter();
   const branding = getBranding();
@@ -40,7 +42,7 @@ export default function OKRs() {
         setStats(statsData);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error loading OKRs:", error);
+        logger.error("Error loading OKRs:", error);
         setError("Failed to load OKR data");
         setIsLoading(false);
       }
@@ -421,7 +423,7 @@ export default function OKRs() {
             </h2>
             <CreateOKRForm
               onSubmit={(data) => {
-                console.log("OKR creation not implemented yet:", data);
+                logger.info("OKR creation not implemented yet:", data);
                 setShowCreateModal(false);
               }}
               onCancel={() => setShowCreateModal(false)}

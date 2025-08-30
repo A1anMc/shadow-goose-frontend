@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+
+import { logger } from '../lib/logger';
 interface AnalyticsData {
   grantSuccessRate: number;
   averageResponseTime: number;
@@ -60,7 +62,7 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
         }
       });
     } catch (error) {
-      console.error('Failed to load analytics data:', error);
+      logger.error('Failed to load analytics data:', error);
     } finally {
       setLoading(false);
     }

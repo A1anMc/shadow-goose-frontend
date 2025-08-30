@@ -1,9 +1,12 @@
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import CriticalErrorBoundary from "../src/components/CriticalErrorBoundary";
 import NotificationBell from "../src/components/NotificationBell";
 import { getBranding } from "../src/lib/branding";
 import { getGrantsService } from "../src/lib/services/grants-service";
 import { successMetricsTracker } from "../src/lib/success-metrics";
+
+import { logger } from '../src/lib/logger';
 import {
     Grant,
     GrantApplication,
@@ -43,7 +46,7 @@ export default function Grants() {
       setLoading(true);
       setError(null);
 
-      console.log('🚀 Loading grants with centralized service...');
+      logger.info('🚀 Loading grants with centralized service...');
       const grantsService = getGrantsService();
       const result = await grantsService.getGrantsWithSource();
 
@@ -57,7 +60,7 @@ export default function Grants() {
         });
       }
 
-      console.log(`✅ Grants loaded successfully!`, {
+      logger.info(`✅ Grants loaded successfully!`, {
         count: result.data.length,
         source: result.source,
         reliability: result.reliability,
@@ -65,7 +68,7 @@ export default function Grants() {
       });
 
     } catch (error) {
-      console.error('Error loading grants:', error);
+      logger.error('Error loading grants:', error);
       setError('Failed to load grants. Please try again.');
     } finally {
       setLoading(false);
@@ -80,7 +83,7 @@ export default function Grants() {
       setGrants(result.data);
       setDataSource(result.source as 'api' | 'fallback' | 'unified_pipeline');
     } catch (error) {
-      console.error('Error searching grants:', error);
+      logger.error('Error searching grants:', error);
       setError('Search failed. Please try again.');
     } finally {
       setSearching(false);
@@ -166,7 +169,7 @@ export default function Grants() {
         router.push(`/grants/applications/${application.id}`);
       }
     } catch (error) {
-      console.error("Error creating application:", error);
+      logger.error("Error creating application:", error);
     }
   };
 
@@ -288,7 +291,19 @@ export default function Grants() {
   }
 
   return (
-    <div className="min-h-screen bg-sg-background">
+    <CriticalErrorBoundary 
+      componentName="GrantsPage"
+      maxRetries={2}
+      retryDelay={3000}
+      onCriticalError={(error, errorInfo) => {
+        logger.error('Critical error in Grants page', {
+          error: error.message,
+          componentStack: errorInfo.componentStack,
+          timestamp: new Date().toISOString(),
+        });
+      }}
+    >
+      <div className="min-h-screen bg-sg-background">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1065,5 +1080,6 @@ export default function Grants() {
         )}
       </main>
     </div>
+    </CriticalErrorBoundary>
   );
 }

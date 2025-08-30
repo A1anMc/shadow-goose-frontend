@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 // Grant Application Notifications System
 // Handles all notifications for grant applications, deadlines, and updates
 
@@ -244,7 +246,7 @@ class NotificationService {
         localStorage.setItem('grant_notifications', JSON.stringify(this.notifications));
       }
     } catch (error) {
-      console.error('Error saving notifications:', error);
+      logger.error('Error saving notifications:', error);
     }
   }
 
@@ -258,7 +260,7 @@ class NotificationService {
         }
       }
     } catch (error) {
-      console.error('Error loading notifications:', error);
+      logger.error('Error loading notifications:', error);
     }
   }
 
@@ -269,7 +271,7 @@ class NotificationService {
         localStorage.setItem('notification_preferences', JSON.stringify(this.preferences));
       }
     } catch (error) {
-      console.error('Error saving preferences:', error);
+      logger.error('Error saving preferences:', error);
     }
   }
 
@@ -283,7 +285,7 @@ class NotificationService {
         }
       }
     } catch (error) {
-      console.error('Error loading preferences:', error);
+      logger.error('Error loading preferences:', error);
     }
   }
 

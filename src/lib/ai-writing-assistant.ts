@@ -1,6 +1,8 @@
 // AI Writing Assistant for Grant Applications
 // Senior Grants Operations Agent - Real Data Integration
 
+import { logger } from './logger';
+
 export interface AIWritingPrompt {
   grant_title: string;
   grant_description: string;
@@ -178,7 +180,7 @@ class AIWritingAssistant {
         }
       };
     } catch (error) {
-      console.error('Error generating grant content:', error);
+      logger.error('Error generating grant content:', error);
       return this.getFallbackResponse({
         grant_title: 'Grant Title',
         grant_description: 'Grant Description',
@@ -271,7 +273,7 @@ Please provide a detailed analysis with scores and specific feedback.`;
         compliance_issues: this.extractComplianceIssues(analysis)
       };
     } catch (error) {
-      console.error('Error analyzing grant content:', error);
+      logger.error('Error analyzing grant content:', error);
       return {
         grant_alignment: 75,
         completeness: 70,
@@ -454,7 +456,7 @@ Please enhance this content to meet professional grant writing standards while m
       const data = await response.json();
       return data.choices[0].message.content;
     } catch (error) {
-      console.error('Error enhancing content professionalism:', error);
+      logger.error('Error enhancing content professionalism:', error);
       return content; // Return original if enhancement fails
     }
   }
@@ -512,7 +514,7 @@ Please enhance this content to meet professional grant writing standards while m
         });
         versions.push(version);
       } catch (error) {
-        console.error(`Error generating version ${i + 1}:`, error);
+        logger.error(`Error generating version ${i + 1}:`, error);
       }
     }
 
@@ -581,11 +583,11 @@ Please enhance this content to meet professional grant writing standards while m
 
         return await this.analyzeAndEnhance(enhancedContent, prompt);
       } catch (error) {
-        console.error('Error enhancing content:', error);
+        logger.error('Error enhancing content:', error);
         return await this.analyzeAndEnhance(content, prompt);
       }
     } catch (error) {
-      console.error('Error in enhanceContent:', error);
+      logger.error('Error in enhanceContent:', error);
       return this.getFallbackResponse(prompt);
     }
   }
@@ -655,7 +657,7 @@ Please enhance this content to meet professional grant writing standards while m
 
       return this.parseAssistanceResponse(assistanceText);
     } catch (error) {
-      console.error('Error providing writing assistance:', error);
+      logger.error('Error providing writing assistance:', error);
       return {
         suggestions: ['Focus on being specific and measurable'],
         improvements: ['Add more concrete examples'],
@@ -723,7 +725,7 @@ Please enhance this content to meet professional grant writing standards while m
 
       return this.parseAnalysisResponse(analysisText);
     } catch (error) {
-      console.error('Error analyzing content:', error);
+      logger.error('Error analyzing content:', error);
       return {
         grant_alignment: 70,
         completeness: 70,
@@ -972,7 +974,7 @@ Please replace this placeholder with your specific content tailored to this gran
 
       return versions;
     } catch (error) {
-      console.error('Error generating alternative versions:', error);
+      logger.error('Error generating alternative versions:', error);
       return [];
     }
   }

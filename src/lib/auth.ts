@@ -124,7 +124,7 @@ class AuthService {
         return token;
       }
     } catch (error) {
-      console.error('Failed to retrieve token:', error);
+      logger.error('Failed to retrieve token:', error);
     }
     return null;
   }
@@ -264,7 +264,7 @@ class AuthService {
 
       return userData;
     } catch (error) {
-      console.error('Failed to refresh user data:', error);
+      logger.error('Failed to refresh user data:', error);
       return null;
     }
   }
@@ -289,7 +289,7 @@ class AuthService {
 
       return response.ok;
     } catch (error) {
-      console.error('Token validation failed:', error);
+      logger.error('Token validation failed:', error);
       return false;
     }
   }
@@ -305,7 +305,7 @@ class AuthService {
 
       return !!response.access_token;
     } catch (error) {
-      console.error('Auto-login failed:', error);
+      logger.error('Auto-login failed:', error);
       return false;
     }
   }

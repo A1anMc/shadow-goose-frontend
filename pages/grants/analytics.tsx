@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getBranding } from "../../src/lib/branding";
 import { getGrantsService } from "../../src/lib/services/grants-service";
 import { successMetricsTracker } from "../../src/lib/success-metrics";
+
+import { logger } from '../../src/lib/logger';
 import {
     Grant,
     GrantApplication,
@@ -32,7 +34,7 @@ export default function GrantsAnalytics() {
       setApplications(applicationsData);
       setGrants(grantsData.data);
     } catch (error) {
-      console.error("Error loading analytics data:", error);
+      logger.error("Error loading analytics data:", error);
       setError('Failed to load analytics data');
     } finally {
       setLoading(false);
@@ -46,7 +48,7 @@ export default function GrantsAnalytics() {
       const grantsData = await grantsService.getGrantsWithSource();
       setGrants(grantsData.data);
     } catch (error) {
-      console.error('Error loading grants:', error);
+      logger.error('Error loading grants:', error);
       setError('Failed to load grants data');
     } finally {
       setLoading(false);

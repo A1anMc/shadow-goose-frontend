@@ -5,6 +5,8 @@ import GrantWritingAssistant from "../../../src/components/GrantWritingAssistant
 import { aiWritingAssistant } from "../../../src/lib/ai-writing-assistant";
 import { getBranding } from "../../../src/lib/branding";
 import { getGrantsService } from "../../../src/lib/services/grants-service";
+
+import { logger } from '../../../src/lib/logger';
 import {
     Grant,
 } from "../../../src/lib/types/grants";
@@ -102,7 +104,7 @@ export default function NewGrantApplication() {
         prefillSmartSuggestions(grantData);
       }
     } catch (error) {
-      console.error("Error loading grant:", error);
+      logger.error("Error loading grant:", error);
       setError("Failed to load grant data");
     } finally {
       setLoading(false);
@@ -218,7 +220,7 @@ export default function NewGrantApplication() {
         [field]: response.content
       }));
     } catch (error) {
-      console.error("Error getting AI suggestion:", error);
+      logger.error("Error getting AI suggestion:", error);
     } finally {
       setAiLoading(prev => ({ ...prev, [field]: false }));
     }
@@ -259,7 +261,7 @@ export default function NewGrantApplication() {
         router.push(`/grants/applications/${newApplication.id}`);
       }
     } catch (error) {
-      console.error("Error saving application:", error);
+      logger.error("Error saving application:", error);
       setError("Failed to save application");
     } finally {
       setSaving(false);
@@ -994,7 +996,7 @@ export default function NewGrantApplication() {
                         grant={grant}
                         onUpdate={() => {
                           // Refresh data when project management updates
-                          console.log('Project management updated');
+                          logger.info('Project management updated');
                         }}
                       />
                     </div>

@@ -1,3 +1,5 @@
+import { logger } from '../logger';
+
 // SGE-Specific ML Service
 // Focused on SGE's actual business needs: media projects, cultural representation, social impact
 
@@ -84,7 +86,7 @@ export class SGEMLService {
       // Sort by match score descending
       return matches.sort((a, b) => b.match_score - a.match_score);
     } catch (error) {
-      console.error('Error in SGE grant matching:', error);
+      logger.error('Error in SGE grant matching:', error);
       return [];
     }
   }
@@ -211,7 +213,7 @@ export class SGEMLService {
 
       return Math.min(Math.max(baseProbability, 0), 1); // Clamp between 0 and 1
     } catch (error) {
-      console.error('Error in SGE success prediction:', error);
+      logger.error('Error in SGE success prediction:', error);
       return 0.5; // Default probability
     }
   }
@@ -283,7 +285,7 @@ export class SGEMLService {
         recommendations: recommendations
       };
     } catch (error) {
-      console.error('Error in SGE content optimization:', error);
+      logger.error('Error in SGE content optimization:', error);
       return {
         original_narrative: content,
         enhanced_narrative: content,
@@ -445,7 +447,7 @@ export class SGEMLService {
         team_efficiency_score: 0.8 // Would be calculated from team performance
       };
     } catch (error) {
-      console.error('Error in SGE business metrics analysis:', error);
+      logger.error('Error in SGE business metrics analysis:', error);
       return {
         metric_date: new Date().toISOString().split('T')[0],
         total_grants_discovered: 0,

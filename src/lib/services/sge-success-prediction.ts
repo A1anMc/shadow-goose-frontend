@@ -3,6 +3,8 @@
 
 import { SGEApplication, SGEGrant, SGESuccessPrediction } from '../types/sge-types';
 
+
+import { logger } from '../logger';
 export interface SGESuccessFactor {
   factor: string;
   weight: number;
@@ -103,7 +105,7 @@ export class SGESuccessPredictionEngine {
 
       return analysis;
     } catch (error) {
-      console.error('Error predicting application success:', error);
+      logger.error('Error predicting application success:', error);
       throw error;
     }
   }

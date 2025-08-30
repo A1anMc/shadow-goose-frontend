@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getBranding } from "../../../src/lib/branding";
 import { getGrantsService } from "../../../src/lib/services/grants-service";
+
+import { logger } from '../../../src/lib/logger';
 import {
     Grant,
     GrantApplication,
@@ -34,7 +36,7 @@ export default function ApplicationsDashboard() {
       setApplications(applicationsData);
       setGrants(grantsData.data);
     } catch (error) {
-      console.error("Error loading applications data:", error);
+      logger.error("Error loading applications data:", error);
       setError('Failed to load applications data');
     } finally {
       setLoading(false);
@@ -48,7 +50,7 @@ export default function ApplicationsDashboard() {
       const grantsData = await grantsService.getGrantsWithSource();
       setGrants(grantsData.data);
     } catch (error) {
-      console.error('Error loading grants:', error);
+      logger.error('Error loading grants:', error);
       setError('Failed to load grants data');
     } finally {
       setLoading(false);

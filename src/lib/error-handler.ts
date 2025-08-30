@@ -4,6 +4,8 @@
 
 import { configService } from './config';
 
+
+import { logger } from './logger';
 export interface ErrorContext {
   service: string;
   operation: string;
@@ -178,7 +180,7 @@ class ErrorHandler {
 
     // Log to console in development
     if (configService.isDevelopment()) {
-      console.error('Error logged:', errorInfo);
+      logger.error('Error logged:', errorInfo);
     }
 
     // In production, you might want to send to error tracking service
@@ -231,7 +233,7 @@ class ErrorHandler {
   private sendToErrorTracking(errorInfo: ErrorInfo): void {
     // In production, this would send to Sentry, LogRocket, etc.
     // For now, just log to console
-    console.error('Production error:', errorInfo);
+    logger.error('Production error:', errorInfo);
   }
 
   // Utility method to check if error is retryable

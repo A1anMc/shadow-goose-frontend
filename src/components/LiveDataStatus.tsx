@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { liveDataMonitor } from '../lib/live-data-monitor';
 import { DataValidationResult, liveDataValidator } from '../lib/live-data-validator';
 
+
+import { logger } from '../lib/logger';
 interface LiveDataStatusProps {
   showDetails?: boolean;
   showAlerts?: boolean;
@@ -38,14 +40,14 @@ export default function LiveDataStatus({
 
     // Listen for critical alerts
     const handleCriticalAlert = (alert: any) => {
-      console.error('🚨 CRITICAL ALERT:', alert);
+      logger.error('🚨 CRITICAL ALERT:', alert);
       // Show critical alert to user
       showCriticalAlert(alert);
     };
 
     // Listen for fallback blocking
     const handleFallbackBlocked = (data: any) => {
-      console.error('🚨 FALLBACK BLOCKED:', data);
+      logger.error('🚨 FALLBACK BLOCKED:', data);
       showFallbackBlockedAlert(data);
     };
 
@@ -105,14 +107,14 @@ export default function LiveDataStatus({
     alert(message); // Simple alert for now, could be replaced with a proper modal
 
     // Log to console for debugging
-    console.error('Critical Alert Details:', alert);
+    logger.error('Critical Alert Details:', alert);
   };
 
   const showFallbackBlockedAlert = (data: any) => {
     const message = `🚨 FALLBACK BLOCKED: System attempted to use fallback data. Live data required.`;
     alert(message);
 
-    console.error('Fallback Blocked Details:', data);
+    logger.error('Fallback Blocked Details:', data);
   };
 
   const handleRefresh = () => {

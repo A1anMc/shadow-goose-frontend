@@ -2,6 +2,8 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 
+
+import { logger } from './logger';
 export interface ReportData {
   title: string;
   subtitle?: string;
@@ -60,7 +62,7 @@ class ExportService {
 
       pdf.save(filename);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      logger.error('Error generating PDF:', error);
       throw new Error('Failed to generate PDF');
     }
   }

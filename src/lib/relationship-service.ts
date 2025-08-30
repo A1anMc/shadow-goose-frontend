@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 // Relationship Impact Tracker Service
 // SGE V3 GIIS - Stakeholder Relationship Management
 
@@ -60,7 +62,7 @@ class RelationshipService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Relationship service error:', error);
+      logger.error('Relationship service error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',

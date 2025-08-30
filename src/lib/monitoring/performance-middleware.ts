@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { healthMonitor } from './health-monitor';
 
+
+import { logger } from '../logger';
 export interface PerformanceData {
   path: string;
   method: string;
@@ -19,7 +21,7 @@ class PerformanceMiddleware {
   // Middleware function
   middleware(handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>) {
     const self = this;
-    return async (_req: NextApiRequest, res: NextApiResponse) => {
+    return async (req: NextApiRequest, res: NextApiResponse) => {
       const startTime = Date.now();
       const originalSend = res.send;
       const originalJson = res.json;
@@ -116,7 +118,7 @@ class PerformanceMiddleware {
     // Log slow requests or errors
     if (responseTime > 2000 || statusCode >= 400 || error) {
       // Keep console.warn for performance alerts
-      console.warn('Performance Alert:', performanceData);
+      logger.warn('Performance Alert:', performanceData);
     }
   }
 

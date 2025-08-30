@@ -1,5 +1,7 @@
 import { healthMonitor, defaultHealthChecks } from './health-monitor';
 
+
+import { logger } from '../logger';
 export function initializeMonitoring() {
   // Start the health monitor
   healthMonitor.start();
@@ -41,7 +43,7 @@ export function initializeMonitoring() {
   });
 
   // Keep console.log for monitoring initialization
-  console.log('✅ Monitoring system initialized successfully');
+  logger.info('✅ Monitoring system initialized successfully');
 }
 
 // Auto-initialize in development

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { HealthStatus } from '../lib/monitoring/health-monitor';
 
+
+import { logger } from '../lib/logger';
 interface MonitoringDashboardProps {
   refreshInterval?: number; // milliseconds
   showAlerts?: boolean;
@@ -31,7 +33,7 @@ export default function MonitoringDashboard({
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch health status');
       // Keep console.error for monitoring errors
-      console.error('Health status fetch error:', err);
+      logger.error('Health status fetch error:', err);
     } finally {
       setLoading(false);
     }

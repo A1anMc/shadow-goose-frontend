@@ -7,6 +7,8 @@ import { configService } from '../config';
 import { BulletproofResponse, Grant, GrantRecommendation, GrantSearchFilters } from '../types/grants';
 import { IGrantsService } from './grants-service';
 
+
+import { logger } from '../logger';
 export class GrantsBulletproofService implements IGrantsService {
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
@@ -25,7 +27,7 @@ export class GrantsBulletproofService implements IGrantsService {
 
     try {
       // Layer 1: Try primary API with authentication
-      console.log('🔍 Layer 1: Attempting primary API...');
+      logger.info('🔍 Layer 1: Attempting primary API...');
       const primaryResult = await this.tryPrimaryAPI();
       if (primaryResult.success && primaryResult.grants) {
         return {
@@ -39,7 +41,7 @@ export class GrantsBulletproofService implements IGrantsService {
       errors.push(`Primary API failed: ${primaryResult.error}`);
 
       // Layer 2: Try cached data
-      console.log('🔍 Layer 2: Attempting cached data...');
+      logger.info('🔍 Layer 2: Attempting cached data...');
       const cachedResult = await this.tryCachedData();
       if (cachedResult.success && cachedResult.grants) {
         return {
@@ -53,7 +55,7 @@ export class GrantsBulletproofService implements IGrantsService {
       errors.push(`Cache failed: ${cachedResult.error}`);
 
       // Layer 3: Try fallback API (no auth)
-      console.log('🔍 Layer 3: Attempting fallback API...');
+      logger.info('🔍 Layer 3: Attempting fallback API...');
       const fallbackResult = await this.tryFallbackAPI();
       if (fallbackResult.success && fallbackResult.grants) {
         return {
@@ -67,11 +69,11 @@ export class GrantsBulletproofService implements IGrantsService {
       errors.push(`Fallback API failed: ${fallbackResult.error}`);
 
       // NO MOCK DATA - If all real sources fail, throw error
-      console.error('💥 All real data sources failed');
+      logger.error('💥 All real data sources failed');
       throw new Error(`All real data sources failed: ${errors.join(', ')}`);
 
     } catch (error) {
-      console.error('💥 All real data sources failed, cannot provide grants');
+      logger.error('💥 All real data sources failed, cannot provide grants');
       throw new Error(`Cannot load grants: All real data sources are unavailable. Please try again later.`);
     }
   }
@@ -165,7 +167,7 @@ export class GrantsBulletproofService implements IGrantsService {
 
       return newApplication;
     } catch (error) {
-      console.error('Error creating grant application:', error);
+      logger.error('Error creating grant application:', error);
       throw new Error('Failed to create grant application');
     }
   }
@@ -188,7 +190,7 @@ export class GrantsBulletproofService implements IGrantsService {
       
       throw new Error('Application not found');
     } catch (error) {
-      console.error('Error updating grant application:', error);
+      logger.error('Error updating grant application:', error);
       throw new Error('Failed to update grant application');
     }
   }
@@ -200,7 +202,7 @@ export class GrantsBulletproofService implements IGrantsService {
       localStorage.setItem('grant_applications', JSON.stringify(filteredApplications));
       return true;
     } catch (error) {
-      console.error('Error deleting grant application:', error);
+      logger.error('Error deleting grant application:', error);
       return false;
     }
   }
@@ -256,7 +258,7 @@ export class GrantsBulletproofService implements IGrantsService {
       
       throw new Error('Application not found');
     } catch (error) {
-      console.error('Error updating application content:', error);
+      logger.error('Error updating application content:', error);
       throw new Error('Failed to update application content');
     }
   }

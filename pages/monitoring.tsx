@@ -1,7 +1,6 @@
-import React from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import Head from 'next/head';
 import Layout from '../src/components/Layout';
 import MonitoringDashboard from '../src/components/MonitoringDashboard';
 import { authService } from '../src/lib/auth';
@@ -9,7 +8,7 @@ import { authService } from '../src/lib/auth';
 export default function MonitoringPage() {
   const router = useRouter();
   // User state for future authentication integration
-  const [_user] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -145,7 +145,7 @@ class SGEProjectService {
           return project;
         }
       } catch (error) {
-        console.warn(`Backend project ${id} not found, using local fallback`);
+        logger.warn(`Backend project ${id} not found, using local fallback`);
       }
     }
 
@@ -202,7 +202,7 @@ class SGEProjectService {
           }
         }
       } catch (error) {
-        console.warn('Failed to save project to backend, using local storage:', error);
+        logger.warn('Failed to save project to backend, using local storage:', error);
       }
     }
 
@@ -243,7 +243,7 @@ class SGEProjectService {
           Object.assign(updatedProject, backendProject);
         }
       } catch (error) {
-        console.warn('Failed to update project in backend, using local storage:', error);
+        logger.warn('Failed to update project in backend, using local storage:', error);
       }
     }
 
@@ -269,10 +269,10 @@ class SGEProjectService {
         });
 
         if (!response.ok) {
-          console.warn('Failed to delete project from backend, using local deletion');
+          logger.warn('Failed to delete project from backend, using local deletion');
         }
       } catch (error) {
-        console.warn('Failed to delete project from backend, using local deletion:', error);
+        logger.warn('Failed to delete project from backend, using local deletion:', error);
       }
     }
 
@@ -314,10 +314,10 @@ class SGEProjectService {
         });
 
         if (!response.ok) {
-          console.warn('Failed to update current data in backend, using local storage');
+          logger.warn('Failed to update current data in backend, using local storage');
         }
       } catch (error) {
-        console.warn('Failed to update current data in backend, using local storage:', error);
+        logger.warn('Failed to update current data in backend, using local storage:', error);
       }
     }
 
@@ -334,7 +334,7 @@ class SGEProjectService {
       const projectsData = Array.from(this.localProjects.values());
       localStorage.setItem('sge_local_projects', JSON.stringify(projectsData));
     } catch (error) {
-      console.warn('Failed to save projects to localStorage:', error);
+      logger.warn('Failed to save projects to localStorage:', error);
     }
   }
 
@@ -348,7 +348,7 @@ class SGEProjectService {
         });
       }
     } catch (error) {
-      console.warn('Failed to load projects from localStorage:', error);
+      logger.warn('Failed to load projects from localStorage:', error);
     }
   }
 
@@ -407,7 +407,7 @@ class SGEProjectService {
           return await response.blob();
         }
       } catch (error) {
-        console.warn('Backend export failed, using local export:', error);
+        logger.warn('Backend export failed, using local export:', error);
       }
     }
 
