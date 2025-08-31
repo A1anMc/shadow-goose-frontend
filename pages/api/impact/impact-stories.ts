@@ -1,11 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Pool } from 'pg';
+import { db } from '../../../src/lib/database';
 import { logger } from '../../../src/lib/logger';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -18,19 +13,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       let query = `
         SELECT * FROM impact_stories 
-        WHERE project_id = $1
+        WHERE project_id = ?
       `;
       const params = [project_id];
 
       if (category) {
-        query += ' AND impact_category = $2';
+        query += ' AND impact_category = ?';
         params.push(category as string);
       }
 
       query += ' ORDER BY created_at DESC';
 
-      const result = await pool.query(query, params);
-      res.status(200).json({ data: result.rows });
+      const stmt = db.prepare(query);
+      const result = stmt.all(params);
+      res.status(200).json({ data: result });
     } catch (error) {
       logger.error('Error fetching impact stories', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
@@ -60,11 +56,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           project_id, title, description, participant_name, participant_type,
           impact_category, frameworks, media_files, permissions
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         RETURNING *
       `;
 
-      const result = await pool.query(query, [
+      const stmt = db.prepare(query);
+      const result = stmt.run([
         project_id,
         title,
         description,
@@ -76,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         permissions || {}
       ]);
 
-      res.status(201).json({ data: result.rows[0] });
+      res.status(201).json({ data: result[0] });
     } catch (error) {
       logger.error('Error creating impact story', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
@@ -103,19 +100,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const setClause = updateFields.map((field, index) => `${field} = $${index + 2}`).join(', ');
       const query = `
         UPDATE impact_stories 
-        SET ${setClause}, updated_at = NOW()
-        WHERE id = $1
+        SET ${setClause}, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
         RETURNING *
       `;
 
       const values = [id, ...updateFields.map(field => updates[field])];
-      const result = await pool.query(query, values);
+      const stmt = db.prepare(query);
+      const result = stmt.get(values);
 
-      if (result.rows.length === 0) {
+      if (result.length === 0) {
         return res.status(404).json({ error: 'Impact story not found' });
       }
 
-      res.status(200).json({ data: result.rows[0] });
+      res.status(200).json({ data: result[0] });
     } catch (error) {
       logger.error('Error updating impact story', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
@@ -128,14 +126,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Story ID is required' });
       }
 
-      const query = 'DELETE FROM impact_stories WHERE id = $1 RETURNING *';
-      const result = await pool.query(query, [id]);
+      const query = 'DELETE FROM impact_stories WHERE id = ? RETURNING *';
+      const stmt = db.prepare(query);
+      const result = stmt.all([id]);
 
-      if (result.rows.length === 0) {
+      if (result.length === 0) {
         return res.status(404).json({ error: 'Impact story not found' });
       }
 
-      res.status(200).json({ data: result.rows[0] });
+      res.status(200).json({ data: result[0] });
     } catch (error) {
       logger.error('Error deleting impact story', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });

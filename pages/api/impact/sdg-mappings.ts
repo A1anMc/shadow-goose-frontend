@@ -1,11 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Pool } from 'pg';
+import { db } from '../../../src/lib/database';
 import { logger } from '../../../src/lib/logger';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -34,12 +29,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         JOIN sdg_goals sg ON psdm.sdg_goal_id = sg.id
         JOIN sdg_targets st ON psdm.sdg_target_id = st.id
         JOIN sdg_indicators si ON psdm.sdg_indicator_id = si.id
-        WHERE psdm.project_id = $1
+        WHERE psdm.project_id = ?
         ORDER BY sg.id, st.code, si.code
       `;
 
-      const result = await pool.query(query, [project_id]);
-      res.status(200).json({ data: result.rows });
+      const stmt = db.prepare(query);
+      const result = stmt.all([project_id]);
+      res.status(200).json({ data: result });
     } catch (error) {
       logger.error('Error fetching SDG mappings', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
@@ -68,18 +64,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           project_id, sdg_goal_id, sdg_target_id, sdg_indicator_id,
           current_value, target_value, contribution_percentage, evidence
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (project_id, sdg_goal_id, sdg_target_id, sdg_indicator_id) 
         DO UPDATE SET 
           current_value = EXCLUDED.current_value,
           target_value = EXCLUDED.target_value,
           contribution_percentage = EXCLUDED.contribution_percentage,
           evidence = EXCLUDED.evidence,
-          updated_at = NOW()
+          updated_at = CURRENT_TIMESTAMP
         RETURNING *
       `;
 
-      const result = await pool.query(query, [
+      const stmt = db.prepare(query);
+      const result = stmt.run([
         project_id,
         sdg_goal_id,
         sdg_target_id,
@@ -90,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         evidence || []
       ]);
 
-      res.status(201).json({ data: result.rows[0] });
+      res.status(201).json({ data: result[0] });
     } catch (error) {
       logger.error('Error creating SDG mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
@@ -114,19 +111,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const setClause = updateFields.map((field, index) => `${field} = $${index + 2}`).join(', ');
       const query = `
         UPDATE project_sdg_mappings 
-        SET ${setClause}, updated_at = NOW()
-        WHERE id = $1
+        SET ${setClause}, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
         RETURNING *
       `;
 
       const values = [id, ...updateFields.map(field => updates[field])];
-      const result = await pool.query(query, values);
+      const stmt = db.prepare(query);
+      const result = stmt.get(values);
 
-      if (result.rows.length === 0) {
+      if (result.length === 0) {
         return res.status(404).json({ error: 'SDG mapping not found' });
       }
 
-      res.status(200).json({ data: result.rows[0] });
+      res.status(200).json({ data: result[0] });
     } catch (error) {
       logger.error('Error updating SDG mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });
@@ -139,14 +137,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Mapping ID is required' });
       }
 
-      const query = 'DELETE FROM project_sdg_mappings WHERE id = $1 RETURNING *';
-      const result = await pool.query(query, [id]);
+      const query = 'DELETE FROM project_sdg_mappings WHERE id = ? RETURNING *';
+      const stmt = db.prepare(query);
+      const result = stmt.all([id]);
 
-      if (result.rows.length === 0) {
+      if (result.length === 0) {
         return res.status(404).json({ error: 'SDG mapping not found' });
       }
 
-      res.status(200).json({ data: result.rows[0] });
+      res.status(200).json({ data: result[0] });
     } catch (error) {
       logger.error('Error deleting SDG mapping', { error: error instanceof Error ? error.message : String(error) });
       res.status(500).json({ error: 'Internal server error' });

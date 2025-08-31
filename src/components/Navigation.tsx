@@ -33,30 +33,22 @@ export default function Navigation({ className = '' }: NavigationProps) {
   };
 
   return (
-    <nav className={`bg-surface border-b border-border ${className}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className={`nav ${className}`}>
+      <div className="nav-container">
+        <div className="nav-content">
           {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/dashboard" className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
-              </div>
-              <span className="text-xl font-semibold text-primary">{branding.name}</span>
-            </Link>
-          </div>
+          <Link href="/dashboard" className="nav-logo">
+            <div className="nav-logo-icon">S</div>
+            <span>{branding.name}</span>
+          </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="nav-links">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2 ${
-                  isActive(item.href)
-                    ? 'bg-accent text-white shadow-md'
-                    : 'text-secondary hover:text-primary hover:bg-surface-hover'
-                }`}
+                className={`nav-link ${isActive(item.href) ? 'active' : ''}`}
               >
                 <span>{item.icon}</span>
                 <span>{item.name}</span>
@@ -65,10 +57,10 @@ export default function Navigation({ className = '' }: NavigationProps) {
           </div>
 
           {/* User Menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="nav-links">
             <button
               onClick={handleLogout}
-              className="btn btn-ghost text-sm"
+              className="btn btn-ghost"
             >
               <span>👤</span>
               <span>Logout</span>
@@ -76,45 +68,47 @@ export default function Navigation({ className = '' }: NavigationProps) {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="btn btn-ghost p-2"
-            >
-              <span className="text-xl">☰</span>
-            </button>
-          </div>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="btn btn-ghost md:hidden"
+          >
+            <span className="text-xl">☰</span>
+          </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border">
-            <div className="px-2 pt-2 pb-3 space-y-1">
+          <div className="border-t border-gray-200 md:hidden">
+            <div className="p-4 space-y-2">
               {navigationItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 flex items-center space-x-3 ${
+                  className={`block p-3 rounded-lg text-base font-medium transition-colors ${
                     isActive(item.href)
-                      ? 'bg-accent text-white'
-                      : 'text-secondary hover:text-primary hover:bg-surface-hover'
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <span>{item.icon}</span>
-                  <span>{item.name}</span>
+                  <div className="flex items-center space-x-3">
+                    <span>{item.icon}</span>
+                    <span>{item.name}</span>
+                  </div>
                 </Link>
               ))}
-              <div className="border-t border-border pt-2 mt-2">
+              <div className="border-t border-gray-200 pt-2 mt-2">
                 <button
                   onClick={() => {
                     handleLogout();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-secondary hover:text-primary hover:bg-surface-hover flex items-center space-x-3"
+                  className="w-full text-left p-3 rounded-lg text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
                 >
-                  <span>👤</span>
-                  <span>Logout</span>
+                  <div className="flex items-center space-x-3">
+                    <span>👤</span>
+                    <span>Logout</span>
+                  </div>
                 </button>
               </div>
             </div>
