@@ -16,6 +16,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
   const navigationItems = [
     { name: 'Dashboard', href: '/dashboard', icon: '📊' },
     { name: 'Grants', href: '/grants', icon: '💰' },
+    { name: 'CRM Pipeline', href: '/crm-grants-pipeline', icon: '🎯' },
     { name: 'Analytics', href: '/analytics', icon: '📈' },
     { name: 'Projects', href: '/projects', icon: '📋' },
     { name: 'Relationships', href: '/relationships', icon: '🤝' },
