@@ -1,0 +1,284 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User management
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  grantApplications GrantApplication[]
+  projects         Project[]
+  notifications    Notification[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  USER
+}
+
+// Grant management
+model Grant {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  amount      Float
+  deadline    DateTime
+  category    String
+  status      GrantStatus @default(OPEN)
+  organization String
+  eligibility String?
+  requirements String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  applications GrantApplication[]
+  impactMeasurements ImpactMeasurement[]
+
+  @@map("grants")
+}
+
+enum GrantStatus {
+  OPEN
+  CLOSING_SOON
+  CLOSING_TODAY
+  CLOSED
+  EXPIRED
+}
+
+// Grant applications
+model GrantApplication {
+  id          String   @id @default(cuid())
+  grantId     String
+  userId      String
+  title       String
+  description String
+  budget      Float
+  timeline    String
+  status      ApplicationStatus @default(DRAFT)
+  priority    Priority @default(MEDIUM)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  grant       Grant   @relation(fields: [grantId], references: [id])
+  user        User    @relation(fields: [userId], references: [id])
+  documents   Document[]
+  impactStories ImpactStory[]
+
+  @@map("grant_applications")
+}
+
+enum ApplicationStatus {
+  DRAFT
+  IN_PROGRESS
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// Documents
+model Document {
+  id          String   @id @default(cuid())
+  applicationId String
+  name        String
+  type        String
+  url         String
+  size        Int
+  createdAt   DateTime @default(now())
+
+  // Relations
+  application GrantApplication @relation(fields: [applicationId], references: [id])
+
+  @@map("documents")
+}
+
+// Projects
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  status      ProjectStatus @default(ACTIVE)
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User    @relation(fields: [userId], references: [id])
+  projectMappings ProjectMapping[]
+
+  @@map("projects")
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+// Impact measurements
+model ImpactMeasurement {
+  id          String   @id @default(cuid())
+  grantId     String
+  metric      String
+  value       Float
+  unit        String
+  period      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  grant       Grant   @relation(fields: [grantId], references: [id])
+
+  @@map("impact_measurements")
+}
+
+// Impact stories
+model ImpactStory {
+  id          String   @id @default(cuid())
+  applicationId String
+  title       String
+  description String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  application GrantApplication @relation(fields: [applicationId], references: [id])
+
+  @@map("impact_stories")
+}
+
+// Project mappings
+model ProjectMapping {
+  id          String   @id @default(cuid())
+  projectId   String
+  type        String
+  value       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project @relation(fields: [projectId], references: [id])
+
+  @@map("project_mappings")
+}
+
+// SDG mappings
+model SDGMapping {
+  id          String   @id @default(cuid())
+  sdgGoal     String
+  description String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("sdg_mappings")
+}
+
+// Notifications
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  read        Boolean  @default(false)
+  priority    Priority @default(MEDIUM)
+  actionUrl   String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user        User    @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  DEADLINE
+  STATUS_UPDATE
+  REMINDER
+  SUCCESS
+  WARNING
+  INFO
+}
+
+// OKRs
+model OKR {
+  id          String   @id @default(cuid())
+  objective   String
+  keyResults  String[]
+  status      OKRStatus @default(IN_PROGRESS)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("okrs")
+}
+
+enum OKRStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  ON_TRACK
+  AT_RISK
+  BEHIND
+}
+
+// Relationships
+model Relationship {
+  id          String   @id @default(cuid())
+  name        String
+  type        RelationshipType
+  stage       RelationshipStage @default(INITIAL)
+  priority    Priority @default(MEDIUM)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("relationships")
+}
+
+enum RelationshipType {
+  STAKEHOLDER
+  PARTNER
+  FUNDER
+  COLLABORATOR
+  VENDOR
+}
+
+enum RelationshipStage {
+  INITIAL
+  ENGAGED
+  PARTNERSHIP
+  ACTIVE
+  MAINTAINED
+  ARCHIVED
+}

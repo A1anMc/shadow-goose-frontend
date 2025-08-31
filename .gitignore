@@ -194,3 +194,5 @@ database/*.sqlite3
 ehthumbs.db
 Thumbs.db
 .vercel
+
+/src/generated/prisma
