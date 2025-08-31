@@ -21,7 +21,8 @@
     "health": "./scripts/monitor-deployment.sh health",
     "build-id": "./scripts/monitor-deployment.sh build-id",
     "deploy": "npm run verify-all && git add . && git commit --no-verify -m \"🚀 Auto-deploy $(date)\" && git push origin main && npm run monitor",
-    "deploy:vercel": "vercel --prod"
+    "deploy:vercel": "vercel --prod",
+    "csp:check": "node scripts/csp-compliance-checker.js"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.12",

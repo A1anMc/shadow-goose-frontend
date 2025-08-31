@@ -196,7 +196,7 @@
                 Grants API Monitoring Dashboard
             </h1>
             <p>Real-time monitoring of grants API health, performance, and data quality</p>
-            <button class="refresh-button" onclick="refreshData()">Refresh Data</button>
+                            <button class="refresh-button" id="refresh-btn">Refresh Data</button>
             <span class="auto-refresh">Auto-refresh every 30 seconds</span>
         </div>
 
@@ -315,7 +315,10 @@
 
         function updateResponseChart() {
             const chart = document.getElementById('response-chart');
-            chart.innerHTML = '';
+            // Clear chart safely
+            while (chart.firstChild) {
+                chart.removeChild(chart.firstChild);
+            }
 
             const maxTime = Math.max(...responseTimeHistory, 1000);
 
@@ -338,22 +341,42 @@
         function updateAlerts(alerts) {
             const container = document.getElementById('alerts-container');
 
+            // Clear container safely
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
             if (alerts.length === 0) {
-                container.innerHTML = '<p>No alerts yet...</p>';
+                const noAlerts = document.createElement('p');
+                noAlerts.textContent = 'No alerts yet...';
+                container.appendChild(noAlerts);
                 return;
             }
 
-            container.innerHTML = alerts.map(alert => `
-                <div class="alert-item alert-${alert.severity}">
-                    <div class="alert-time">${alert.time}</div>
-                    <div class="alert-message">${alert.message}</div>
-                </div>
-            `).join('');
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert-item alert-${alert.severity}`;
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'alert-time';
+                timeDiv.textContent = alert.time;
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'alert-message';
+                messageDiv.textContent = alert.message;
+                
+                alertDiv.appendChild(timeDiv);
+                alertDiv.appendChild(messageDiv);
+                container.appendChild(alertDiv);
+            });
         }
 
         function refreshData() {
             fetchMonitoringData();
         }
+
+        // Add event listener for refresh button
+        document.getElementById('refresh-btn').addEventListener('click', refreshData);
 
         // Auto-refresh every 30 seconds
         setInterval(refreshData, 30000);
