@@ -1,17 +1,25 @@
-import { Grant, GrantApplication, GrantRecommendation, GrantSearchFilters } from './grants';
+import { Grant, GrantSearchFilters, GrantRecommendation } from './grants';
 
-class GrantServiceFixed {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://shadow-goose-api.onrender.com';
+interface GrantWithSource extends Grant {
+  data_source: 'api';
+}
 
-  // Get all available grants - NO FALLBACK, ONLY REAL API
-  async getGrants(): Promise<{ grants: Grant[], dataSource: 'api' }> {
+export class GrantsService {
+  private baseUrl: string | null = null;
+
+  constructor() {
+    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || null;
+  }
+
+  // Get all grants - NO FALLBACK, ONLY REAL API
+  async getAllGrants(): Promise<{ grants: Grant[], dataSource: 'api' }> {
     if (!this.baseUrl) {
-      throw new Error('API URL not configured - cannot fetch real grants data');
+      throw new Error('API URL not configured - cannot get real grants data');
     }
 
     const token = localStorage.getItem('sge_auth_token');
     if (!token) {
-      throw new Error('Authentication required - cannot fetch real grants data');
+      throw new Error('Authentication required - cannot get real grants data');
     }
 
     const headers: Record<string, string> = {
@@ -26,7 +34,7 @@ class GrantServiceFixed {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Grants API failed: ${errorData.detail || `Status: ${response.status}`}`);
+      throw new Error(`Get grants API failed: ${errorData.detail || `Status: ${response.status}`}`);
     }
 
     const data = await response.json();
@@ -39,13 +47,13 @@ class GrantServiceFixed {
     const grants = data.grants || [];
 
     // Validate each grant has data_source === 'api'
-    const invalidGrants = grants.filter(grant => grant.data_source !== 'api');
+    const invalidGrants = grants.filter((grant: GrantWithSource) => grant.data_source !== 'api');
     if (invalidGrants.length > 0) {
       throw new Error(`Found ${invalidGrants.length} grants with non-API data source`);
     }
 
     // Mark API data with source indicator
-    const grantsWithSource = grants.map(grant => ({
+    const grantsWithSource = grants.map((grant: GrantWithSource) => ({
       ...grant,
       data_source: 'api' as const
     }));
@@ -93,13 +101,13 @@ class GrantServiceFixed {
     const grants = data.grants || [];
 
     // Validate each grant has data_source === 'api'
-    const invalidGrants = grants.filter(grant => grant.data_source !== 'api');
+    const invalidGrants = grants.filter((grant: GrantWithSource) => grant.data_source !== 'api');
     if (invalidGrants.length > 0) {
       throw new Error(`Found ${invalidGrants.length} search results with non-API data source`);
     }
 
     // Mark API data with source indicator
-    const grantsWithSource = grants.map(grant => ({
+    const grantsWithSource = grants.map((grant: GrantWithSource) => ({
       ...grant,
       data_source: 'api' as const
     }));
@@ -138,6 +146,7 @@ class GrantServiceFixed {
 
     const data = await response.json();
 
+    // Validate data structure
     if (!data || !Array.isArray(data.recommendations)) {
       throw new Error('Invalid recommendations data structure from API');
     }
@@ -145,15 +154,51 @@ class GrantServiceFixed {
     return data.recommendations || [];
   }
 
-  // Get grant categories - NO FALLBACK, ONLY REAL API
-  async getCategories(): Promise<string[]> {
+  // Get grant by ID - NO FALLBACK, ONLY REAL API
+  async getGrantById(id: string): Promise<Grant> {
     if (!this.baseUrl) {
-      throw new Error('API URL not configured - cannot get real grant categories');
+      throw new Error('API URL not configured - cannot get real grant data');
     }
 
     const token = localStorage.getItem('sge_auth_token');
     if (!token) {
-      throw new Error('Authentication required - cannot get real grant categories');
+      throw new Error('Authentication required - cannot get real grant data');
+    }
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    const response = await fetch(`${this.baseUrl}/api/grants/${id}`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Get grant API failed: ${errorData.detail || `Status: ${response.status}`}`);
+    }
+
+    const data = await response.json();
+
+    // Validate data structure
+    if (!data || !data.grant) {
+      throw new Error('Invalid grant data structure from API');
+    }
+
+    return data.grant;
+  }
+
+  // Get grant categories - NO FALLBACK, ONLY REAL API
+  async getCategories(): Promise<string[]> {
+    if (!this.baseUrl) {
+      throw new Error('API URL not configured - cannot get real categories data');
+    }
+
+    const token = localStorage.getItem('sge_auth_token');
+    if (!token) {
+      throw new Error('Authentication required - cannot get real categories data');
     }
 
     const headers: Record<string, string> = {
@@ -162,16 +207,18 @@ class GrantServiceFixed {
     };
 
     const response = await fetch(`${this.baseUrl}/api/grants/categories`, {
+      method: 'GET',
       headers,
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Categories API failed: ${errorData.detail || `Status: ${response.status}`}`);
+      throw new Error(`Get categories API failed: ${errorData.detail || `Status: ${response.status}`}`);
     }
 
     const data = await response.json();
 
+    // Validate data structure
     if (!data || !Array.isArray(data.categories)) {
       throw new Error('Invalid categories data structure from API');
     }
@@ -179,15 +226,15 @@ class GrantServiceFixed {
     return data.categories || [];
   }
 
-  // Get applications - NO FALLBACK, ONLY REAL API
-  async getApplications(): Promise<GrantApplication[]> {
+  // Get success metrics - NO FALLBACK, ONLY REAL API
+  async getSuccessMetrics(): Promise<any> {
     if (!this.baseUrl) {
-      throw new Error('API URL not configured - cannot get real applications');
+      throw new Error('API URL not configured - cannot get real success metrics');
     }
 
     const token = localStorage.getItem('sge_auth_token');
     if (!token) {
-      throw new Error('Authentication required - cannot get real applications');
+      throw new Error('Authentication required - cannot get real success metrics');
     }
 
     const headers: Record<string, string> = {
@@ -195,23 +242,25 @@ class GrantServiceFixed {
       'Authorization': `Bearer ${token}`,
     };
 
-    const response = await fetch(`${this.baseUrl}/api/grant-applications`, {
+    const response = await fetch(`${this.baseUrl}/api/grants/success-metrics`, {
+      method: 'GET',
       headers,
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Applications API failed: ${errorData.detail || `Status: ${response.status}`}`);
+      throw new Error(`Get success metrics API failed: ${errorData.detail || `Status: ${response.status}`}`);
     }
 
     const data = await response.json();
 
-    if (!data || !Array.isArray(data.applications)) {
-      throw new Error('Invalid applications data structure from API');
+    // Validate data structure
+    if (!data || !data.metrics) {
+      throw new Error('Invalid success metrics data structure from API');
     }
 
-    return data.applications || [];
+    return data.metrics;
   }
 }
 
-export const grantServiceFixed = new GrantServiceFixed();
+export const grantsService = new GrantsService();

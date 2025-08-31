@@ -238,11 +238,11 @@ class AuthService {
       }
 
       // Check if parts are base64 encoded
-      parts.forEach(part => {
+      for (const part of parts) {
         if (!/^[A-Za-z0-9+/]*={0,2}$/.test(part)) {
           return false;
         }
-      });
+      }
 
       return true;
     } catch (error) {

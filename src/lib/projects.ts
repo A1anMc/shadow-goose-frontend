@@ -88,7 +88,7 @@ class SGEProjectService {
 
         // Merge backend projects with local projects
         const backendProjects = data.projects;
-        backendProjects.forEach(project => {
+        backendProjects.forEach((project: any) => {
           // Transform project data to match SGEProject interface
         const transformedProject: SGEProject = {
           ...project,

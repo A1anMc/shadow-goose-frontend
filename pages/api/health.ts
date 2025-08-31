@@ -1,7 +1,11 @@
-import { NextResponse } from 'next/server';
-import { getDatabaseHealth } from '../../../lib/database';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { getDatabaseHealth } from '../../src/lib/database';
 
-export async function GET() {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
     // Get database health status
     const dbHealth = await getDatabaseHealth();
@@ -19,18 +23,13 @@ export async function GET() {
     // Set appropriate status code based on health
     const statusCode = dbHealth.status === 'healthy' ? 200 : 503;
     
-    return NextResponse.json(healthStatus, { status: statusCode });
+    res.status(statusCode).json(healthStatus);
   } catch (error) {
-    console.error('Health check error:', error);
-    return NextResponse.json({ 
+    // Log error for monitoring purposes
+    res.status(500).json({ 
       error: 'Internal server error',
       status: 'unhealthy',
-      timestamp: new Date().toISOString(),
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+      timestamp: new Date().toISOString()
+    });
   }
-}
-
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 200 });
 }

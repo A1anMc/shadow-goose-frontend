@@ -22,7 +22,7 @@ export default function InstantAnalytics() {
     const currentUser = authService.getCurrentUser();
     if (!currentUser) {
       router.push("/login");
-      return;
+      return undefined;
     }
     setUser(currentUser);
 
@@ -34,6 +34,7 @@ export default function InstantAnalytics() {
       const interval = setInterval(loadInstantAnalytics, 30000); // Refresh every 30 seconds
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [router, autoRefresh, selectedTimeframe]);
 
   const loadInstantAnalytics = async () => {
