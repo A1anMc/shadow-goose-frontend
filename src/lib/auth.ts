@@ -26,11 +26,8 @@ class AuthService {
 
   // Login user - REAL AUTHENTICATION ONLY
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    if (!process.env.NEXT_PUBLIC_API_URL) {
-      throw new Error('API URL not configured');
-    }
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    // Use local API route for authentication
+    const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
