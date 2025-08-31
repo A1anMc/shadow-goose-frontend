@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Layout from '../src/components/Layout';
 import { logger } from '../src/lib/logger';
 import { getGrantsService } from '../src/lib/services/grants-service';
 import { Grant } from '../src/lib/types/grants';
-import Layout from '../src/components/Layout';
 
 interface OrganizationType {
   type: string;
@@ -57,27 +57,27 @@ export default function ApplicantDemographics() {
     // Mock organization type analysis based on grant categories and amounts
     const typeMap = new Map<string, { count: number; success: number; funding: number }>();
 
-    grantsData.forEach(grant => {
-      // Determine organization type based on grant characteristics
-      let orgType = 'Other';
-      
-      if (grant.category?.toLowerCase().includes('arts') || grant.category?.toLowerCase().includes('culture')) {
-        orgType = 'Arts & Culture';
-      } else if (grant.category?.toLowerCase().includes('education') || grant.category?.toLowerCase().includes('school')) {
-        orgType = 'Education';
-      } else if (grant.category?.toLowerCase().includes('health') || grant.category?.toLowerCase().includes('medical')) {
-        orgType = 'Healthcare';
-      } else if (grant.category?.toLowerCase().includes('community') || grant.category?.toLowerCase().includes('social')) {
-        orgType = 'Community Services';
-      } else if (grant.category?.toLowerCase().includes('technology') || grant.category?.toLowerCase().includes('digital')) {
-        orgType = 'Technology';
-      } else if (grant.category?.toLowerCase().includes('environment') || grant.category?.toLowerCase().includes('sustainability')) {
-        orgType = 'Environment';
-      }
+         grantsData.forEach(grant => {
+       // Determine organization type based on grant characteristics
+       let orgType = 'Other';
+       
+       if (grant.category?.toLowerCase().includes('arts') || grant.category?.toLowerCase().includes('culture')) {
+         orgType = 'Arts & Culture';
+       } else if (grant.category?.toLowerCase().includes('education') || grant.category?.toLowerCase().includes('school')) {
+         orgType = 'Education';
+       } else if (grant.category?.toLowerCase().includes('health') || grant.category?.toLowerCase().includes('medical')) {
+         orgType = 'Healthcare';
+       } else if (grant.category?.toLowerCase().includes('community') || grant.category?.toLowerCase().includes('social')) {
+         orgType = 'Community Services';
+       } else if (grant.category?.toLowerCase().includes('technology') || grant.category?.toLowerCase().includes('digital')) {
+         orgType = 'Technology';
+       } else if (grant.category?.toLowerCase().includes('environment') || grant.category?.toLowerCase().includes('sustainability')) {
+         orgType = 'Environment';
+       }
 
-      const current = typeMap.get(orgType) || { count: 0, success: 0, funding: 0 };
-      current.count += 1;
-      current.funding += grant.funding_amount || 0;
+       const current = typeMap.get(orgType) || { count: 0, success: 0, funding: 0 };
+       current.count += 1;
+       current.funding += grant.amount || 0;
       if (grant.status === 'closed') current.success += 1;
       
       typeMap.set(orgType, current);
@@ -119,9 +119,9 @@ export default function ApplicantDemographics() {
         region = 'National';
       }
 
-      const current = regionMap.get(region) || { count: 0, success: 0, funding: 0 };
-      current.count += 1;
-      current.funding += grant.funding_amount || 0;
+             const current = regionMap.get(region) || { count: 0, success: 0, funding: 0 };
+       current.count += 1;
+       current.funding += grant.amount || 0;
       if (grant.status === 'closed') current.success += 1;
       
       regionMap.set(region, current);
@@ -144,7 +144,7 @@ export default function ApplicantDemographics() {
     const total_organizations = new Set(grantsData.map(g => g.organisation || 'Unknown')).size;
     const successful_grants = grantsData.filter(g => g.status === 'closed').length;
     const overall_success_rate = total_applicants > 0 ? (successful_grants / total_applicants) * 100 : 0;
-    const total_funding = grantsData.reduce((sum, g) => sum + (g.funding_amount || 0), 0);
+         const total_funding = grantsData.reduce((sum, g) => sum + (g.amount || 0), 0);
     const average_grant_size = total_applicants > 0 ? total_funding / total_applicants : 0;
     const geographic_coverage = new Set(grantsData.flatMap(g => g.geographic_focus || [])).size;
     const organization_diversity = new Set(grantsData.map(g => g.category)).size;
@@ -164,20 +164,20 @@ export default function ApplicantDemographics() {
 
     grantsData.forEach(grant => {
       const category = grant.category || 'Other';
-      const current = categoryMap.get(category) || { success: 0, total: 0, funding: 0 };
-      current.total += 1;
-      current.funding += grant.funding_amount || 0;
+             const current = categoryMap.get(category) || { success: 0, total: 0, funding: 0 };
+       current.total += 1;
+       current.funding += grant.amount || 0;
       if (grant.status === 'closed') current.success += 1;
       categoryMap.set(category, current);
     });
 
-    const patterns = Array.from(categoryMap.entries()).map(([category, data]) => ({
-      category,
-      success_rate: data.total > 0 ? (data.success / data.total) * 100 : 0,
-      application_count: data.total,
-      avg_funding: data.total > 0 ? data.funding / data.total : 0,
-      trend: Math.random() > 0.5 ? 'increasing' : Math.random() > 0.5 ? 'decreasing' : 'stable'
-    })).sort((a, b) => b.success_rate - a.success_rate);
+         const patterns = Array.from(categoryMap.entries()).map(([category, data]) => ({
+       category,
+       success_rate: data.total > 0 ? (data.success / data.total) * 100 : 0,
+       application_count: data.total,
+       avg_funding: data.total > 0 ? data.funding / data.total : 0,
+       trend: (Math.random() > 0.5 ? 'increasing' : Math.random() > 0.5 ? 'decreasing' : 'stable') as 'increasing' | 'decreasing' | 'stable'
+     })).sort((a, b) => b.success_rate - a.success_rate);
 
     setSuccessPatterns(patterns);
   }, []);

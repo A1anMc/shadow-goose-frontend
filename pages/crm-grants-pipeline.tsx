@@ -61,7 +61,7 @@ export default function CRMGrantsPipeline() {
       });
 
       const count = stageGrants.length;
-      const value = stageGrants.reduce((sum, grant) => sum + (grant.funding_amount || 0), 0);
+             const value = stageGrants.reduce((sum, grant) => sum + (grant.amount || 0), 0);
       const conversion_rate = index === 0 ? 100 : 
         ((count / (grantsData.length || 1)) * 100);
 
@@ -77,7 +77,7 @@ export default function CRMGrantsPipeline() {
   }, []);
 
   const calculatePerformanceMetrics = useCallback((grantsData: Grant[]) => {
-    const total_pipeline_value = grantsData.reduce((sum, grant) => sum + (grant.funding_amount || 0), 0);
+         const total_pipeline_value = grantsData.reduce((sum, grant) => sum + (grant.amount || 0), 0);
     const forecasted_revenue = total_pipeline_value * 0.612; // 61.2% conversion rate like example
     const overall_conversion_rate = 61.2;
     const average_deal_size = grantsData.length > 0 ? total_pipeline_value / grantsData.length : 0;
@@ -99,7 +99,7 @@ export default function CRMGrantsPipeline() {
       const industry = grant.category || 'Other';
       const current = industryMap.get(industry) || { value: 0, count: 0, success: 0 };
       
-      current.value += grant.funding_amount || 0;
+             current.value += grant.amount || 0;
       current.count += 1;
       if (grant.status === 'closed') current.success += 1;
       
@@ -370,7 +370,7 @@ export default function CRMGrantsPipeline() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ${(grant.funding_amount || 0).toLocaleString()}
+                                                 ${(grant.amount || 0).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -382,7 +382,7 @@ export default function CRMGrantsPipeline() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {grant.closing_date ? new Date(grant.closing_date).toLocaleDateString() : 'N/A'}
+                                                 {grant.deadline ? new Date(grant.deadline).toLocaleDateString() : 'N/A'}
                       </td>
                     </tr>
                   ))}
