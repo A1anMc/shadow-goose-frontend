@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Layout from '../src/components/Layout';
 import { logger } from '../src/lib/logger';
 import { getGrantsService } from '../src/lib/services/grants-service';
 import { Grant } from '../src/lib/types/grants';
-import Layout from '../src/components/Layout';
 
 interface PipelineStage {
   stage: string;
@@ -42,21 +42,21 @@ export default function CRMGrantsPipeline() {
 
   const calculatePipelineStages = useCallback((grantsData: Grant[]) => {
     const stages = [
-      { stage: 'Draft', color: 'bg-gray-500' },
-      { stage: 'Submitted', color: 'bg-blue-500' },
-      { stage: 'Under Review', color: 'bg-yellow-500' },
-      { stage: 'Approved', color: 'bg-green-500' },
-      { stage: 'Funded', color: 'bg-purple-500' }
+      { stage: 'Planning', color: 'bg-gray-500' },
+      { stage: 'Open', color: 'bg-blue-500' },
+      { stage: 'Closing Soon', color: 'bg-yellow-500' },
+      { stage: 'Closing Today', color: 'bg-orange-500' },
+      { stage: 'Closed', color: 'bg-purple-500' }
     ];
 
     const stageData = stages.map((stage, index) => {
       const stageGrants = grantsData.filter(grant => {
         // Mock stage assignment based on grant properties
-        if (index === 0) return grant.status === 'draft';
-        if (index === 1) return grant.status === 'submitted';
-        if (index === 2) return grant.status === 'review';
-        if (index === 3) return grant.status === 'approved';
-        if (index === 4) return grant.status === 'funded';
+        if (index === 0) return grant.status === 'planning';
+        if (index === 1) return grant.status === 'open';
+        if (index === 2) return grant.status === 'closing_soon';
+        if (index === 3) return grant.status === 'closing_today';
+        if (index === 4) return grant.status === 'closed';
         return false;
       });
 
@@ -101,7 +101,7 @@ export default function CRMGrantsPipeline() {
       
       current.value += grant.funding_amount || 0;
       current.count += 1;
-      if (grant.status === 'funded') current.success += 1;
+      if (grant.status === 'closed') current.success += 1;
       
       industryMap.set(industry, current);
     });
