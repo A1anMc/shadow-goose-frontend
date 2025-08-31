@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const { PrismaClient } = require('@prisma/client');
-const { logger } = require('../src/lib/logger');
 
 const prisma = new PrismaClient();
 
