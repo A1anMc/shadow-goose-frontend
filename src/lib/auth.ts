@@ -250,7 +250,7 @@ class AuthService {
   // Refresh user data
   async refreshUserData(): Promise<User | null> {
     try {
-      const response = await this.authenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/auth/user`);
+      const response = await this.authenticatedRequest('/api/auth/user');
 
       if (!response.ok) {
         throw new Error('Failed to refresh user data');
@@ -272,7 +272,7 @@ class AuthService {
       const token = this.getToken();
       if (!token) return false;
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/user`, {
+      const response = await fetch('/api/auth/user', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
