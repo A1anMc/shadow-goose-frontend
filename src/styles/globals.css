@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* SGE Brand Colors */
+  --sg-primary: #1A1A1A;
+  --sg-secondary: #FFFFFF;
+  --sg-accent: #FF6600;
+  --sg-background: #F5F5F5;
+  
+  /* SGE Extended Colors */
+  --sge-primary: #2C5F2D;
+  --sge-secondary: #FFFFFF;
+  --sge-accent: #FFD700;
+  --sge-background: #F8F9FA;
+}
+
+/* Custom SGE Classes */
+.bg-sg-background {
+  background-color: var(--sg-background);
+}
+
+.text-sg-primary {
+  color: var(--sg-primary);
+}
+
+.bg-sg-primary {
+  background-color: var(--sg-primary);
+}
+
+.bg-sg-accent {
+  background-color: var(--sg-accent);
+}
+
+.text-sg-accent {
+  color: var(--sg-accent);
+}
+
+.hover\:bg-sg-accent\/90:hover,
+.hover\:bg-sg-primary\/90:hover {
+  background-color: var(--sg-accent);
+  opacity: 0.9;
+}

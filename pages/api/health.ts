@@ -24,12 +24,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const statusCode = dbHealth.status === 'healthy' ? 200 : 503;
     
     res.status(statusCode).json(healthStatus);
-  } catch (error) {
-    // Log error for monitoring purposes
-    res.status(500).json({ 
-      error: 'Internal server error',
-      status: 'unhealthy',
-      timestamp: new Date().toISOString()
-    });
-  }
+          } catch {
+          // Log error for monitoring purposes
+          res.status(500).json({
+            error: 'Internal server error',
+            status: 'unhealthy',
+            timestamp: new Date().toISOString()
+          });
+        }
 }

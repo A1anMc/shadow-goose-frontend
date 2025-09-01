@@ -40,8 +40,7 @@ interface SuccessPatterns {
 }
 
 export default function ApplicantDemographics() {
-  const router = useRouter();
-  const [grants, setGrants] = useState<Grant[]>([]);
+  const [grants] = useState<Grant[]>([]);
   const [organizationTypes, setOrganizationTypes] = useState<OrganizationType[]>([]);
   const [geographicData, setGeographicData] = useState<GeographicData[]>([]);
   const [demographicMetrics, setDemographicMetrics] = useState<DemographicMetrics | null>(null);

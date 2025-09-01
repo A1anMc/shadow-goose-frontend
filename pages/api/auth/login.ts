@@ -35,11 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const response = await authService.login({ username, password });
       return res.status(200).json(response);
-    } catch (authError) {
+    } catch {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-  } catch (error) {
-    console.error('Login error:', error);
+  } catch {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

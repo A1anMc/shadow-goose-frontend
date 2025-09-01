@@ -29,7 +29,6 @@ interface IndustryBreakdown {
 }
 
 export default function CRMGrantsPipeline() {
-  const router = useRouter();
   const [grants, setGrants] = useState<Grant[]>([]);
   const [pipelineStages, setPipelineStages] = useState<PipelineStage[]>([]);
   const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetrics | null>(null);
@@ -286,7 +285,7 @@ export default function CRMGrantsPipeline() {
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Pipeline Funnel</h3>
               <div className="space-y-4">
-                {pipelineStages.map((stage, index) => (
+                                       {pipelineStages.map((stage) => (
                   <div key={stage.stage} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className={`w-4 h-4 rounded-full ${stage.color}`}></div>
