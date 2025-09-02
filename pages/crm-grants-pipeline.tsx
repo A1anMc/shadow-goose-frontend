@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from '../src/components/Layout';
 import { logger } from '../src/lib/logger';

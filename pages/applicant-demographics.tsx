@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Layout from '../src/components/Layout';
 import { logger } from '../src/lib/logger';
@@ -40,7 +39,7 @@ interface SuccessPatterns {
 }
 
 export default function ApplicantDemographics() {
-  const [grants] = useState<Grant[]>([]);
+  const [grants, setGrants] = useState<Grant[]>([]);
   const [organizationTypes, setOrganizationTypes] = useState<OrganizationType[]>([]);
   const [geographicData, setGeographicData] = useState<GeographicData[]>([]);
   const [demographicMetrics, setDemographicMetrics] = useState<DemographicMetrics | null>(null);
